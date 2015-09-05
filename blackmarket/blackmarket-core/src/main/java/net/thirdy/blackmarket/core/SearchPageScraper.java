@@ -121,10 +121,10 @@ public class SearchPageScraper {
 			item.dmgAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_dps").get(0).text();
 			item.physDmgAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_pdps").get(0).text();
 			item.eleDmg = element.getElementsByAttributeValue("data-name", "edps").get(0).text();
-			item.armourAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_armour ").get(0).text();
+			item.armourAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_armour").get(0).text();
 			item.evasionAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_evasion").get(0).text();
-			item.energyShieldAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_shield ").get(0).text();
-			item.block = element.getElementsByAttributeValue("data-name", "block ").get(0).text();
+			item.energyShieldAtMaxQuality = element.getElementsByAttributeValue("data-name", "quality_shield").get(0).text();
+			item.block = element.getElementsByAttributeValue("data-name", "block").get(0).text();
 			item.crit = element.getElementsByAttributeValue("data-name", "crit").get(0).text();
 			// "level"
 			

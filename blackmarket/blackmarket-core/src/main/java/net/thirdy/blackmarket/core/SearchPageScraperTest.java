@@ -17,7 +17,9 @@ public class SearchPageScraperTest {
 		String page = FileUtils.readFileToString(new File(url.toURI()));
 		SearchPageScraper scraper = new SearchPageScraper(page);
 		List<SearchResultItem> list = scraper.parse();
-		System.out.println(list);
+		for (SearchResultItem item : list) {
+			System.out.println(item);
+		}
 	}
 
 }
