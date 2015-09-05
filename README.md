@@ -15,3 +15,6 @@ Hard to implement Features
 2. Search for upgrades based on item data in the clipboard
 3. Activate application on hotkey press from PoE
 
+How to run:
+cd into blackmarket-ui directory
+mvn exec:java -Dexec.mainClass="net.thirdy.blackmarket.MainApp"
