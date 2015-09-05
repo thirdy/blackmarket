@@ -8,6 +8,7 @@ Features
 2. Copy item to shortlist
 3. Provide graphical view of the stats
 4. Bookmark items if user is offline
+5. Show improved view on account age and highest level. right now it's a1253h87
 
 Hard to implement Features
 

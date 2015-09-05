@@ -149,36 +149,6 @@ public class PoeTradeHttpClient {
         return result.toString();
     }
 
-    public List<NameValuePair> getFormParams(
-            String html, String username, String password)
-            throws UnsupportedEncodingException {
-
-        System.out.println("Extracting form's data...");
-
-        Document doc = Jsoup.parse(html);
-        // Google form id
-        Element loginform = doc.getElementById("content");
-        Elements inputElements = loginform.getElementsByTag("input");
-
-        List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-
-        for (Element inputElement : inputElements) {
-            String key = inputElement.attr("name");
-            String value = inputElement.attr("value");
-
-//            if (key.equals("Email")) {
-//                value = username;
-//            } else if (key.equals("Passwd")) {
-//                value = password;
-//            }
-
-            paramList.add(new BasicNameValuePair(key, value));
-
-        }
-
-        return paramList;
-    }
-
 //    public String getCookies() {
 //        return cookies;
 //    }
