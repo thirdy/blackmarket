@@ -45,7 +45,7 @@ public class SearchPageScraper {
 
 		Elements items = content.getElementsByClass("item");
 
-		System.out.println(items.get(86).toString());
+//		System.out.println(items.get(86).toString());
 
 //		System.out.println("Items");
 		for (Element element : items) {
@@ -128,7 +128,8 @@ public class SearchPageScraper {
 			item.crit = element.getElementsByAttributeValue("data-name", "crit").get(0).text();
 			// "level"
 			
-			System.out.println(item);
+//			System.out.println(item);
+			searchResultItems.add(item);
 		}
 //		System.out.println("DONE --- Items");
 
