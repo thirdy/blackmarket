@@ -53,6 +53,7 @@ public class FXMLController implements Initializable {
 		}
 		
 		searchResultTable.getColumns().clear();
+		searchResultTable.getItems().clear();
 		
 //		Set<String> explicitMods = 
 //				list.stream().map(SearchResultItem::getExplicitModsNames).flatMap(Collection::stream).collect(Collectors.toSet());
