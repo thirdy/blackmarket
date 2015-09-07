@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -108,7 +110,7 @@ public class SearchPageScraper {
 				for (Element modLi : modsLi) {
 					// explicit mods
 					Mod mod = new Mod(modLi.attr("data-name"), modLi.attr("data-value"));
-					item.mods.add(mod);
+					item.explicitMods.add(mod);
 				}
 			}
 			
@@ -142,22 +144,11 @@ public class SearchPageScraper {
 	public static class SearchResultItem {
 
 		String id; // the id in the search result html page
-		String seller;
-		String thread;
-		String sellerid;
 		String buyout;
-		String ign;
-		String league;
 		String name;
-
-		String threadUrl;
-		String reqLvl;
-		String reqStr;
-		String reqInt;
-		String reqDex;
-
+		String ign;
+		
 		String socketsRaw;
-		String ageAndHighLvl;
 		
 		String quality;
 		String physDmgRangeAtMaxQuality;
@@ -171,9 +162,29 @@ public class SearchPageScraper {
 		String energyShieldAtMaxQuality;
 		String block;
 		String crit;
+		
+		String reqLvl;
+		String reqStr;
+		String reqInt;
+		String reqDex;
+
+		String ageAndHighLvl;
+		String league;
+		String seller;
+		String thread;
+		String sellerid;
+		String threadUrl;
 
 		Mod implicitMod;
-		List<Mod> mods = new ArrayList<>();
+		List<Mod> explicitMods = new ArrayList<>();
+		
+		public List<Mod> getExplicitMods() {
+			return explicitMods;
+		}
+
+		public Set<String> getExplicitModsNames() {
+			return getExplicitMods().stream().map(Mod::getName).collect(Collectors.toSet());
+		}
 
 		/**
 		 * @author thirdy
@@ -186,6 +197,14 @@ public class SearchPageScraper {
 			public Mod(String name, String value) {
 				this.name = name;
 				this.value = value;
+			}
+			
+			public String getName() {
+				return name;
+			}
+
+			public String getValue() {
+				return value;
 			}
 
 			@Override
@@ -205,8 +224,122 @@ public class SearchPageScraper {
 					+ ", physDmgAtMaxQuality=" + physDmgAtMaxQuality + ", eleDmg=" + eleDmg + ", armourAtMaxQuality="
 					+ armourAtMaxQuality + ", evasionAtMaxQuality=" + evasionAtMaxQuality
 					+ ", energyShieldAtMaxQuality=" + energyShieldAtMaxQuality + ", block=" + block + ", crit=" + crit
-					+ ", implicitMod=" + implicitMod + ", mods=" + mods + "]";
+					+ ", implicitMod=" + implicitMod + ", mods=" + explicitMods + "]";
 		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getBuyout() {
+			return buyout;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getIgn() {
+			return ign;
+		}
+
+		public String getSocketsRaw() {
+			return socketsRaw;
+		}
+
+		public String getQuality() {
+			return quality;
+		}
+
+		public String getPhysDmgRangeAtMaxQuality() {
+			return physDmgRangeAtMaxQuality;
+		}
+
+		public String getEleDmgRange() {
+			return eleDmgRange;
+		}
+
+		public String getAttackSpeed() {
+			return attackSpeed;
+		}
+
+		public String getDmgAtMaxQuality() {
+			return dmgAtMaxQuality;
+		}
+
+		public String getPhysDmgAtMaxQuality() {
+			return physDmgAtMaxQuality;
+		}
+
+		public String getEleDmg() {
+			return eleDmg;
+		}
+
+		public String getArmourAtMaxQuality() {
+			return armourAtMaxQuality;
+		}
+
+		public String getEvasionAtMaxQuality() {
+			return evasionAtMaxQuality;
+		}
+
+		public String getEnergyShieldAtMaxQuality() {
+			return energyShieldAtMaxQuality;
+		}
+
+		public String getBlock() {
+			return block;
+		}
+
+		public String getCrit() {
+			return crit;
+		}
+
+		public String getReqLvl() {
+			return reqLvl;
+		}
+
+		public String getReqStr() {
+			return reqStr;
+		}
+
+		public String getReqInt() {
+			return reqInt;
+		}
+
+		public String getReqDex() {
+			return reqDex;
+		}
+
+		public String getAgeAndHighLvl() {
+			return ageAndHighLvl;
+		}
+
+		public String getLeague() {
+			return league;
+		}
+
+		public String getSeller() {
+			return seller;
+		}
+
+		public String getThread() {
+			return thread;
+		}
+
+		public String getSellerid() {
+			return sellerid;
+		}
+
+		public String getThreadUrl() {
+			return threadUrl;
+		}
+
+		public Mod getImplicitMod() {
+			return implicitMod;
+		}
+		
+		
 	}
 
 }
