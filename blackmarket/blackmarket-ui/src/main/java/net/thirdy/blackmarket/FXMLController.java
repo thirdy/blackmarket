@@ -64,6 +64,7 @@ public class FXMLController implements Initializable {
 			@Override
 			public TableColumn apply(String t) {
 				TableColumn col = new TableColumn(t);
+				// thanks to http://fxapps.blogspot.com/2012/09/showing-object-properties-in-tableview.html
 				col.setCellValueFactory(new PropertyValueFactory<>(t));
 				return col;
 			}
