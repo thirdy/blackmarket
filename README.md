@@ -1,5 +1,13 @@
 # blackmarket
 
+#### Info:
+
+*blackmarket* is a fan made application for the free to play MMORPG game Path of Exile. It aims to provide the people of wraeclast the ultimate way to find the best items in the market.
+
+#### Screenshot:
+
+![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/srcsht-1.PNG)
+
 #### Features
 
 1. Search form
@@ -20,7 +28,3 @@
 
 cd into blackmarket-ui directory
 mvn exec:java -Dexec.mainClass="net.thirdy.blackmarket.MainApp"
-
-#### Screenshot:
-
-![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/srcsht-1.PNG)
