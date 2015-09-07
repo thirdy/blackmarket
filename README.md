@@ -1,7 +1,5 @@
 # blackmarket
 
-#### Info:
-
 *blackmarket* is a fan made application for the free to play MMORPG game Path of Exile. It aims to provide the people of wraeclast the ultimate way to find the best items in the market.
 
 #### Screenshot:
