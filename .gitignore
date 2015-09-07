@@ -10,3 +10,7 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/blackmarket/target/
+/blackmarket-core/target/
+/blackmarket/blackmarket-core/target/
+/blackmarket/blackmarket-ui/target/
