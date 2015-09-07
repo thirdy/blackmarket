@@ -5,7 +5,6 @@
 #### Screenshot:
 
 ![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/srcsht-1.PNG)
-![screenshot-2](https://github.com/thirdy/blackmarket/blob/master/blackmarket/srcsht-2.PNG)
 
 #### Features
 
