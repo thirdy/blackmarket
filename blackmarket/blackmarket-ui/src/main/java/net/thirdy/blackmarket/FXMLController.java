@@ -24,6 +24,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.core.PoeTradeHttpClient;
 import net.thirdy.blackmarket.core.PoeTradeHttpClientException;
 import net.thirdy.blackmarket.core.SearchPageScraper;
@@ -36,7 +37,8 @@ public class FXMLController implements Initializable {
 	PoeTradeHttpClient poeTradeHttpClient = new PoeTradeHttpClient();
     
 	@FXML TextArea searchTextArea;
-	@FXML TableView searchResultTable;
+	
+	@FXML VBox itemPaneVBox;
 
     @FXML
     private void handleSearchButtonAction(ActionEvent event) throws PoeTradeHttpClientException {
@@ -52,27 +54,32 @@ public class FXMLController implements Initializable {
 			System.out.println(item);
 		}
 		
-		searchResultTable.getColumns().clear();
-		searchResultTable.getItems().clear();
+//		searchResultTable.getColumns().clear();
+//		searchResultTable.getItems().clear();
 		
 //		Set<String> explicitMods = 
 //				list.stream().map(SearchResultItem::getExplicitModsNames).flatMap(Collection::stream).collect(Collectors.toSet());
 //		explicitMods.stream().map(e -> new TableColumn(e)).forEach(e -> searchResultTable.getColumns().add(e));
 		
-		List<String> cols = Arrays.asList(SearchResultItem.class.getDeclaredFields()).stream().map(Field::getName).collect(toList());
-		cols.stream().map(new Function<String, TableColumn>() {
-
-			@Override
-			public TableColumn apply(String t) {
-				TableColumn col = new TableColumn(t);
-				// thanks to http://fxapps.blogspot.com/2012/09/showing-object-properties-in-tableview.html
-				col.setCellValueFactory(new PropertyValueFactory<>(t));
-				return col;
-			}
-		}).forEach(e -> searchResultTable.getColumns().add(e));
+//		List<String> cols = Arrays.asList(SearchResultItem.class.getDeclaredFields()).stream().map(Field::getName).collect(toList());
+//		cols.stream().map(new Function<String, TableColumn>() {
+//
+//			@Override
+//			public TableColumn apply(String t) {
+//				TableColumn col = new TableColumn(t);
+//				// thanks to http://fxapps.blogspot.com/2012/09/showing-object-properties-in-tableview.html
+//				col.setCellValueFactory(new PropertyValueFactory<>(t));
+//				return col;
+//			}
+//		}).forEach(e -> searchResultTable.getColumns().add(e));
 		
-		list.stream().forEach(e -> searchResultTable.getItems().add(e));
+		list.stream().forEach(e -> addNewItemPane(e));
     }
+
+	private void addNewItemPane(SearchResultItem e) {
+		ItemPaneController itemPane = new ItemPaneController(e);
+		itemPaneVBox.getChildren().add(itemPane);
+	}
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
