@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="237.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+   <Label fx:id="itemName" layoutX="153.0" layoutY="14.0" prefHeight="17.0" prefWidth="443.0" text="Item Name" />
+   <Label layoutX="8.0" layoutY="14.0" text="ID" />
+   <Hyperlink layoutX="26.0" layoutY="11.0" text="1 Chaos" />
+   <Pane layoutX="148.0" layoutY="34.0" prefHeight="193.0" prefWidth="443.0" style="-fx-border-color: #000000;">
+      <children>
+         <Hyperlink layoutX="5.0" layoutY="3.0" prefHeight="23.0" prefWidth="196.0" text="Implicit" />
+         <Line endX="200.0" layoutY="35.0" startX="5.0" />
+         <VBox fx:id="explicitModsPane" layoutX="5.0" layoutY="42.0" prefHeight="145.0" prefWidth="196.0" style="-fx-background-color: #fffff5;" />
+      </children>
+   </Pane>
+</fx:root>
