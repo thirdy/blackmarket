@@ -3,8 +3,11 @@ package net.thirdy.blackmarket;
 import static java.util.stream.Collectors.toList;
 
 import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,11 +17,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.google.common.collect.Lists;
@@ -120,13 +125,20 @@ public class FXMLController implements Initializable {
 	}
 
 	private String loadDefaultSearchFile() {
-		URL url = this.getClass().getResource("ring-life.txt");
-		String page;
+//		URL url = this.getClass().getResourceAsStream("/ring-life.txt");
+//		String page;
+//		try {
+//			page = FileUtils.readFileToString(new File(url.toURI()));
+//		} catch (Exception e) {
+//			// won't likely happen since file is in classpath
+//			throw new RuntimeException(e);
+//		}
+		
+		String page = null;
 		try {
-			page = FileUtils.readFileToString(new File(url.toURI()));
-		} catch (Exception e) {
-			// won't likely happen since file is in classpath
-			throw new RuntimeException(e);
+			page = IOUtils.toString(this.getClass().getResourceAsStream("/ring-life.txt"));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return page;
 	}
@@ -143,4 +155,5 @@ public class FXMLController implements Initializable {
 		
 	}
 	
+
 }

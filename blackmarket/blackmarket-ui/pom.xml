@@ -21,8 +21,8 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+            
+<plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
@@ -46,14 +46,13 @@
                 <version>1.2.1</version>
                 <executions>
                     <execution>
-                        <id>unpack-dependencies</id>
-                        
+                        <id>package-jar</id>
                         <phase>package</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${java.home}/../bin/javafxpackager</executable>
+                            <executable>${env.JAVA_HOME}/bin/javafxpackager</executable>
                             <arguments>
                                 <argument>-createjar</argument>
                                 <argument>-nocss2bin</argument>
@@ -62,24 +61,20 @@
                                 <argument>-srcdir</argument>
                                 <argument>${project.build.directory}/classes</argument>
                                 <argument>-outdir</argument>
+                                <argument>.</argument>
+                                <argument>-outdir</argument>
                                 <argument>${project.build.directory}</argument>
                                 <argument>-outfile</argument>
-                                <argument>${project.build.finalName}.jar</argument>
+                                <argument>${project.artifactId}-app</argument>
+                                <argument>-v</argument>
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>default-cli</id>
-                        <goals>
-                            <goal>exec</goal>                            
-                        </goals>
-                        <configuration>
-                            <executable>${java.home}/bin/java</executable>
-                            <commandlineArgs>${runfx.args}</commandlineArgs>
-                        </configuration>
-                    </execution>
-                </executions>  
+                </executions>
             </plugin>
+
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
