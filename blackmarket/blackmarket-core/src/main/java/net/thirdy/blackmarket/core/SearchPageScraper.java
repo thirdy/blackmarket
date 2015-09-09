@@ -58,6 +58,7 @@ public class SearchPageScraper {
 			SearchResultItem item = new SearchResultItem();
 
 			item.id = element.attr("id");
+			item.id = StringUtils.remove(item.id, "item-container-");
 			item.seller = element.attr("data-seller");
 			item.thread = element.attr("data-thread");
 			item.sellerid = element.attr("data-sellerid");

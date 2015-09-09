@@ -7,24 +7,24 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.thirdy.blackmarket.FXMLController">
+<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.thirdy.blackmarket.FXMLController">
     <children>
-      <SplitPane dividerPositions="0.398" layoutX="14.0" layoutY="14.0" prefHeight="300.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.34935897435897434" layoutX="14.0" layoutY="14.0" prefHeight="300.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <SplitPane dividerPositions="0.7270114942528736" layoutY="84.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <SplitPane dividerPositions="0.9597701149425287" layoutY="84.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                        <AnchorPane prefHeight="200.0" prefWidth="431.0">
                            <children>
-                              <Button fx:id="searchButton" layoutX="137.0" layoutY="314.0" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="59.0" prefWidth="155.0" text="Search" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
-                              <TextArea fx:id="searchTextArea" layoutX="14.0" layoutY="14.0" prefHeight="406.0" prefWidth="442.0" />
+                              <Button fx:id="searchButton" layoutX="137.0" layoutY="314.0" mnemonicParsing="false" onAction="#handleSearchButtonAction" prefHeight="59.0" prefWidth="346.0" text="Search" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="70.0" />
+                              <TextArea fx:id="searchTextArea" layoutX="14.0" layoutY="14.0" prefHeight="577.0" prefWidth="418.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <ProgressIndicator fx:id="progressIndicator" layoutX="373.0" layoutY="596.0" prefHeight="59.0" prefWidth="55.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="241.0" prefWidth="273.0">
                            <children>
-                                <Label fx:id="label" layoutX="14.0" layoutY="167.0" minHeight="16" minWidth="69" text="Issues or Suggestions?" AnchorPane.bottomAnchor="14.0" />
-                              <Hyperlink layoutX="145.0" layoutY="164.0" text="https://github.com/thirdy/blackmarket/issues" AnchorPane.bottomAnchor="11.0" />
+                              <Hyperlink layoutX="6.0" layoutY="20.0" onAction="#issuesSuggestionsClickHandler" text="Issues or Suggestions?" AnchorPane.bottomAnchor="2.0" />
                            </children>
                         </AnchorPane>
                     </items>
@@ -38,7 +38,7 @@
                         <Insets />
                      </opaqueInsets>
                      <content>
-                        <VBox fx:id="itemPaneVBox" prefHeight="200.0" prefWidth="100.0" />
+                        <VBox fx:id="itemPaneVBox" />
                      </content>
                   </ScrollPane>
                   <Label layoutX="14.0" layoutY="708.0" prefHeight="17.0" prefWidth="200.0" text="Status: Ready" AnchorPane.bottomAnchor="13.0" />

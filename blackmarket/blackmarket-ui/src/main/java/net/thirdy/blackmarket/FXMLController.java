@@ -2,9 +2,11 @@ package net.thirdy.blackmarket;
 
 import static java.util.stream.Collectors.toList;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -21,10 +23,16 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import com.google.common.collect.Lists;
 
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -42,60 +50,49 @@ public class FXMLController implements Initializable {
 	PoeTradeHttpClient poeTradeHttpClient = new PoeTradeHttpClient();
     
 	@FXML TextArea searchTextArea;
-	
 	@FXML VBox itemPaneVBox;
+	@FXML ProgressIndicator progressIndicator;
+	@FXML Button searchButton;
+	BackendService backendService = new BackendService();
+	
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		progressIndicator.visibleProperty().bind(backendService.runningProperty());
+		String page = loadDefaultSearchFile();
+		searchTextArea.setText(page);
+	}
 
-    @FXML
-    private void handleSearchButtonAction(ActionEvent event) throws PoeTradeHttpClientException {
+    @FXML private void handleSearchButtonAction(ActionEvent event) throws PoeTradeHttpClientException {
         System.out.println("handleSearchButtonAction");
         
-        URL url = SearchPageScraper.class.getResource("DefaultWarbands.search.poetrade");
-		try {
-			String payload = FileUtils.readFileToString(new File(url.toURI()));
-			SearchPageScraper scraper = new SearchPageScraper(payload);
-			List<SearchResultItem> list = scraper.parse();
-			for (SearchResultItem item : list) {
-				System.out.println(item);
-			}
-			list.stream().forEach(e -> addNewItemPane(e));
-		} catch (IOException | URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        String payload = searchTextArea.getText();
+        payload = new SearchPayload(payload).getPayloadFormatted();
+        backendService.setPayload(payload);
         
-//        String payload = searchTextArea.getText();
-//        payload = new SearchPayload(payload).getPayloadFormatted();
-//        
-//        String searchPage = poeTradeHttpClient.search(payload);
-//        SearchPageScraper scraper = new SearchPageScraper(searchPage);
-//		List<SearchResultItem> list = scraper.parse();
-//		for (SearchResultItem item : list) {
-//			System.out.println(item);
-//		}
-		
-//		searchResultTable.getColumns().clear();
-//		searchResultTable.getItems().clear();
-		
-//		Set<String> explicitMods = 
-//				list.stream().map(SearchResultItem::getExplicitModsNames).flatMap(Collection::stream).collect(Collectors.toSet());
-//		explicitMods.stream().map(e -> new TableColumn(e)).forEach(e -> searchResultTable.getColumns().add(e));
-		
-//		List<String> cols = Arrays.asList(SearchResultItem.class.getDeclaredFields()).stream().map(Field::getName).collect(toList());
-//		cols.stream().map(new Function<String, TableColumn>() {
-//
-//			@Override
-//			public TableColumn apply(String t) {
-//				TableColumn col = new TableColumn(t);
-//				// thanks to http://fxapps.blogspot.com/2012/09/showing-object-properties-in-tableview.html
-//				col.setCellValueFactory(new PropertyValueFactory<>(t));
-//				return col;
-//			}
-//		}).forEach(e -> searchResultTable.getColumns().add(e));
-		
-//		list.stream().forEach(e -> addNewItemPane(e));
+        backendService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			
+			@Override
+			public void handle(WorkerStateEvent event) {
+				List<SearchResultItem> list = backendService.getValue();
+				if(list != null) list.stream().forEach(e -> addNewItemPane(e));
+				searchButton.setDisable(false);
+			}
+		});
+        backendService.setOnFailed(new EventHandler<WorkerStateEvent>() {
+			
+			@Override
+			public void handle(WorkerStateEvent event) {
+				backendService.getException().printStackTrace();
+				searchButton.setDisable(false);
+			}
+		});
+        searchButton.setDisable(true);
+        backendService.restart();
+        
+        
     }
 
-	private void addNewItemPane(SearchResultItem e) {
+    public void addNewItemPane(SearchResultItem e) {
 		ItemPaneController itemPane = new ItemPaneController(e, new Function<String, Void>() {
 
 			@Override
@@ -122,12 +119,6 @@ public class FXMLController implements Initializable {
 		itemPaneVBox.getChildren().add(itemPane);
 	}
 
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		String page = loadDefaultSearchFile();
-		searchTextArea.setText(page);
-	}
-
 	private String loadDefaultSearchFile() {
 		URL url = this.getClass().getResource("ring-life.txt");
 		String page;
@@ -140,5 +131,16 @@ public class FXMLController implements Initializable {
 		return page;
 	}
     
- 
+	@FXML private void issuesSuggestionsClickHandler(ActionEvent event) {
+		 Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+		    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+		        try {
+		            desktop.browse(new URI("https://github.com/thirdy/blackmarket/issues"));
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		    }
+		
+	}
+	
 }

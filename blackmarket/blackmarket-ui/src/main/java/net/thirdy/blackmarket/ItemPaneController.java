@@ -12,15 +12,48 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 
 public class ItemPaneController extends AnchorPane {
-//	@FXML
-//	private TextField textField;
-	
+
+	@FXML Label id;
 	@FXML Hyperlink buyout;
+	@FXML Label name;
+//	@FXML Hyperlink ign;
+	           
+	@FXML Label socketsRaw;
+	           
+	@FXML Hyperlink quality;
+	           
+	@FXML Hyperlink physDmgRangeAtMaxQuality;
+	@FXML Hyperlink physDmgAtMaxQuality;
+	@FXML Hyperlink eleDmgRange;
+	@FXML Hyperlink attackSpeed;
+	@FXML Hyperlink dmgAtMaxQuality;
+	@FXML Hyperlink crit;
+	@FXML Hyperlink eleDmg;
+	           
+	@FXML Hyperlink armourAtMaxQuality;
+	@FXML Hyperlink evasionAtMaxQuality;
+	@FXML Hyperlink energyShieldAtMaxQuality;
+	@FXML Hyperlink block;
+	           
+	@FXML Hyperlink reqLvl;
+	@FXML Hyperlink reqStr;
+	@FXML Hyperlink reqInt;
+	@FXML Hyperlink reqDex;
+	           
+	@FXML Label ageAndHighLvl;
+//	@FXML Hyperlink league;
+	@FXML Label seller;
+	@FXML Label thread;
+//	@FXML Hyperlink sellerid;
+//	@FXML Hyperlink threadUrl;
+
+	
 private Function<String, Void> sortCallback;
 private SearchResultItem searchResultItem;
 
@@ -38,42 +71,41 @@ private SearchResultItem searchResultItem;
 
 	public ItemPaneController(SearchResultItem e, Function<String, Void> function) {
 		this();
-		buyout.setText(e.getBuyout());
 		this.sortCallback = function;
 		this.searchResultItem = e;
-//		id	.setText(e.get	Id		());
-//		buyout	.setText(e.get	Buyout		());
-//		name	.setText(e.get	Name		());
-//		ign	.setText(e.get	Ign		());
-//			.setText(e.get			());
-//		socketsRaw	.setText(e.get	SocketsRaw		());
-//			.setText(e.get			());
-//		quality	.setText(e.get	Quality		());
-//			.setText(e.get			());
-//		physDmgRangeAtMaxQuality	.setText(e.get	PhysDmgRangeAtMaxQuality		());
-//		physDmgAtMaxQuality	.setText(e.get	PhysDmgAtMaxQuality		());
-//		eleDmgRange	.setText(e.get	EleDmgRange		());
-//		attackSpeed	.setText(e.get	AttackSpeed		());
-//		dmgAtMaxQuality	.setText(e.get	DmgAtMaxQuality		());
-//		crit	.setText(e.get	Crit		());
-//		eleDmg	.setText(e.get	EleDmg		());
-//			.setText(e.get			());
-//		armourAtMaxQuality	.setText(e.get	ArmourAtMaxQuality		());
-//		evasionAtMaxQuality	.setText(e.get	EvasionAtMaxQuality		());
-//		energyShieldAtMaxQuality	.setText(e.get	EnergyShieldAtMaxQuality		());
-//		block	.setText(e.get	Block		());
-//			.setText(e.get			());
-//		reqLvl	.setText(e.get	ReqLvl		());
-//		reqStr	.setText(e.get	ReqStr		());
-//		reqInt	.setText(e.get	ReqInt		());
-//		reqDex	.setText(e.get	ReqDex		());
-//			.setText(e.get			());
-//		ageAndHighLvl	.setText(e.get	AgeAndHighLvl		());
-//		league	.setText(e.get	League		());
-//		seller	.setText(e.get	Seller		());
-//		thread	.setText(e.get	Thread		());
-//		sellerid	.setText(e.get	Sellerid		());
-//		threadUrl	.setText(e.get	ThreadUrl		());
+		id.setText(e.getId());
+		buyout.setText(e.getBuyout());
+		name.setText(e.getName());
+//		ign.setText(e.getIgn());
+
+		socketsRaw.setText(e.getSocketsRaw());
+
+		quality.setText(e.getQuality());
+
+		physDmgRangeAtMaxQuality.setText(e.getPhysDmgRangeAtMaxQuality());
+		physDmgAtMaxQuality.setText(e.getPhysDmgAtMaxQuality());
+		eleDmgRange.setText(e.getEleDmgRange());
+		attackSpeed.setText(e.getAttackSpeed());
+		dmgAtMaxQuality.setText(e.getDmgAtMaxQuality());
+		crit.setText(e.getCrit());
+		eleDmg.setText(e.getEleDmg());
+
+		armourAtMaxQuality.setText(e.getArmourAtMaxQuality());
+		evasionAtMaxQuality.setText(e.getEvasionAtMaxQuality());
+		energyShieldAtMaxQuality.setText(e.getEnergyShieldAtMaxQuality());
+		block.setText(e.getBlock());
+
+		reqLvl.setText(e.getReqLvl());
+		reqStr.setText(e.getReqStr());
+		reqInt.setText(e.getReqInt());
+		reqDex.setText(e.getReqDex());
+
+		ageAndHighLvl.setText(e.getAgeAndHighLvl());
+//		league.setText(e.getLeague());
+		seller.setText(e.getSeller());
+		thread.setText(e.getThread());
+//		sellerid.setText(e.getSellerid());
+//		threadUrl.setText(e.getThreadUrl());
 		
 	}
 
