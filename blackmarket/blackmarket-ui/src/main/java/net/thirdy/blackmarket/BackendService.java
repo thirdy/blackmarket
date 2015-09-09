@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -33,29 +35,22 @@ public class BackendService extends Service<List<SearchResultItem>> {
 		return new Task<List<SearchResultItem>>() {
 			@Override
 			protected List<SearchResultItem> call() throws Exception {
-				List<SearchResultItem> list = null;
-//				URL url = SearchPageScraper.class.getResource("DefaultWarbands.search.poetrade");
-//				try {
-//					String payload = FileUtils.readFileToString(new File(url.toURI()));
-//					SearchPageScraper scraper = new SearchPageScraper(payload);
-//					list = scraper.parse();
-//					for (SearchResultItem item : list) {
-//						System.out.println(item);
-//					}
-//				} catch (URISyntaxException e1) {
-//				e1.printStackTrace();
-//				// TODO use exception dialog from
-//				// http://code.makery.ch/blog/javafx-dialogs-official/
-//				throw e1;
-//			}	
-					String searchPage = MainApp.getPoeTradeHttpClient().search(payload);
-			        SearchPageScraper scraper = new SearchPageScraper(searchPage);
-					list = scraper.parse();
-					for (SearchResultItem item : list) {
-						System.out.println(item);
+				List<SearchResultItem> list = Collections.emptyList();
+				if (AppConfig.TESTING_MODE) {
+					String page = null;
+					try {
+						page = IOUtils.toString(this.getClass().getResourceAsStream("/DefaultWarbands.search.poetrade"));
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					
-
+					SearchPageScraper scraper = new SearchPageScraper(page);
+					list = scraper.parse();
+				} else {
+					String searchPage = MainApp.getPoeTradeHttpClient().search(payload);
+					SearchPageScraper scraper = new SearchPageScraper(searchPage);
+					list = scraper.parse();
+				}
+				list.stream().forEach(e -> System.out.println(e));
 				return list;
 			}
 		};

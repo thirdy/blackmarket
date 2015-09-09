@@ -15,8 +15,7 @@
    <Pane layoutX="173.0" layoutY="34.0" prefHeight="193.0" prefWidth="622.0" style="-fx-border-color: #000000; -fx-border-style: dashed; -fx-border-width: 1 0 0 0;">
       <children>
          <Hyperlink fx:id="implicitMod" layoutX="5.0" layoutY="3.0" onAction="#sortClickHandler" prefHeight="23.0" prefWidth="196.0" text="Implicit" />
-         <Line endX="200.0" layoutY="35.0" startX="5.0" />
-         <VBox fx:id="explicitModsPane" layoutX="5.0" layoutY="42.0" prefHeight="145.0" prefWidth="196.0" style="-fx-background-color: #fffff5;">
+         <VBox fx:id="explicitModsPane" layoutX="5.0" layoutY="23.0" prefHeight="164.0" prefWidth="196.0" style="-fx-background-color: #fffff5;">
             <children>
                <Hyperlink fx:id="explicit1" prefHeight="23.0" prefWidth="196.0" />
                <Hyperlink fx:id="explicit2" prefHeight="23.0" prefWidth="196.0" />
@@ -24,6 +23,7 @@
                <Hyperlink fx:id="explicit4" prefHeight="23.0" prefWidth="196.0" />
                <Hyperlink fx:id="explicit5" prefHeight="23.0" prefWidth="196.0" />
                <Hyperlink fx:id="explicit6" prefHeight="23.0" prefWidth="196.0" />
+               <Hyperlink fx:id="explicit7" prefHeight="23.0" prefWidth="196.0" />
             </children></VBox>
          <Pane layoutX="203.0" layoutY="5.0" prefHeight="185.0" prefWidth="436.0">
             <children>

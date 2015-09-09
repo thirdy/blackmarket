@@ -11,17 +11,13 @@ import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;import java.util.stream.Collector;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -134,7 +130,6 @@ public class SearchPageScraper {
 			item.crit = element.getElementsByAttributeValue("data-name", "crit").get(0).text();
 			// "level"
 			
-//			System.out.println(item);
 			searchResultItems.add(item);
 		}
 //		System.out.println("DONE --- Items");

@@ -4,18 +4,24 @@ import java.awt.Toolkit;
 import static java.lang.String.format;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
+import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
 
 public class ItemPaneController extends AnchorPane {
 
@@ -52,7 +58,16 @@ public class ItemPaneController extends AnchorPane {
 	@FXML Label thread;
 //	@FXML Hyperlink sellerid;
 //	@FXML Hyperlink threadUrl;
-
+	
+	@FXML Hyperlink implicitMod;
+	@FXML Hyperlink explicit1;
+	@FXML Hyperlink explicit2;
+	@FXML Hyperlink explicit3;
+	@FXML Hyperlink explicit4;
+	@FXML Hyperlink explicit5;
+	@FXML Hyperlink explicit6;
+	@FXML Hyperlink explicit7;
+	
 	
 private Function<String, Void> sortCallback;
 private SearchResultItem searchResultItem;
@@ -69,44 +84,63 @@ private SearchResultItem searchResultItem;
 		}
 	}
 
-	public ItemPaneController(SearchResultItem e, Function<String, Void> function) {
+	public ItemPaneController(SearchResultItem item, Function<String, Void> function) {
 		this();
 		this.sortCallback = function;
-		this.searchResultItem = e;
-		id.setText(e.getId());
-		buyout.setText(e.getBuyout());
-		name.setText(e.getName());
+		this.searchResultItem = item;
+		id.setText(item.getId());
+		buyout.setText(item.getBuyout());
+		name.setText(item.getName());
 //		ign.setText(e.getIgn());
 
-		socketsRaw.setText(e.getSocketsRaw());
+		socketsRaw.setText(item.getSocketsRaw());
 
-		quality.setText(e.getQuality());
+		quality.setText(item.getQuality());
 
-		physDmgRangeAtMaxQuality.setText(e.getPhysDmgRangeAtMaxQuality());
-		physDmgAtMaxQuality.setText(e.getPhysDmgAtMaxQuality());
-		eleDmgRange.setText(e.getEleDmgRange());
-		attackSpeed.setText(e.getAttackSpeed());
-		dmgAtMaxQuality.setText(e.getDmgAtMaxQuality());
-		crit.setText(e.getCrit());
-		eleDmg.setText(e.getEleDmg());
+		physDmgRangeAtMaxQuality.setText(item.getPhysDmgRangeAtMaxQuality());
+		physDmgAtMaxQuality.setText(item.getPhysDmgAtMaxQuality());
+		eleDmgRange.setText(item.getEleDmgRange());
+		attackSpeed.setText(item.getAttackSpeed());
+		dmgAtMaxQuality.setText(item.getDmgAtMaxQuality());
+		crit.setText(item.getCrit());
+		eleDmg.setText(item.getEleDmg());
 
-		armourAtMaxQuality.setText(e.getArmourAtMaxQuality());
-		evasionAtMaxQuality.setText(e.getEvasionAtMaxQuality());
-		energyShieldAtMaxQuality.setText(e.getEnergyShieldAtMaxQuality());
-		block.setText(e.getBlock());
+		armourAtMaxQuality.setText(item.getArmourAtMaxQuality());
+		evasionAtMaxQuality.setText(item.getEvasionAtMaxQuality());
+		energyShieldAtMaxQuality.setText(item.getEnergyShieldAtMaxQuality());
+		block.setText(item.getBlock());
 
-		reqLvl.setText(e.getReqLvl());
-		reqStr.setText(e.getReqStr());
-		reqInt.setText(e.getReqInt());
-		reqDex.setText(e.getReqDex());
+		reqLvl.setText(item.getReqLvl());
+		reqStr.setText(item.getReqStr());
+		reqInt.setText(item.getReqInt());
+		reqDex.setText(item.getReqDex());
 
-		ageAndHighLvl.setText(e.getAgeAndHighLvl());
+		ageAndHighLvl.setText(item.getAgeAndHighLvl());
 //		league.setText(e.getLeague());
-		seller.setText(e.getSeller());
-		thread.setText(e.getThread());
+		seller.setText(item.getSeller());
+		thread.setText(item.getThread());
 //		sellerid.setText(e.getSellerid());
 //		threadUrl.setText(e.getThreadUrl());
 		
+		if (item.getImplicitMod() != null) {
+			implicitMod.setText(item.getImplicitMod().getName());
+			implicitMod.setUserData(item.getImplicitMod());
+		}
+		
+		if (item.getExplicitMods().size() > 7) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setContentText("Problem while displaying explicit mods. Mods are more than 7." + item.getExplicitMods());
+			alert.showAndWait();
+		}
+		
+		List<Hyperlink> explicits = Arrays.asList(explicit1,explicit2,explicit3,explicit4,explicit5,explicit6,explicit7);
+		int idx = 0;
+		for(Mod explicitMod : item.getExplicitMods()) {
+			Hyperlink hyperlink = explicits.get(idx);
+			hyperlink.setUserData(explicitMod);
+			hyperlink.setText(explicitMod.getName());
+			idx += 1;
+		}
 	}
 
 	@FXML

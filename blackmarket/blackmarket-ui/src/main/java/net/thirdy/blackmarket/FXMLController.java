@@ -79,7 +79,10 @@ public class FXMLController implements Initializable {
 			@Override
 			public void handle(WorkerStateEvent event) {
 				List<SearchResultItem> list = backendService.getValue();
-				if(list != null) list.stream().forEach(e -> addNewItemPane(e));
+				if (!list.isEmpty()) {
+					itemPaneVBox.getChildren().clear();
+					list.stream().forEach(e -> addNewItemPane(e));
+				}
 				searchButton.setDisable(false);
 			}
 		});
@@ -121,6 +124,7 @@ public class FXMLController implements Initializable {
 				return null;
 			}
 		});
+		itemPane.setCache(true);
 		itemPaneVBox.getChildren().add(itemPane);
 	}
 
