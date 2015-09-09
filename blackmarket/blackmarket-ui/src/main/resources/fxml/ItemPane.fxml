@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
@@ -7,15 +8,55 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.HBox?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="237.0" prefWidth="600.0" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
-   <Label fx:id="itemName" layoutX="153.0" layoutY="14.0" prefHeight="17.0" prefWidth="443.0" text="Item Name" />
-   <Label layoutX="8.0" layoutY="14.0" text="ID" />
-   <Hyperlink layoutX="26.0" layoutY="11.0" text="1 Chaos" />
-   <Pane layoutX="148.0" layoutY="34.0" prefHeight="193.0" prefWidth="443.0" style="-fx-border-color: #000000;">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-style: dotted;" type="AnchorPane" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+   <Label fx:id="name" layoutX="153.0" layoutY="14.0" prefHeight="17.0" prefWidth="443.0" text="Item Name" />
+   <Label fx:id="id" layoutX="8.0" layoutY="14.0" text="ID" />
+   <Hyperlink fx:id="buyout" layoutX="26.0" layoutY="11.0" text="1 Chaos" onAction="#sortClickHandler" />
+   <Pane layoutX="148.0" layoutY="34.0" prefHeight="193.0" prefWidth="594.0" style="-fx-border-color: #000000; -fx-border-style: dashed; -fx-border-width: 1 0 0 0;">
       <children>
-         <Hyperlink layoutX="5.0" layoutY="3.0" prefHeight="23.0" prefWidth="196.0" text="Implicit" />
+         <Hyperlink fx:id="implicitMod" layoutX="5.0" layoutY="3.0" prefHeight="23.0" prefWidth="196.0" text="Implicit" onAction="#sortClickHandler" />
          <Line endX="200.0" layoutY="35.0" startX="5.0" />
-         <VBox fx:id="explicitModsPane" layoutX="5.0" layoutY="42.0" prefHeight="145.0" prefWidth="196.0" style="-fx-background-color: #fffff5;" />
+         <VBox fx:id="explicitModsPane" layoutX="5.0" layoutY="42.0" prefHeight="145.0" prefWidth="196.0" style="-fx-background-color: #fffff5;">
+            <children>
+               <Hyperlink fx:id="explicit1" prefHeight="23.0" prefWidth="196.0" />
+               <Hyperlink fx:id="explicit2" prefHeight="23.0" prefWidth="196.0" />
+               <Hyperlink fx:id="explicit3" prefHeight="23.0" prefWidth="196.0" />
+               <Hyperlink fx:id="explicit4" prefHeight="23.0" prefWidth="196.0" />
+               <Hyperlink fx:id="explicit5" prefHeight="23.0" prefWidth="196.0" />
+               <Hyperlink fx:id="explicit6" prefHeight="23.0" prefWidth="196.0" />
+            </children></VBox>
+         <Pane layoutX="203.0" layoutY="5.0" prefHeight="185.0" prefWidth="380.0">
+            <children>
+               <Hyperlink fx:id="physDmgRangeAtMaxQuality11" layoutX="101.0" layoutY="11.0" prefHeight="23.0" prefWidth="104.0" text="physDmgRangeAtMaxQuality" onAction="#sortClickHandler" />
+               <Label layoutX="14.0" layoutY="14.0" text="Q pDPS range:" />
+               <Label layoutX="14.0" layoutY="34.0" text="Q pDPS:" />
+               <Hyperlink fx:id="physDmgAtMaxQuality" layoutX="101.0" layoutY="31.0" prefHeight="23.0" prefWidth="104.0" text="physDmgAtMaxQuality" onAction="#sortClickHandler" />
+               <Label layoutX="14.0" layoutY="54.0" text="Ele DPS range:" />
+               <Hyperlink fx:id="eleDmgRange" layoutX="101.0" layoutY="51.0" prefHeight="23.0" prefWidth="104.0" text="eleDmgRange" onAction="#sortClickHandler" />
+               <Label layoutX="14.0" layoutY="74.0" text="APS:" />
+               <Hyperlink fx:id="attackSpeed" layoutX="101.0" layoutY="71.0" prefHeight="23.0" prefWidth="104.0" text="attackSpeed" onAction="#sortClickHandler" />
+               <Label layoutX="14.0" layoutY="93.0" text="Q DPS:" />
+               <Hyperlink fx:id="dmgAtMaxQuality" layoutX="101.0" layoutY="90.0" prefHeight="23.0" prefWidth="104.0" text="dmgAtMaxQuality" onAction="#sortClickHandler" />
+               <Label layoutX="14.0" layoutY="113.0" text="Crit Chance:" />
+               <Label layoutX="14.0" layoutY="130.0" text="Ele DPS:" />
+               <Hyperlink fx:id="crit" layoutX="101.0" layoutY="110.0" prefHeight="23.0" prefWidth="104.0" text="crit" onAction="#sortClickHandler" />
+               <Hyperlink fx:id="eleDmg" layoutX="101.0" layoutY="127.0" prefHeight="23.0" prefWidth="104.0" text="eleDmg" onAction="#sortClickHandler" />
+               <Label layoutX="213.0" layoutY="14.0" text="Q Armour:" />
+               <Label layoutX="213.0" layoutY="34.0" text="Q Evasion:" />
+               <Label layoutX="213.0" layoutY="54.0" text="Q ES:" />
+               <Label layoutX="213.0" layoutY="74.0" text="Block:" />
+               <Hyperlink fx:id="armourAtMaxQuality" layoutX="268.0" layoutY="11.0" prefHeight="23.0" prefWidth="104.0" text="armourAtMaxQuality" onAction="#sortClickHandler" />
+               <Hyperlink fx:id="evasionAtMaxQuality" layoutX="268.0" layoutY="31.0" prefHeight="23.0" prefWidth="104.0" text="evasionAtMaxQuality" onAction="#sortClickHandler" />
+               <Hyperlink fx:id="energyShieldAtMaxQuality" layoutX="268.0" layoutY="51.0" prefHeight="23.0" prefWidth="104.0" text="energyShieldAtMaxQuality" onAction="#sortClickHandler" />
+               <Hyperlink fx:id="block" layoutX="268.0" layoutY="71.0" prefHeight="23.0" prefWidth="104.0" text="block" onAction="#sortClickHandler" />
+            </children>
+         </Pane>
       </children>
    </Pane>
+   <Hyperlink fx:id="quality" alignment="TOP_RIGHT" layoutX="97.0" layoutY="11.0" prefHeight="23.0" prefWidth="51.0" text="0%" onAction="#sortClickHandler" />
+   <Button fx:id="buyButton" layoutX="679.0" layoutY="2.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="Buy!" onAction="#buyClickHandler" />
+   <Label fx:id="seller" layoutX="624.0" layoutY="3.0" prefHeight="17.0" prefWidth="55.0" text="seller" />
+   <Label fx:id="thread" layoutX="17.0" layoutY="198.0" text="thread" />
+   <Label fx:id="ageAndHighLvl" layoutX="76.0" layoutY="198.0" prefHeight="17.0" prefWidth="43.0" text="ageAndHighLvl" />
+   <Label fx:id="socketsRaw" layoutX="8.0" layoutY="31.0" prefHeight="17.0" prefWidth="127.0" text="socketsRaw" />
 </fx:root>

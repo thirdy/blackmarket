@@ -9,13 +9,16 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.apache.commons.lang3.StringUtils.trim;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -151,17 +154,19 @@ public class SearchPageScraper {
 		String socketsRaw;
 		
 		String quality;
+		
 		String physDmgRangeAtMaxQuality;
+		String physDmgAtMaxQuality;
 		String eleDmgRange;
 		String attackSpeed;
 		String dmgAtMaxQuality;
-		String physDmgAtMaxQuality;
+		String crit;
 		String eleDmg;
+		
 		String armourAtMaxQuality;
 		String evasionAtMaxQuality;
 		String energyShieldAtMaxQuality;
 		String block;
-		String crit;
 		
 		String reqLvl;
 		String reqStr;
@@ -337,6 +342,16 @@ public class SearchPageScraper {
 
 		public Mod getImplicitMod() {
 			return implicitMod;
+		}
+
+		public String getFieldValue(String field) {
+			String value;
+			try {
+				value = BeanUtils.getProperty(this, field);
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				throw new RuntimeException(e);
+			}
+			return value;
 		}
 		
 		
