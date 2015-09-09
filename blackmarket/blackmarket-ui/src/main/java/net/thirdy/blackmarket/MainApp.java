@@ -6,11 +6,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.thirdy.blackmarket.core.PoeTradeHttpClient;
 
 
 public class MainApp extends Application {
+	
+	// TODO, is this okay to be a single instance?
+	private static PoeTradeHttpClient poeTradeHttpClient = new PoeTradeHttpClient();
+	public static PoeTradeHttpClient getPoeTradeHttpClient() {
+		return poeTradeHttpClient;
+	}
 
-    @Override
+	@Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene_simple.fxml"));
         
