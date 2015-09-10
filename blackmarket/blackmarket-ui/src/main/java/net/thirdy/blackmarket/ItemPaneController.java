@@ -5,11 +5,14 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
@@ -69,7 +73,7 @@ public class ItemPaneController extends AnchorPane {
 	@FXML Hyperlink explicit7;
 	
 	
-private Function<String, Void> sortCallback;
+private ListView<SearchResultItem> listView;
 private SearchResultItem searchResultItem;
 
 	public ItemPaneController() {
@@ -84,9 +88,9 @@ private SearchResultItem searchResultItem;
 		}
 	}
 
-	public ItemPaneController(SearchResultItem item, Function<String, Void> function) {
+	public ItemPaneController(SearchResultItem item, ListView<SearchResultItem> listView) {
 		this();
-		this.sortCallback = function;
+		this.listView = listView;
 		this.searchResultItem = item;
 		id.setText(item.getId());
 		buyout.setText(item.getBuyout());
@@ -147,7 +151,26 @@ private SearchResultItem searchResultItem;
 	protected void sortClickHandler(ActionEvent actionEvent) {
 		Node node = (Node) actionEvent.getSource();
 		System.out.println("sortClickHandler, got the ff id: " + node.getId());
-		sortCallback.apply(node.getId());
+		final String field = node.getId();
+		ObservableList<SearchResultItem> items = listView.getItems();
+		items.sort(new Comparator<SearchResultItem>() {
+
+			@Override
+			public int compare(SearchResultItem item0, SearchResultItem item1) {
+				
+//				String prop0 = item0.getFieldValue(field);
+//				String prop1 = item1.getFieldValue(field);
+//				if (prop0 == null || prop0.isEmpty()) {
+//					System.out.println(prop1 + ":" + prop0 + ":" + prop1.compareTo(prop0));
+//					System.out.println(item0.toString());
+//					System.out.println(item1.toString());
+//					
+//				}
+//				return prop1.compareTo(prop0);
+				return item0.getName().compareTo(item1.getName());
+			
+			}
+		});
 	}
 	
 	@FXML
