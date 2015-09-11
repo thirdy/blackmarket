@@ -12,9 +12,13 @@ import java.util.function.Function;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.Node;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.core.SearchPageScraper;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
@@ -22,6 +26,7 @@ import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 public class BackendService extends Service<List<SearchResultItem>> {
 
 	private String payload;
+	private ListView<SearchResultItem> itemListView;
 
 	public BackendService() {
 	}
@@ -51,9 +56,17 @@ public class BackendService extends Service<List<SearchResultItem>> {
 					list = scraper.parse();
 				}
 				list.stream().forEach(e -> System.out.println(e));
+				if (!list.isEmpty()) {
+					ObservableList<SearchResultItem> fxList = FXCollections.observableArrayList(list);
+					Platform.runLater(() -> itemListView.setItems(fxList));
+				}
 				return list;
 			}
 		};
+	}
+
+	public void setListView(ListView<SearchResultItem> itemListView) {
+		this.itemListView = itemListView;
 	}
 
 	// Set<String> explicitMods =

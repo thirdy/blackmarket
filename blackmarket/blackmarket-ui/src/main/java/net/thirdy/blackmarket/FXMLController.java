@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.WorkerStateEvent;
@@ -40,6 +41,7 @@ public class FXMLController implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		progressIndicator.visibleProperty().bind(backendService.runningProperty());
+		backendService.setListView(itemListView);
 		String page = loadDefaultSearchFile();
 		searchTextArea.setText(page);
 		itemListView.setCellFactory(new Callback<ListView<SearchResultItem>, ListCell<SearchResultItem>>() {
@@ -81,11 +83,11 @@ public class FXMLController implements Initializable {
 			
 			@Override
 			public void handle(WorkerStateEvent event) {
-				List<SearchResultItem> list = backendService.getValue();
-				if (!list.isEmpty()) {
-					ObservableList<SearchResultItem> fxList = FXCollections.observableArrayList(list);
-					itemListView.setItems(fxList);
-				}
+//				List<SearchResultItem> list = backendService.getValue();
+//				if (!list.isEmpty()) {
+//					ObservableList<SearchResultItem> fxList = FXCollections.observableArrayList(list);
+//					Platform.runLater(() -> itemListView.setItems(fxList));
+//				}
 				searchButton.setDisable(false);
 			}
 		});
