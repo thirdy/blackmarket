@@ -45,37 +45,39 @@ public class BaseTable extends JXTable {
         setColumnControlVisible(true);
         setHighlighters(HighlighterFactory.createSimpleStriping());
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//        setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
         
     }
 
-    public boolean isFilterHeaderEnabled() {
-        return filterHeaderEnabled;
-    }
-
-    /**
-     * Enables or disables and hides filtering header
-     * @param filterHeaderEnabled True to enable and attach filter header component
-     */
-    public void setFilterHeaderEnabled(boolean filterHeaderEnabled) {
-        // if filter was off and enabled, create and attach it
-        if (filterHeaderEnabled && !this.filterHeaderEnabled && tableFilterHeader == null) {
-            // enable the filter header
-            tableFilterHeader = new TableFilterHeader(this);
-        }
-        if (tableFilterHeader != null) {
-            tableFilterHeader.setVisible(filterHeaderEnabled);
-            tableFilterHeader.setEnabled(filterHeaderEnabled);
-        }
-        this.filterHeaderEnabled = filterHeaderEnabled;
-    }
-
-    /**
-     *
-     * @return Filter header component used in the table or null if never used
-     */
-    public TableFilterHeader getTableFilterHeader() {
-        return tableFilterHeader;
-    }
+//    public boolean isFilterHeaderEnabled() {
+//        return filterHeaderEnabled;
+//    }
+//
+//    /**
+//     * Enables or disables and hides filtering header
+//     * @param filterHeaderEnabled True to enable and attach filter header component
+//     */
+//    public void setFilterHeaderEnabled(boolean filterHeaderEnabled) {
+//        // if filter was off and enabled, create and attach it
+//        if (filterHeaderEnabled && !this.filterHeaderEnabled && tableFilterHeader == null) {
+//            // enable the filter header
+//            tableFilterHeader = new TableFilterHeader(this);
+//        }
+//        if (tableFilterHeader != null) {
+//            tableFilterHeader.setVisible(filterHeaderEnabled);
+//            tableFilterHeader.setEnabled(filterHeaderEnabled);
+//        }
+//        this.filterHeaderEnabled = filterHeaderEnabled;
+//    }
+//
+//    /**
+//     *
+//     * @return Filter header component used in the table or null if never used
+//     */
+//    public TableFilterHeader getTableFilterHeader() {
+//        return tableFilterHeader;
+//    }
 
 
     /**

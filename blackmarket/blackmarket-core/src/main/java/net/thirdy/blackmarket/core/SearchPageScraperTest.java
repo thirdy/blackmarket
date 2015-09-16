@@ -8,6 +8,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
+import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
+
 import static org.junit.Assert.*
 ;
 public class SearchPageScraperTest {
@@ -32,6 +34,23 @@ public class SearchPageScraperTest {
 				assertEquals("42.0", item.getExplicitMods().get(1).getValue());
 				assertEquals("##% increased Flask Charges gained", item.getExplicitMods().get(2).getName());
 				assertEquals("50.0", item.getExplicitMods().get(2).getValue());
+			}
+		}
+	}
+	
+	@Test
+	public void testParse2() throws Exception {
+		URL url = this.getClass().getResource("SearchChest.search.poetrade");
+		String page = FileUtils.readFileToString(new File(url.toURI()));
+		SearchPageScraper scraper = new SearchPageScraper(page);
+		List<SearchResultItem> list = scraper.parse();
+		for (SearchResultItem item : list) {
+			if (item.getName().equals("Victory Shroud Destiny Leather")) {
+				assertEquals("58.0", item.getPseudoResistance());
+				assertEquals("79.0", item.getPseudoLife());
+//				for (Mod mod : item.getExplicitMods()) {
+//					System.out.println(mod);
+//				}
 			}
 		}
 	}

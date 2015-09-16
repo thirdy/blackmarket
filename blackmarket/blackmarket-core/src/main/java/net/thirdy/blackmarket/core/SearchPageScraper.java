@@ -11,18 +11,22 @@ import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
+
+import com.google.common.collect.Lists;
 
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
 
@@ -356,7 +360,23 @@ public class SearchPageScraper {
 			}
 			return value;
 		}
+
+		public String getPseudoResistance() {
+			return getExplicitModValueByName("#(pseudo) +#% total Resistance");
+		}
+
+		public String getPseudoLife() {
+			return getExplicitModValueByName("#(pseudo) (total) +# to maximum Life");
+		}
 		
+		private String getExplicitModValueByName(String name) {
+			for (Mod mod : explicitMods) {
+				if (mod.getName().equalsIgnoreCase(name)) {
+					return mod.getValue();
+				}
+			}
+			return "";
+		}
 		
 	}
 

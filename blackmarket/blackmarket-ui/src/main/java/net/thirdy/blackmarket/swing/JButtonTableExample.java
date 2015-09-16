@@ -7,6 +7,8 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
+import org.jdesktop.swingx.JXTable;
+
 public class JButtonTableExample {
 
     public JButtonTableExample() {
@@ -17,7 +19,7 @@ public class JButtonTableExample {
         dm.setDataVector(new Object[][]{{"button 1", "foo"},
                     {"button 2", "bar"}}, new Object[]{"Button", "String"});
 
-        JTable table = new JTable(dm);
+        JXTable table = new JXTable(dm);
         table.getColumn("Button").setCellRenderer(new ButtonRenderer());
         table.getColumn("Button").setCellEditor(new ButtonEditor(new JCheckBox()));
 
