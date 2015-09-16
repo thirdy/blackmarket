@@ -14,6 +14,7 @@ import net.thirdy.blackmarket.core.SearchPayload;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -141,6 +142,9 @@ public class BlackmarketJFrame extends JFrame {
 
 			@Override
 			protected Void doInBackground() throws Exception {
+				searchButton.setEnabled(false);
+				BlackmarketJFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				
 				List<SearchResultItem> list = Collections.emptyList();
 				String payload = loadDefaultSearchFile();
 				payload = new SearchPayload(payload).getPayloadFormatted();
@@ -170,7 +174,7 @@ public class BlackmarketJFrame extends JFrame {
 	private void loadData(List<SearchResultItem> data) {
 		System.out.println("loading data into Table");
 		table.setModel(new BlackmarketTableModel(data));
-		table.setEditable(true);
+
 		Action action = new AbstractAction() {
 
 			@Override
@@ -190,6 +194,9 @@ public class BlackmarketJFrame extends JFrame {
 		};
 		table.getColumn("WTB").setCellEditor(new ButtonColumn(table, action, 2));
 		table.packAll();
+		
+		searchButton.setEnabled(true);
+		this.setCursor(Cursor.getDefaultCursor());
 	}
 
 	private List<SearchResultItem> loadSampleData() {
@@ -203,13 +210,5 @@ public class BlackmarketJFrame extends JFrame {
 		return scraper.parse();
 	}
 
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
 
-			@Override
-			public void run() {
-				new BlackmarketJFrame();
-			}
-		});
-	}
 }

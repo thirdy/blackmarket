@@ -1,28 +1,9 @@
 package com.porty.swing.table;
 
-import static java.lang.String.format;
-
-import java.awt.Component;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Optional;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
-import net.coderazzi.filters.gui.TableFilterHeader;
-import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-
-import com.porty.swing.table.model.BeanPropertyTableModel;
-
-import javafx.scene.control.TextInputDialog;
 
 /**
  * Base table extends SwingX JXTable and provides a few more functions which are
@@ -36,7 +17,7 @@ import javafx.scene.control.TextInputDialog;
  */
 public class BaseTable extends JXTable {
     /** Filter header used in the table */
-    private TableFilterHeader tableFilterHeader;
+//    private TableFilterHeader tableFilterHeader;
     /** Flag to enable or disable filter header */
     private boolean filterHeaderEnabled;
 
