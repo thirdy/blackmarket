@@ -91,6 +91,10 @@ private SearchResultItem searchResultItem;
 	public ItemPaneController(SearchResultItem item, ListView<SearchResultItem> listView) {
 		this();
 		this.listView = listView;
+		update(item);
+	}
+
+	public void update(SearchResultItem item) {
 		this.searchResultItem = item;
 		id.setText(item.getId());
 		buyout.setText(item.getBuyout());
@@ -131,19 +135,17 @@ private SearchResultItem searchResultItem;
 			implicitMod.setUserData(item.getImplicitMod());
 		}
 		
-		if (item.getExplicitMods().size() > 7) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText("Problem while displaying explicit mods. Mods are more than 7." + item.getExplicitMods());
-			alert.showAndWait();
-		}
-		
 		List<Hyperlink> explicits = Arrays.asList(explicit1,explicit2,explicit3,explicit4,explicit5,explicit6,explicit7);
 		int idx = 0;
-		for(Mod explicitMod : item.getExplicitMods()) {
-			Hyperlink hyperlink = explicits.get(idx);
-			hyperlink.setUserData(explicitMod);
-			hyperlink.setText(explicitMod.getName());
-			idx += 1;
+		if (item.getExplicitMods().size() > 7) {
+			System.out.println("Mods for item is more than 7. Skipping display for all of them: " + item);
+		} else {
+			for(Mod explicitMod : item.getExplicitMods()) {
+				Hyperlink hyperlink = explicits.get(idx);
+				hyperlink.setUserData(explicitMod);
+				hyperlink.setText(explicitMod.getName());
+				idx += 1;
+			}
 		}
 	}
 

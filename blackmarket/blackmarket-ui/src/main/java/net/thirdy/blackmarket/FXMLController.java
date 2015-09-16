@@ -66,6 +66,8 @@ public class FXMLController implements Initializable {
             	if(itemPane == null) {
             		itemPane = new ItemPaneController(item, super.getListView());
             		itemPane.setCache(true);
+            	} else {
+            		itemPane.update(item);
             	}
                 setGraphic(itemPane);
             }

@@ -20,65 +20,83 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class SO extends Application {
-    static class XCell extends ListCell<String> {
-        HBox hbox = new HBox();
-        Label label = new Label("(empty)");
-        Pane pane = new Pane();
-        Button button = new Button("(>)");
-        String lastItem;
 
-        public XCell() {
-            super();
-            hbox.getChildren().addAll(label, pane, button);
-            HBox.setHgrow(pane, Priority.ALWAYS);
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    System.out.println(lastItem + " : " + event);
-                    getListView().getItems().sort(new Comparator<String>() {
-                    	@Override
-                    	public int compare(String arg0, String arg1) {
-                    		return arg1.compareTo(arg0);
-                    	}
+	static class Custom {
+		private String name;
+
+		public Custom(String name) {
+			super();
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+	}
+
+	static class XCell extends ListCell<Custom> {
+		HBox hbox = new HBox();
+		Label label = new Label("(empty)");
+		Pane pane = new Pane();
+		Button button = new Button("(>)");
+		Custom lastItem;
+
+		public XCell() {
+			super();
+			hbox.getChildren().addAll(label, pane, button);
+			HBox.setHgrow(pane, Priority.ALWAYS);
+			button.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent event) {
+					System.out.println(lastItem + " : " + event);
+					getListView().getItems().sort(new Comparator<Custom>() {
+						@Override
+						public int compare(Custom arg0, Custom arg1) {
+							return arg1.getName().compareTo(arg0.getName());
+						}
 					});
-                }
-            });
-        }
+				}
+			});
+		}
 
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(null);  // No text in label of super class
-            if (empty) {
-                lastItem = null;
-                setGraphic(null);
-            } else {
-                lastItem = item;
-                label.setText(item!=null ? item : "<null>");
-                setGraphic(hbox);
-            }
-        }
-    }
+		@Override
+		protected void updateItem(Custom item, boolean empty) {
+			super.updateItem(item, empty);
+			setText(null); // No text in label of super class
+			if (empty) {
+				lastItem = null;
+				setGraphic(null);
+			} else {
+				lastItem = item;
+				label.setText(item != null ? item.getName() : "<null>");
+				setGraphic(hbox);
+			}
+		}
+	}
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        StackPane pane = new StackPane();
-        Scene scene = new Scene(pane, 300, 150);
-        primaryStage.setScene(scene);
-        ObservableList<String> list = FXCollections.observableArrayList(
-                "Item 1", "Item 2", "Item 3", "Item 4");
-        ListView<String> lv = new ListView<>(list);
-        lv.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(ListView<String> param) {
-                return new XCell();
-            }
-        });
-        pane.getChildren().add(lv);
-        primaryStage.show();
-    }
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		StackPane pane = new StackPane();
+		Scene scene = new Scene(pane, 300, 150);
+		primaryStage.setScene(scene);
+		ObservableList<Custom> list = FXCollections.observableArrayList(new Custom("Item 1"), new Custom("Item 2"), new Custom("Item 3"), new Custom("Item 4"));
+		ListView<Custom> lv = new ListView<>(list);
+		lv.setCellFactory(new Callback<ListView<Custom>, ListCell<Custom>>() {
+			@Override
+			public ListCell<Custom> call(ListView<Custom> param) {
+				return new XCell();
+			}
+		});
+		pane.getChildren().add(lv);
+		primaryStage.show();
+	}
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+	public static void main(String[] args) {
+		launch(args);
+	}
 }

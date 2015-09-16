@@ -102,11 +102,12 @@ public class SearchPageScraper {
 				Elements ulMods = bulletItem.getElementsByTag("ul");
 				if (ulMods.size() == 2) {
 					// implicit mod
-					Element implicitLi = ulMods.get(1).getElementsByTag("li").get(0);
+					Element implicitLi = ulMods.get(0).getElementsByTag("li").get(0);
 					Mod impMod = new Mod(implicitLi.attr("data-name"), implicitLi.attr("data-value"));
 					item.implicitMod = impMod;
 				}
-				Elements modsLi = ulMods.get(0).getElementsByTag("li");
+				int indexOfExplicitMods = ulMods.size() - 1;
+				Elements modsLi = ulMods.get(indexOfExplicitMods).getElementsByTag("li");
 				for (Element modLi : modsLi) {
 					// explicit mods
 					Mod mod = new Mod(modLi.attr("data-name"), modLi.attr("data-value"));
@@ -183,8 +184,14 @@ public class SearchPageScraper {
 			return explicitMods;
 		}
 
-		public Set<String> getExplicitModsNames() {
-			return getExplicitMods().stream().map(Mod::getName).collect(Collectors.toSet());
+//		public Set<String> getExplicitModsNames() {
+//			return getExplicitMods().stream().map(Mod::getName).collect(Collectors.toSet());
+//		}
+		
+		public String getWTB() {
+			return String.format(
+					"@%s Hi, I would like to buy your %s listed for %s in %s",
+					getIgn(), getName(), getBuyout(), getLeague());
 		}
 
 		/**
