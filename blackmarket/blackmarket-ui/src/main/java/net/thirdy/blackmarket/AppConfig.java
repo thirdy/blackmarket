@@ -1,13 +1,8 @@
 package net.thirdy.blackmarket;
 
-import java.awt.GraphicsConfiguration;
-import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
-
 public class AppConfig {
 
-	public static final String VERSION = "PROTOTYPE 2";
+	public static final String VERSION = "0.1";
 	public static final boolean TESTING_MODE = false;
 	public static final String TITLE = "Blackmarket " + VERSION;
 	public static String getAboutMessage() {

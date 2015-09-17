@@ -359,8 +359,8 @@ public class SearchPageScraper {
 			return value;
 		}
 
-		public String getPseudoResistance() {
-			return getExplicitModValueByName("#(pseudo) +#% total Resistance");
+		public String getPseudoEleResistance() {
+			return getExplicitModValueByName("#(pseudo) +#% total Elemental Resistance");
 		}
 
 		public String getPseudoLife() {

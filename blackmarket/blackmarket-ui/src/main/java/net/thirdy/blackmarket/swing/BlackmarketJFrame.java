@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,12 +28,14 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.porty.swing.table.BaseTable;
 import com.porty.swing.util.WindowUtils;
 
 import net.thirdy.blackmarket.AppConfig;
 import net.thirdy.blackmarket.MainApp;
+import net.thirdy.blackmarket.core.BlackmarketLanguageParserInstance;
 import net.thirdy.blackmarket.core.BlackmarketUtil;
 import net.thirdy.blackmarket.core.SearchPageScraper;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
@@ -47,29 +51,36 @@ public class BlackmarketJFrame extends JFrame {
 	JFrame itemViewerWindow = new JFrame();
 	ItemViewPanel itemViewPanel = new ItemViewPanel();
 
+	Action searchAction;
+	
 	public BlackmarketJFrame() {
 		super(AppConfig.TITLE);
+		setupIconImage();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Rectangle screenRect = WindowUtils.getScreenRect();
 		setSize(screenRect.width - 260, screenRect.height - 30);
 //		WindowUtils.centerWindow(this);
 		
 		itemViewerWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		itemViewerWindow.add(itemViewPanel);
+		itemViewerWindow.getContentPane().add(itemViewPanel);
 		itemViewerWindow.setAlwaysOnTop(true);
-		itemViewerWindow.setSize(260, 380);
+		itemViewerWindow.setSize(260, 390);
 		itemViewerWindow.setLocation(screenRect.width - 260, 0);
 		
 //		 setExtendedState( getExtendedState()|JFrame.MAXIMIZED_VERT );
 //		table.setFilterHeaderEnabled(false);
-		searchButton.addActionListener(new ActionListener() {
+		searchAction = new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Search button clicked");
-				searchEventHandler();
+				if (StringUtils.isNotBlank(searchField.getText())) {
+					searchEventHandler();
+				}
 			}
-		});
+		};
+		searchButton.addActionListener(searchAction);
+		searchField.addActionListener(searchAction);
 //		searchButton.setPreferredSize(new Dimension(100, 50));
 		
 		JButton about = new JButton("?");
@@ -93,12 +104,23 @@ public class BlackmarketJFrame extends JFrame {
 		headerPanel.add(searchField, BorderLayout.CENTER);
 
 		montherPanel.add(headerPanel, BorderLayout.NORTH);
-		add(montherPanel);
+		getContentPane().add(montherPanel);
 		setupTableSelectionListener();
-		loadData(loadSampleData());
+//		loadData(loadSampleData());
 		setVisible(true);
 	}
 	
+	private void setupIconImage() {
+		try {
+			byte[] imgBytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/lapulapu-icon.jpg"));
+			Image img = Toolkit.getDefaultToolkit().createImage(imgBytes);
+			setIconImage(img);
+		} catch (IOException e) {
+			// won't likely happen since file is in classpath
+			e.printStackTrace();
+		}
+	}
+
 	private void setupTableSelectionListener() {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
@@ -119,19 +141,6 @@ public class BlackmarketJFrame extends JFrame {
 	}
 
 	protected void showAboutDialog() {
-		// TODO Auto-generated method stub
-//		JButton button = new JButton();
-//	    button.setText("<HTML>Click the <FONT color=\"#000099\"><U>link</U></FONT>"
-//	        + " to go to the Java website.</HTML>");
-//	    button.setHorizontalAlignment(SwingConstants.LEFT);
-//	    button.setBorderPainted(false);
-//	    button.setOpaque(false);
-//	    button.setBackground(Color.WHITE);
-//	    button.setToolTipText(uri.toString());
-//	    button.addActionListener(new OpenUrlAction());
-	    
-//	    JOptionPane.showMessageDialog(BlackmarketJFrame.this, AppConfig.getAboutMessage());
-		
 		String s = "http://thirdy.github.io/blackmarket";
 		if (Desktop.isDesktopSupported()) {
 			try {
@@ -156,24 +165,33 @@ public class BlackmarketJFrame extends JFrame {
 			@Override
 			protected Void doInBackground() throws Exception {
 				System.out.println("searchEventHandler() - doInBackground()");
-				searchButton.setEnabled(false);
-				BlackmarketJFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				
-				List<SearchResultItem> list = Collections.emptyList();
-				System.out.println("loading search params");
-				String payload = loadDefaultSearchFile();
-				System.out.println("RAW payload: " + payload);
-				payload = new SearchPayload(payload).getPayloadFormatted();
-				System.out.println("Formatted payload: " + payload);
+				try {
+					searchButton.setEnabled(false);
+					BlackmarketJFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					
+					List<SearchResultItem> list = Collections.emptyList();
+					System.out.println("loading search params");
+					String searchString = searchField.getText();
+					// String payload = loadDefaultSearchFile();
+					BlackmarketLanguageParserInstance bmLang = new BlackmarketLanguageParserInstance();
+					String payload = bmLang.parse(searchString);
+					
+					System.out.println("RAW payload: " + payload);
+					payload = new SearchPayload(payload).getPayloadFormatted();
+					System.out.println("Formatted payload: " + payload);
 
-				String searchPage = MainApp.getPoeTradeHttpClient().search(payload );
-				SearchPageScraper scraper = new SearchPageScraper(searchPage);
-				list = scraper.parse();
+					String searchPage = MainApp.getPoeTradeHttpClient().search(payload );
+					SearchPageScraper scraper = new SearchPageScraper(searchPage);
+					list = scraper.parse();
 
-				// This sends the results to the .process method
-				SearchResultItem[] arr = new SearchResultItem[list.size()];
-				list.toArray(arr);
-				publish(arr);
+					// This sends the results to the .process method
+					SearchResultItem[] arr = new SearchResultItem[list.size()];
+					list.toArray(arr);
+					publish(arr);
+				} catch (Exception e) {
+					System.out.println("error: " + e.getMessage());
+					e.printStackTrace();
+				}
 
 				return null;
 			}

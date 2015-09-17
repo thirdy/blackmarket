@@ -25,7 +25,7 @@ public class BlackmarketTableModel extends DefaultTableModel {
 				"Sockets",
 				"%", // quality
 				"Life",
-				"Res",
+				"EleRes",
 				"pDPS%r", //physDmgRangeAtMaxQuality
 				"pDPS%", // physDmgAtMaxQuality
 				"eDPSr", // eleDmgRange
@@ -61,7 +61,7 @@ public class BlackmarketTableModel extends DefaultTableModel {
 						item.getSocketsRaw(),
 						item.getQuality(),
 						item.getPseudoLife(),
-						item.getPseudoResistance(),
+						item.getPseudoEleResistance(),
 						item.getPhysDmgRangeAtMaxQuality(),
 						item.getPhysDmgAtMaxQuality(),
 						item.getEleDmgRange(),

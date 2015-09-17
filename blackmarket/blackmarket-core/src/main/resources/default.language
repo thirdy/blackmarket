@@ -6,8 +6,6 @@
 ;
 ; Item Types
 ;
-ring		=		type=Ring
-
 1h								=		type=Generic One-Handed Weapon
 2h								=		type=Generic Two-Handed Weapon
 bow								=		type=Bow
@@ -32,17 +30,18 @@ shield							=		type=Shield
 amulet							=		type=Amulet
 belt							=		type=Belt
 currency						=		type=Currency
-								=		type=Divination Card
-								=		type=Fishing Rods
-								=		type=Flask
-								=		type=Gem
-								=		type=Jewel
-								=		type=Map
-								=		type=Quiver
-								=		type=Ring
-								=		type=Vaal Fragments
+divcard							=		type=Divination Card
+fish							=		type=Fishing Rods
+flask							=		type=Flask
+gem								=		type=Gem
+jewel							=		type=Jewel
+map								=		type=Map
+quiver							=		type=Quiver
+ring							=		type=Ring
+frag							=		type=Vaal Fragments
 
 ;
 ; Explicit Mods
 ;
-(\d+)life	=		mods=&modexclude=&modmin=$GROUP1&modmax=&mods=(pseudo) (total) +# to maximum Life
+(\d+)life	=		mods=(pseudo) (total) +# to maximum Life&modexclude=&modmin=$GROUP1&modmax=
+(\d+)res	=		mods=(pseudo) +#% total Elemental Resistance&modexclude=&modmin=$GROUP1&modmax=

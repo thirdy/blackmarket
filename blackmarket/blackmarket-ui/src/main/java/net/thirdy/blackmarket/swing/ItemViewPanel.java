@@ -1,16 +1,18 @@
 package net.thirdy.blackmarket.swing;
 
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import javax.swing.JLabel;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
-import java.awt.GridBagConstraints;
+import java.util.Random;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import org.apache.commons.io.IOUtils;
@@ -21,11 +23,6 @@ import com.google.common.collect.Lists;
 
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
-
-import java.awt.Font;
-import javax.swing.JTextPane;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
 
 public class ItemViewPanel extends JPanel {
 
@@ -57,8 +54,13 @@ public class ItemViewPanel extends JPanel {
 		lblImg = new JLabel("");
 		lblImg.setHorizontalAlignment(SwingConstants.CENTER);
 		
+		String[] images = new String[] {
+				"/Ancient_German_armour_helmet.jpg",
+				"/lapulapu.jpg"
+		};
+		String img = images[new Random().nextInt(2)];
 		try {
-			byte[] imgBytes = IOUtils.toByteArray(this.getClass().getResourceAsStream("/sword1.png"));
+			byte[] imgBytes = IOUtils.toByteArray(this.getClass().getResourceAsStream(img));
 			lblImg.setIcon(new ImageIcon(imgBytes));
 		} catch (IOException e) {
 			// won't likely happen since file is in classpath
@@ -66,20 +68,20 @@ public class ItemViewPanel extends JPanel {
 		}
 		
 //		lblImg.setIcon(new ImageIcon("account-login-8x.png"));
-		lblImg.setBounds(35, 36, 176, 100);
+		lblImg.setBounds(32, 36, 176, 100);
 		add(lblImg);
 		
 		explicitModsPanel = new JPanel();
-		explicitModsPanel.setBounds(10, 155, 247, 137);
+		explicitModsPanel.setBounds(1, 176, 247, 137);
 		add(explicitModsPanel);
 		explicitModsPanel.setLayout(new BorderLayout(0, 0));
 		
 		taExplicitMods = new JTextArea();
-		taExplicitMods.setRows(7);
 		explicitModsPanel.add(taExplicitMods, BorderLayout.CENTER);
+		taExplicitMods.setRows(7);
 		
 		JButton btnWtb = new JButton("WTB");
-		btnWtb.setBounds(81, 303, 89, 23);
+		btnWtb.setBounds(76, 324, 89, 23);
 		add(btnWtb);
 		btnWtb.addActionListener(new ActionListener() {
 			
@@ -92,7 +94,7 @@ public class ItemViewPanel extends JPanel {
 		lblImplicitmod = new JLabel("");
 		lblImplicitmod.setFont(new Font("Tahoma", Font.ITALIC, 11));
 		lblImplicitmod.setHorizontalAlignment(SwingConstants.CENTER);
-		lblImplicitmod.setBounds(10, 122, 247, 14);
+		lblImplicitmod.setBounds(1, 147, 247, 14);
 		add(lblImplicitmod);
 		
 		lblId = new JLabel("id");
@@ -108,6 +110,8 @@ public class ItemViewPanel extends JPanel {
 		Mod implicitMod = item.getImplicitMod();
 		if (implicitMod != null) {
 			lblImplicitmod.setText(implicitMod.toStringDisplay());
+		} else {
+			lblImplicitmod.setText("");
 		}
 		lblName.setText(item.getName());
 		

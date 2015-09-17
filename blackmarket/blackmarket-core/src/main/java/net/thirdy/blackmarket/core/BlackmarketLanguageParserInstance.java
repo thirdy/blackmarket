@@ -150,7 +150,7 @@ public class BlackmarketLanguageParserInstance {
 
 
 
-	private String processToken(String token) {
+	String processToken(String token) {
 		String result = null;
 		
 		for (Entry<String, String> entry : dictionary.entrySet()) {
@@ -188,7 +188,7 @@ public class BlackmarketLanguageParserInstance {
 
 	private String buildFinalOutput() {
 		// Non explicit mod params
-		List<String> lines = Lists.transform(new ArrayList<>(map.entrySet()), new Function<Entry<String, String>, String>() {
+		List<String> lines0 = Lists.transform(new ArrayList<>(map.entrySet()), new Function<Entry<String, String>, String>() {
 
 			@Override
 			public String apply(Entry<String, String> input) {
@@ -199,37 +199,30 @@ public class BlackmarketLanguageParserInstance {
 		
 		// explicit mods
 		// code below should produce something like this:
-//					mods=
-//					modexclude=
-//					modmin=
-//					modmax=
-//					mods=(pseudo) (total) +# to maximum Life
-//					modexclude=
-//					modmin=50
-//					modmax=
-//					mods=(pseudo) +#% total Elemental Resistance
-//					modexclude=
-//					modmin=90
-//					modmax=
+		// mods=
+		// modexclude=
+		// modmin=
+		// modmax=
+		// mods=(pseudo) (total) +# to maximum Life
+		// modexclude=
+		// modmin=50
+		// modmax=
+		// mods=(pseudo) +#% total Elemental Resistance
+		// modexclude=
+		// modmin=90
+		// modmax=
+		List<String> lines1 = new LinkedList<>(lines0);
 		for (String explicitModParam : explicitModParams) {
 			
 			String[] modParams = StringUtils.split(explicitModParam, "&");
 			String explicitModParamGroup = StringUtils.join(modParams, BlackmarketUtil.lineSep());
 			
-			lines.add(explicitModParamGroup);
+			lines1.add(explicitModParamGroup);
 		}
 		
 		// finalResult should look something like ring-life.txt
-		String finalResult = StringUtils.join(lines.toArray(), BlackmarketUtil.lineSep());
+		String finalResult = StringUtils.join(lines1.toArray(), BlackmarketUtil.lineSep());
 		return finalResult;
 	}
 
-	public static void main(String[] args) {
-		BlackmarketLanguageParserInstance bm = new BlackmarketLanguageParserInstance();
-		String s = bm.processToken("ring");
-		System.out.println(s);
-		
-		 s = bm.processToken("30life");
-		System.out.println(s);
-	}
 }
