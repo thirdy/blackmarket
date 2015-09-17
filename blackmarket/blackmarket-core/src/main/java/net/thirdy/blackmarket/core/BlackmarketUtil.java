@@ -2,6 +2,7 @@ package net.thirdy.blackmarket.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,11 +16,16 @@ import net.thirdy.blackmarket.core.ex.BlackmarketException;
 import net.thirdy.blackmarket.core.ex.BlackmarketRuntimeException;
 
 public class BlackmarketUtil {
-	public static String loadFromClassPath(String classPath) {
+
+	
+	public static String loadFromClassPath(Class<?> clazz, String classPath) {
+		System.out.println("loadFromClassPath: " + classPath);
 		String page = "";
 		try {
-			page = IOUtils.toString(BlackmarketUtil.class.getClassLoader().getResourceAsStream(classPath));
+			InputStream is = clazz.getResourceAsStream(classPath);
+			page = IOUtils.toString(is);
 		} catch (IOException e) {
+			System.out.println("Exception" + e.getMessage());
 			// won't likely happen since file is in classpath
 			e.printStackTrace();
 		}

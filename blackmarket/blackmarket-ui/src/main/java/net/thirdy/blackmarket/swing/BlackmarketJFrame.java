@@ -57,7 +57,7 @@ public class BlackmarketJFrame extends JFrame {
 		itemViewerWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		itemViewerWindow.add(itemViewPanel);
 		itemViewerWindow.setAlwaysOnTop(true);
-		itemViewerWindow.setSize(260, 370);
+		itemViewerWindow.setSize(260, 380);
 		itemViewerWindow.setLocation(screenRect.width - 260, 0);
 		
 //		 setExtendedState( getExtendedState()|JFrame.MAXIMIZED_VERT );
@@ -66,6 +66,7 @@ public class BlackmarketJFrame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Search button clicked");
 				searchEventHandler();
 			}
 		});
@@ -145,7 +146,7 @@ public class BlackmarketJFrame extends JFrame {
 	}
 
 	private String loadDefaultSearchFile() {
-		String page = BlackmarketUtil.loadFromClassPath("/ring-life.txt");
+		String page = BlackmarketUtil.loadFromClassPath(BlackmarketJFrame.class, "/ring-life.txt");
 		return page;
 	}
 
@@ -154,13 +155,16 @@ public class BlackmarketJFrame extends JFrame {
 
 			@Override
 			protected Void doInBackground() throws Exception {
+				System.out.println("searchEventHandler() - doInBackground()");
 				searchButton.setEnabled(false);
 				BlackmarketJFrame.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				
 				List<SearchResultItem> list = Collections.emptyList();
+				System.out.println("loading search params");
 				String payload = loadDefaultSearchFile();
+				System.out.println("RAW payload: " + payload);
 				payload = new SearchPayload(payload).getPayloadFormatted();
-				System.out.println(payload);
+				System.out.println("Formatted payload: " + payload);
 
 				String searchPage = MainApp.getPoeTradeHttpClient().search(payload );
 				SearchPageScraper scraper = new SearchPageScraper(searchPage);

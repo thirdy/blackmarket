@@ -113,6 +113,8 @@ public class BlackmarketLanguageParserInstance {
 	public String parse(String input) {
 		String[] tokens = StringUtils.split(input);
 		String[] parsedTokens = new String[tokens.length];
+		
+		// translate tokens using dictionary
 		for (String token : tokens) {
 			String result = dictionary.get(token);
 			
@@ -121,6 +123,13 @@ public class BlackmarketLanguageParserInstance {
 			map.put(key, value);
 		}
 		
+		String finalResult = buildFinalOutput(); 
+		return finalResult;
+	}
+
+
+
+	private String buildFinalOutput() {
 		List<String> lines = Lists.transform(new ArrayList<>(map.entrySet()), new Function<Entry<String, String>, String>() {
 
 			@Override
@@ -129,7 +138,7 @@ public class BlackmarketLanguageParserInstance {
 			}
 
 		});
-		String finalResult = StringUtils.join(lines.toArray(), BlackmarketUtil.lineSep()); 
+		String finalResult = StringUtils.join(lines.toArray(), BlackmarketUtil.lineSep());
 		return finalResult;
 	}
 
