@@ -102,5 +102,9 @@ public class BlackmarketTableModel extends DefaultTableModel {
 	public String getWantToBuyMessage(int modelRow) {
 		return data.get(modelRow).getWTB();
 	}
+	
+	public SearchResultItem getItem(int row) {
+		return data.get(row);
+	}
 
 }

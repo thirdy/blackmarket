@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.thirdy</groupId>
-    <artifactId>blackmarket-ui</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+	<groupId>net.thirdy</groupId>
+	<artifactId>blackmarket-ui</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
-    <name>blackmarket-ui</name>
+	<name>blackmarket-ui</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>net.thirdy.blackmarket.MainApp</mainClass>
-         <maven.compiler.source>1.7</maven.compiler.source>
-  		<maven.compiler.target>1.7</maven.compiler.target>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<mainClass>net.thirdy.blackmarket.MainApp</mainClass>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+	</properties>
 
-    <organization>
-        <!-- Used as the 'Vendor' for JNLP generation -->
-        <name>Your Organisation</name>
-    </organization>
+	<organization>
+		<!-- Used as the 'Vendor' for JNLP generation -->
+		<name>Your Organisation</name>
+	</organization>
 
-    
-    <dependencies>
-        <dependency>
-            <groupId>net.thirdy</groupId>
-            <artifactId>blackmarket-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.swinglabs</groupId>
-            <artifactId>swingx</artifactId>
-            <version>1.6.1</version>
-            <type>jar</type>
-        </dependency>
-    </dependencies>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.thirdy</groupId>
+			<artifactId>blackmarket-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>swingx</artifactId>
+			<version>1.6.1</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
 
 </project>

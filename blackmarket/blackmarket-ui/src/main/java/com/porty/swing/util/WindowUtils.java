@@ -60,4 +60,13 @@ public class WindowUtils {
     public static void centerWindow(Window frame) {
         frame.setLocation(getPointForCentering(frame));
     }
+
+	public static Rectangle getScreenRect() {
+		GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+        for (GraphicsDevice device : devices) {
+    		Rectangle bounds = device.getDefaultConfiguration().getBounds();
+    		return bounds;	
+        }
+        return new Rectangle();
+	}
 }

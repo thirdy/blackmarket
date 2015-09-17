@@ -34,6 +34,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import net.thirdy.blackmarket.core.ex.BlackmarketException;
+
 public class PoeTradeHttpClient {
 
 //    private String cookies;
@@ -51,7 +53,7 @@ public class PoeTradeHttpClient {
         System.out.println("Done");
     }
     
-    public String search(String payload) throws PoeTradeHttpClientException {
+    public String search(String payload) throws BlackmarketException {
         try {
             String url = "http://poe.trade/search";
             String location = post(url, payload);
@@ -59,7 +61,7 @@ public class PoeTradeHttpClient {
             return searchPage;
         } catch (Exception ex) {
             Logger.getLogger(PoeTradeHttpClient.class.getName()).log(Level.SEVERE, null, ex);
-            throw new PoeTradeHttpClientException(ex);
+            throw new BlackmarketException(ex);
         }
     }
 

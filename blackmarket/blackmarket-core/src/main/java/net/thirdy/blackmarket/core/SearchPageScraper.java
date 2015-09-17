@@ -223,6 +223,10 @@ public class SearchPageScraper {
 			public String toString() {
 				return "Mod [name=" + name + ", value=" + value + "]";
 			}
+
+			public String toStringDisplay() {
+				return name + ": " + value;
+			}
 		}
 
 		@Override
