@@ -1,0 +1,7 @@
+; This is a comment
+
+; Blackmarket Search Language Config
+; TODO: put in documentation here how this whole thing works, otherwise, understand BlackmarketLanguageParserInstance.java
+
+ring=type=Ring
+(\d+)life=mods=&modexclude=&modmin=$GROUP1&modmax=&mods=(pseudo) (total) +# to maximum Life

@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -17,10 +20,23 @@ import com.google.common.collect.Lists;
 public class BlackmarketLanguageParserInstance {
 	
 	Map<String, String> map = new LinkedHashMap<>();
+	List<String> explicitModParams = new LinkedList<>();
 	
 	Map<String, String> dictionary = new HashMap<>();
 	
 	public BlackmarketLanguageParserInstance() {
+		loadDefaultsToMap();
+		
+		Date date = BlackmarketUtil.getDateInThePast(7);
+		String dateStr = DateFormatUtils.format(date, "yyyy-MM-dd");
+		map.put("time", dateStr);
+		
+		dictionary = BlackmarketUtil.loadLanguageDictionary();
+	}
+
+
+
+	private void loadDefaultsToMap() {
 		map.put("league", "Warbands");
 		map.put("type", "");
 		map.put("base", "");
@@ -68,18 +84,20 @@ public class BlackmarketLanguageParserInstance {
 		map.put("impl", "");
 		map.put("impl_min", "");
 		map.put("impl_max", "");
-		map.put("mods", "");
-		map.put("modexclude", "");
-		map.put("modmin", "");
-		map.put("modmax", "");
-		map.put("mods", "");
-		map.put("modexclude", "");
-		map.put("modmin", "");
-		map.put("modmax", "");
-		map.put("mods", "");
-		map.put("modexclude", "");
-		map.put("modmin", "");
-		map.put("modmax", "");
+		// As of Sept 15, these explicit mod params are optional and non-position dependent
+		// we'll save them in a List instead, see explicitModParams
+//		map.put("mods", "");
+//		map.put("modexclude", "");
+//		map.put("modmin", "");
+//		map.put("modmax", "");
+//		map.put("mods", "");
+//		map.put("modexclude", "");
+//		map.put("modmin", "");
+//		map.put("modmax", "");
+//		map.put("mods", "");
+//		map.put("modexclude", "");
+//		map.put("modmin", "");
+//		map.put("modmax", "");
 		map.put("q_min", "");
 		map.put("q_max", "");
 		map.put("level_min", "");
@@ -100,12 +118,6 @@ public class BlackmarketLanguageParserInstance {
 		map.put("buyout_currency", "");
 		map.put("crafted", "");
 		map.put("identified", "");
-		
-		Date date = BlackmarketUtil.getDateInThePast(7);
-		String dateStr = DateFormatUtils.format(date, "yyyy-MM-dd");
-		map.put("time", dateStr);
-		
-		dictionary = BlackmarketUtil.loadLanguageDictionary();
 	}
 
 
@@ -116,11 +128,20 @@ public class BlackmarketLanguageParserInstance {
 		
 		// translate tokens using dictionary
 		for (String token : tokens) {
-			String result = dictionary.get(token);
 			
-			String key = StringUtils.substringBefore(result, "=");
-			String value = StringUtils.substringAfter(result, "=");
-			map.put(key, value);
+			String result = processToken(token);
+			
+			if (StringUtils.isNotBlank(result)) {
+				String key = StringUtils.substringBefore(result, "=");
+				String value = StringUtils.substringAfter(result, "=");
+				
+				if (isExplicitMod(result)) {
+					// we need to put these into list since these are repeating data
+					explicitModParams.add(result);
+				} else {
+					map.put(key, value);
+				}
+			}
 		}
 		
 		String finalResult = buildFinalOutput(); 
@@ -129,7 +150,44 @@ public class BlackmarketLanguageParserInstance {
 
 
 
+	private String processToken(String token) {
+		String result = null;
+		
+		for (Entry<String, String> entry : dictionary.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			
+			// if token matches directly
+			if (key.equalsIgnoreCase(token)) {
+				result = value;
+				break;
+			}
+			
+			// if matches by regex
+			Pattern pattern = Pattern.compile(key);
+			Matcher matcher = pattern.matcher(token);
+			if (matcher.matches()) {
+				result = value;
+				// replace placeholder with values captured from regex
+				for (int i = 1; i <= matcher.groupCount(); i++) {
+					result = result.replace("$GROUP" + i, matcher.group(i));
+				}
+			}
+		}
+		
+		return result;
+	}
+
+
+
+	private boolean isExplicitMod(String result) {
+		return StringUtils.containsIgnoreCase(result, "mod");
+	}
+
+
+
 	private String buildFinalOutput() {
+		// Non explicit mod params
 		List<String> lines = Lists.transform(new ArrayList<>(map.entrySet()), new Function<Entry<String, String>, String>() {
 
 			@Override
@@ -138,13 +196,40 @@ public class BlackmarketLanguageParserInstance {
 			}
 
 		});
+		
+		// explicit mods
+		// code below should produce something like this:
+//					mods=
+//					modexclude=
+//					modmin=
+//					modmax=
+//					mods=(pseudo) (total) +# to maximum Life
+//					modexclude=
+//					modmin=50
+//					modmax=
+//					mods=(pseudo) +#% total Elemental Resistance
+//					modexclude=
+//					modmin=90
+//					modmax=
+		for (String explicitModParam : explicitModParams) {
+			
+			String[] modParams = StringUtils.split(explicitModParam, "&");
+			String explicitModParamGroup = StringUtils.join(modParams, BlackmarketUtil.lineSep());
+			
+			lines.add(explicitModParamGroup);
+		}
+		
+		// finalResult should look something like ring-life.txt
 		String finalResult = StringUtils.join(lines.toArray(), BlackmarketUtil.lineSep());
 		return finalResult;
 	}
 
 	public static void main(String[] args) {
 		BlackmarketLanguageParserInstance bm = new BlackmarketLanguageParserInstance();
-		String s = bm.parse("ring");
+		String s = bm.processToken("ring");
+		System.out.println(s);
+		
+		 s = bm.processToken("30life");
 		System.out.println(s);
 	}
 }

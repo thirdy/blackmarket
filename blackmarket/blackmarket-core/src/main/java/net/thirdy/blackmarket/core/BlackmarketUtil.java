@@ -54,7 +54,7 @@ public class BlackmarketUtil {
 		if (StringUtils.isNotBlank(raw)) {
 			String[] lines = StringUtils.split(raw, lineSep());
 			for (String line : lines) {
-				if (isLineNotComment(line)) {
+				if (isLineNotComment(line) && StringUtils.isNotBlank(line)) {
 					// substringBefore/substringAfter is first occurance
 					String key = StringUtils.substringBefore(line, "=");
 					String value = StringUtils.substringAfter(line, "=");
@@ -70,11 +70,16 @@ public class BlackmarketUtil {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
+				FileUtils.write(file, getDefaultLanguageConfig());
 			} catch (IOException e) {
 				throw new BlackmarketRuntimeException(e);
 			}
 		}
 		return file;
+	}
+
+	private static String getDefaultLanguageConfig() {
+		return loadFromClassPath(BlackmarketUtil.class, "/default.language");
 	}
 
 	private static File loadBmDir() {
