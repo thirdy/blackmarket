@@ -3,5 +3,46 @@
 ; Blackmarket Search Language Config
 ; TODO: put in documentation here how this whole thing works, otherwise, understand BlackmarketLanguageParserInstance.java
 
-ring=type=Ring
-(\d+)life=mods=&modexclude=&modmin=$GROUP1&modmax=&mods=(pseudo) (total) +# to maximum Life
+;
+; Item Types
+;
+ring		=		type=Ring
+
+1h								=		type=Generic One-Handed Weapon
+2h								=		type=Generic Two-Handed Weapon
+bow								=		type=Bow
+claw							=		type=Claw
+dagger							=		type=Dagger
+1haxe							=		type=One Hand Axe
+1hmace							=		type=One Hand Mace
+1hsword							=		type=One Hand Sword
+sceptre							=		type=Sceptre
+staff							=		type=Staff
+2haxe							=		type=Two Hand Axe
+2hmace							=		type=Two Hand Mace
+2hsword							=		type=Two Hand Sword
+wand							=		type=Wand
+
+armour							=		type=Body Armour
+boots							=		type=Boots
+gloves							=		type=Gloves
+helmet							=		type=Helmet
+shield							=		type=Shield
+								
+amulet							=		type=Amulet
+belt							=		type=Belt
+currency						=		type=Currency
+								=		type=Divination Card
+								=		type=Fishing Rods
+								=		type=Flask
+								=		type=Gem
+								=		type=Jewel
+								=		type=Map
+								=		type=Quiver
+								=		type=Ring
+								=		type=Vaal Fragments
+
+;
+; Explicit Mods
+;
+(\d+)life	=		mods=&modexclude=&modmin=$GROUP1&modmax=&mods=(pseudo) (total) +# to maximum Life

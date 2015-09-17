@@ -58,6 +58,8 @@ public class BlackmarketUtil {
 					// substringBefore/substringAfter is first occurance
 					String key = StringUtils.substringBefore(line, "=");
 					String value = StringUtils.substringAfter(line, "=");
+					key = StringUtils.trim(key);
+					value = StringUtils.trim(value);
 					map.put(key, value);
 				}
 			}
