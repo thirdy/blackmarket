@@ -4,7 +4,8 @@
 
 #### Screenshot:
 
-![screenshot-3](https://github.com/thirdy/blackmarket/blob/master/blackmarket/srcsht-3.PNG)
+![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/blackmarket-0.1.png)
+![screenshot-2](https://github.com/thirdy/blackmarket/blob/master/blackmarket/blackmarket-0.1-src2.png)
 
 #### Features
 
@@ -26,3 +27,8 @@
 
 cd into blackmarket-ui directory
 mvn exec:java -Dexec.mainClass="net.thirdy.blackmarket.MainApp"
+
+#### Attributions 
+https://en.wikipedia.org/wiki/File:Ancient_German_armour_helmet.jpg
+https://lh5.googleusercontent.com/-_zzRy8gEoS4/AAAAAAAAAAI/AAAAAAAAABs/dFFVQ-Yr72Y/photo.jpg?sz=50
+http://www.cebu-tourism.techcellar.net/wp-content/uploads/2010/03/1pbase.com_1.jpg

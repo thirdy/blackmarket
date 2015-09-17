@@ -38,7 +38,7 @@
                         <Insets />
                      </opaqueInsets>
                      <content>
-                        <VBox fx:id="itemPaneVBox" />
+                        <ListView fx:id="itemListView" prefHeight="200.0" prefWidth="200.0" />
                      </content>
                   </ScrollPane>
                   <Label layoutX="14.0" layoutY="708.0" prefHeight="17.0" prefWidth="200.0" text="Status: Ready" AnchorPane.bottomAnchor="13.0" />

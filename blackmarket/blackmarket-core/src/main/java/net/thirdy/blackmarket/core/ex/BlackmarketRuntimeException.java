@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.thirdy.blackmarket.core;
+package net.thirdy.blackmarket.core.ex;
 
 /**
  *
  * @author thirdy
  */
-public class PoeTradeHttpClientException extends Exception {
+public class BlackmarketRuntimeException extends RuntimeException {
 
-    public PoeTradeHttpClientException(Exception ex) {
+    public BlackmarketRuntimeException(Exception ex) {
         super(ex);
     }
     
