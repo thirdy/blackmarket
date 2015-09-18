@@ -2,7 +2,7 @@ package net.thirdy.blackmarket;
 
 public class AppConfig {
 
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "v0.1.1-pre-alpha";
 	public static final boolean TESTING_MODE = false;
 	public static final String TITLE = "Blackmarket " + VERSION;
 	public static String getAboutMessage() {

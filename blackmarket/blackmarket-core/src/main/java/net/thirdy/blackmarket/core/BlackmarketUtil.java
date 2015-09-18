@@ -12,7 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import net.thirdy.blackmarket.core.ex.BlackmarketException;
 import net.thirdy.blackmarket.core.ex.BlackmarketRuntimeException;
 
 public class BlackmarketUtil {
