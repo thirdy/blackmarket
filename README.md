@@ -27,7 +27,7 @@ blackmarket is fan-made and not affiliated with Grinding Gear Games in any way.
 8. Activate application on hotkey press from PoE
 
 #### How to run:
-Double click the jar. Make sure you have java installed, java 7 recommended.
+Double click the jar. Make sure you have java installed, at least java 7 recommended.
 
 #### Attributions 
 https://en.wikipedia.org/wiki/File:Ancient_German_armour_helmet.jpg
