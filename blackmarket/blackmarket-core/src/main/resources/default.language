@@ -132,6 +132,10 @@ lightres							=		mods=(pseudo) +#% total Lightning Resistance&modexclude=&modmi
 (\d+)lightres						=		mods=(pseudo) +#% total Lightning Resistance&modexclude=&modmin=$GROUP1&modmax=
 (\d+)-(\d+)lightres					=		mods=(pseudo) +#% total Lightning Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
 
+ms									=		mods=#% increased Movement Speed&modexclude=&modmin=&modmax=
+(\d+)ms								=		mods=#% increased Movement Speed&modexclude=&modmin=$GROUP1&modmax=
+(\d+)-(\d+)ms						=		mods=#% increased Movement Speed&modexclude=&modmin=$GROUP1&modmax=$GROUP2
+
 iir									=		mods=(pseudo) (total) #% increased Rarity of Items found&modexclude=&modmin=&modmax=
 (\d+)iir							=		mods=(pseudo) (total) #% increased Rarity of Items found&modexclude=&modmin=$GROUP1&modmax=
 (\d+)-(\d+)iir						=		mods=(pseudo) (total) #% increased Rarity of Items found&modexclude=&modmin=$GROUP1&modmax=$GROUP2
