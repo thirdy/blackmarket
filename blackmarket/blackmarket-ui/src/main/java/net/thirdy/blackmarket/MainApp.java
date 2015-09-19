@@ -1,7 +1,15 @@
 package net.thirdy.blackmarket;
 
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import org.pushingpixels.substance.api.skin.BusinessBlackSteelSkin;
+import org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 import net.thirdy.blackmarket.core.BackendClient;
 import net.thirdy.blackmarket.core.util.BlackmarketConfig;
@@ -17,11 +25,19 @@ public class MainApp {
 	}
 
 	public static void main(String[] args) {
+		JFrame.setDefaultLookAndFeelDecorated(true);
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override
 			public void run() {
 				BlackmarketConfig.setupConfigFiles();
+				try {
+					UIManager.setLookAndFeel(BlackmarketConfig.properties().lookAndFeel());
+				} catch (Exception e) {
+					System.out.println("Substance Look and Feel failed to initialize");
+					JOptionPane.showMessageDialog(null, "Substance Look and Feel failed to initialize: " + e.getMessage());
+				}
+				
 				new BlackmarketJFrame();
 			}
 		});

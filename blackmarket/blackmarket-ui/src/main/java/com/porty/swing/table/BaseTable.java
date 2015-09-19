@@ -1,9 +1,13 @@
 package com.porty.swing.table;
 
+import java.awt.Color;
+
 import javax.swing.JTable;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+
+import net.thirdy.blackmarket.core.util.BlackmarketConfig;
 
 /**
  * Base table extends SwingX JXTable and provides a few more functions which are
@@ -24,7 +28,15 @@ public class BaseTable extends JXTable {
     public BaseTable() {
         // always enable column control and striping
         setColumnControlVisible(true);
-        setHighlighters(HighlighterFactory.createSimpleStriping());
+        Color color = BlackmarketConfig.properties().highlightColor();
+        if (color != null) {
+        	setHighlighters(HighlighterFactory.createSimpleStriping());
+		} else {
+			// this will use the default color from L&F
+			setHighlighters(HighlighterFactory.createSimpleStriping());
+		}
+//        setHighlighters(HighlighterFactory.createSimpleStriping());
+//        setHighlighters(HighlighterFactory.createAlternateStriping());
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 //        setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 

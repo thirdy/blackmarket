@@ -3,12 +3,17 @@
  */
 package net.thirdy.blackmarket.core.util;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import javax.swing.LookAndFeel;
+
+import org.apache.commons.lang3.StringUtils;
 
 import net.thirdy.blackmarket.core.ex.BlackmarketRuntimeException;
 
@@ -59,6 +64,22 @@ public class BlackmarketProperties extends Properties {
 
 	public String blankSearch() {
 		return getProperty("blankSearch", "boots 4L 70life 50res");
+	}
+
+	public String lookAndFeel() {
+		return getProperty("lookAndFeel", "org.pushingpixels.substance.api.skin.SubstanceMarinerLookAndFeel");
+	}
+
+	public Color highlightColor() {
+		String colorRaw = getProperty("highlightColor", "");
+		if (!colorRaw.isEmpty()) {
+			String[] rgb = StringUtils.split(colorRaw, ',');
+			int r = Integer.parseInt(rgb[0]);
+			int g = Integer.parseInt(rgb[1]);
+			int b = Integer.parseInt(rgb[2]);
+			return new Color(r, g, b);
+		}
+		return null;
 	}
 
 //	public void updateVersion(String newVersion) {
