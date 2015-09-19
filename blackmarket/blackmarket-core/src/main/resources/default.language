@@ -45,7 +45,8 @@ frag							=		type=Vaal Fragments
 ;
 offline							= 		online=
 online							= 		online=x
-bo								= 		buyout=x
+; We don't wanna show items with 0 b/o
+bo								= 		buyout=x&buyout_currency=alteration&buyout_min=1
 nobo							= 		buyout=
 
 ;

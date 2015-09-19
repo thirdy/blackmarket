@@ -105,7 +105,9 @@ public class BlackmarketJFrame extends JFrame {
 		montherPanel.add(headerPanel, BorderLayout.NORTH);
 		getContentPane().add(montherPanel);
 		setupTableSelectionListener();
-//		loadData(loadSampleData());
+		if (BlackmarketConfig.DEVELOPMENT_MODE) {
+			loadData(loadSampleData());
+		}
 		setVisible(true);
 	}
 	
@@ -180,7 +182,7 @@ public class BlackmarketJFrame extends JFrame {
 					System.out.println("Formatted payload: " + payload);
 
 					System.out.println("now calling backend");
-					String searchPage = MainApp.getPoeTradeHttpClient().search(payload);
+					String searchPage = MainApp.getPoeTradeHttpClient().search(payload, BlackmarketConfig.properties().alwaysSortByBuyout());
 					System.out.println("Search done, now parsing");
 					
 					SearchPageScraper scraper = new SearchPageScraper(searchPage);
@@ -191,10 +193,11 @@ public class BlackmarketJFrame extends JFrame {
 					list.toArray(arr);
 					publish(arr);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(BlackmarketJFrame.this, "error: " + e.getMessage());
+					// JOptionPane.showMessageDialog(BlackmarketJFrame.this, "error: " + e.getMessage());
 					System.out.println(e.getMessage());
 					e.printStackTrace();
-					disable(searchButton, 5);
+					publish(new SearchResultItem[] {SearchResultItem.exceptionItem(e)});
+					disable(searchButton, 10);
 				}
 
 				return null;
@@ -204,7 +207,7 @@ public class BlackmarketJFrame extends JFrame {
 			protected void process(List<SearchResultItem> chunks) {
 				// This updates the UI
 				loadData(chunks);
-				disable(searchButton, 5);
+				disable(searchButton, 10);
 			}
 		};
 		sw.execute();

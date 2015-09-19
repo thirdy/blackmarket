@@ -125,9 +125,9 @@ public class BlackmarketLanguageParserInstance {
 		map.put("buyout", properties().buyoutOnly() ? "x" : "");
 		map.put("altart", "");
 		map.put("capquality", "x");
-		map.put("buyout_min", "");
+		map.put("buyout_min", properties().buyoutOnlyMin());
 		map.put("buyout_max", "");
-		map.put("buyout_currency", "");
+		map.put("buyout_currency", properties().buyoutOnlyCurrency());
 		map.put("crafted", "");
 		map.put("identified", "");
 	}

@@ -7,11 +7,8 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import javax.swing.LookAndFeel;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,7 +21,6 @@ import net.thirdy.blackmarket.core.ex.BlackmarketRuntimeException;
  */
 public class BlackmarketProperties extends Properties {
 
-	private static final String OPTION_EITHER = "either";
 	private static final String KEY_VERSION = "version";
 	private static final long serialVersionUID = 1L;
 
@@ -80,6 +76,18 @@ public class BlackmarketProperties extends Properties {
 			return new Color(r, g, b);
 		}
 		return null;
+	}
+
+	public String buyoutOnlyCurrency() {
+		return getProperty("buyoutOnlyCurrency", "");
+	}
+
+	public String buyoutOnlyMin() {
+		return getProperty("buyoutOnlyMin", "1");
+	}
+
+	public boolean alwaysSortByBuyout() {
+		return Boolean.parseBoolean(getProperty("alwaysSortByBuyout", "true").toString());
 	}
 
 //	public void updateVersion(String newVersion) {
