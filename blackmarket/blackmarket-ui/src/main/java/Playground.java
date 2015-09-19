@@ -1,4 +1,4 @@
-import net.thirdy.blackmarket.core.BlackmarketUtil;
+import net.thirdy.blackmarket.core.util.BlackmarketUtil;
 import net.thirdy.blackmarket.swing.BlackmarketJFrame;
 
 /**

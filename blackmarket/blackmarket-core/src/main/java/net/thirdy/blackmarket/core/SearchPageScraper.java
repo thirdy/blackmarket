@@ -39,10 +39,15 @@ public class SearchPageScraper {
 	public List<SearchResultItem> parse() {
 		List<SearchResultItem> searchResultItems = new LinkedList<>();
 		Document doc = Jsoup.parse(page);
-
+		
 		Element content = doc.getElementById("content");
 
-		Elements items = content.getElementsByClass("item");
+		Elements items = null;
+		if (content == null) {
+			items = doc.getElementsByClass("item");
+		} else {
+			items = content.getElementsByClass("item");
+		}
 
 //		System.out.println(items.get(86).toString());
 
@@ -129,6 +134,13 @@ public class SearchPageScraper {
 			item.crit = element.getElementsByAttributeValue("data-name", "crit").get(0).text();
 			// "level"
 			
+			Elements onlineSpans = element.getElementsMatchingText("online");
+			if (!onlineSpans.isEmpty()) {
+				item.online="Online";
+			} else {
+				item.online="";
+			}
+			
 			searchResultItems.add(item);
 		}
 //		System.out.println("DONE --- Items");
@@ -178,13 +190,11 @@ public class SearchPageScraper {
 		Mod implicitMod;
 		List<Mod> explicitMods = new ArrayList<>();
 		
+		String online;
+		
 		public List<Mod> getExplicitMods() {
 			return explicitMods;
 		}
-
-//		public Set<String> getExplicitModsNames() {
-//			return getExplicitMods().stream().map(Mod::getName).collect(Collectors.toSet());
-//		}
 		
 		public String getWTB() {
 			return String.format(
@@ -348,6 +358,14 @@ public class SearchPageScraper {
 		public Mod getImplicitMod() {
 			return implicitMod;
 		}
+		
+		public String getOnline() {
+			return online;
+		}
+
+		public void setOnline(String online) {
+			this.online = online;
+		}
 
 		public String getFieldValue(String field) {
 			String value;
@@ -367,6 +385,18 @@ public class SearchPageScraper {
 			return getExplicitModValueByName("#(pseudo) (total) +# to maximum Life");
 		}
 		
+		public String getFireRes() {
+			return getExplicitModValueByName("#+#% to Fire Resistance");
+		}
+		
+		public String getColdRes() {
+			return getExplicitModValueByName("#+#% to Cold Resistance");
+		}
+		
+		public String getLightRes() {
+			return getExplicitModValueByName("#+#% to Light Resistance");
+		}
+		
 		private String getExplicitModValueByName(String name) {
 			for (Mod mod : explicitMods) {
 				if (mod.getName().equalsIgnoreCase(name)) {
@@ -374,6 +404,14 @@ public class SearchPageScraper {
 				}
 			}
 			return "";
+		}
+
+		public static SearchResultItem exceptionItem(Exception e) {
+			SearchResultItem item = new SearchResultItem();
+			item.name = e.getMessage();
+			item.ign = e.getClass().getName();
+			item.socketsRaw = e.getCause().getMessage();
+			return item;
 		}
 		
 	}

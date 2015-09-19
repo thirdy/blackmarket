@@ -20,12 +20,16 @@ public class BlackmarketTableModel extends DefaultTableModel {
 				"ID",
 				"B/o",
 				"WTB",
+				"Online",
 				"Name",
 				"IGN",
 				"Sockets",
 				"%", // quality
 				"Life",
 				"EleRes",
+				"FireRes",
+				"ColdRes",
+				"LightRes",
 				"pDPS%r", //physDmgRangeAtMaxQuality
 				"pDPS%", // physDmgAtMaxQuality
 				"eDPSr", // eleDmgRange
@@ -56,12 +60,16 @@ public class BlackmarketTableModel extends DefaultTableModel {
 						item.getId(),
 						item.getBuyout(),
 						"WTB",
+						item.getOnline(),
 						item.getName(),
 						item.getIgn(),
 						item.getSocketsRaw(),
 						item.getQuality(),
 						item.getPseudoLife(),
 						item.getPseudoEleResistance(),
+						item.getFireRes(),
+						item.getColdRes(),
+						item.getLightRes(),
 						item.getPhysDmgRangeAtMaxQuality(),
 						item.getPhysDmgAtMaxQuality(),
 						item.getEleDmgRange(),

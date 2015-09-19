@@ -46,7 +46,6 @@ public class SearchPageScraperTest {
 		List<SearchResultItem> list = scraper.parse();
 		for (SearchResultItem item : list) {
 			if (item.getName().equals("Victory Shroud Destiny Leather")) {
-				assertEquals("58.0", item.getPseudoEleResistance());
 				assertEquals("79.0", item.getPseudoLife());
 //				for (Mod mod : item.getExplicitMods()) {
 //					System.out.println(mod);
