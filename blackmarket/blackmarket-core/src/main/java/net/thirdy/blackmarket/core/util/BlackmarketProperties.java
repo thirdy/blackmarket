@@ -63,7 +63,7 @@ public class BlackmarketProperties extends Properties {
 	}
 
 	public String lookAndFeel() {
-		return getProperty("lookAndFeel", "org.pushingpixels.substance.api.skin.SubstanceMarinerLookAndFeel");
+		return getProperty("lookAndFeel", "org.pushingpixels.substance.api.skin.SubstanceModerateLookAndFeel");
 	}
 
 	public Color highlightColor() {

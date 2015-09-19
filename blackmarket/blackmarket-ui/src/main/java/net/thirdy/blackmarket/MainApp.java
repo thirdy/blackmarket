@@ -6,11 +6,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.pushingpixels.substance.api.skin.BusinessBlackSteelSkin;
-import org.pushingpixels.substance.api.skin.SubstanceBusinessBlackSteelLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceDustLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
-
 import net.thirdy.blackmarket.core.BackendClient;
 import net.thirdy.blackmarket.core.util.BlackmarketConfig;
 import net.thirdy.blackmarket.swing.BlackmarketJFrame;

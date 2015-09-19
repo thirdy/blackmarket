@@ -5,16 +5,16 @@
 blackmarket is fan-made and not affiliated with Grinding Gear Games in any way.
 
 ## v0.2-pre-alpha changelog
-1. Refactored utils code
-2. New config file: blackmarket.properties
+1. A lot, will update this later
 
 ## Blackmarket Homepage
 [http://thirdy.github.io/blackmarket/](http://thirdy.github.io/blackmarket/)
 
 #### Screenshot:
 
-![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/blackmarket-0.1.png)
-![screenshot-2](https://github.com/thirdy/blackmarket/blob/master/blackmarket/blackmarket-0.1-src2.png)
+![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/v0.2-pre-alpha-release-scrsht1.png)
+![screenshot-2](https://github.com/thirdy/blackmarket/blob/master/blackmarket/v0.2-pre-alpha-in-development2.png)
+![screenshot-3](https://github.com/thirdy/blackmarket/blob/master/blackmarket/v0.2-pre-alpha-in-development.png)
 
 #### Features (or planned features)
 
