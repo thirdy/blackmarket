@@ -4,6 +4,10 @@
 
 blackmarket is fan-made and not affiliated with Grinding Gear Games in any way.
 
+## v0.2-pre-alpha changelog
+1. Refactored utils code
+2. New config file: blackmarket.properties
+
 ## Blackmarket Homepage
 [http://thirdy.github.io/blackmarket/](http://thirdy.github.io/blackmarket/)
 

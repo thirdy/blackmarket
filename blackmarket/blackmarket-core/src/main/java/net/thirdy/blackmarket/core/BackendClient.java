@@ -11,35 +11,32 @@ package net.thirdy.blackmarket.core;
  */
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.Header;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import net.thirdy.blackmarket.core.ex.BlackmarketException;
 
-public class PoeTradeHttpClient {
+public class BackendClient {
 
 //    private String cookies;
     private HttpClient client = HttpClientBuilder.create().build();
+    
+    int timeout = 30;
+	int CONNECTION_TIMEOUT = timeout  * 1000; // timeout in millis
+    RequestConfig requestConfig = RequestConfig.custom()
+        .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
+        .setConnectTimeout(CONNECTION_TIMEOUT)
+        .setSocketTimeout(CONNECTION_TIMEOUT)
+        .build();
 
     public static void main(String[] args) throws Exception {
         
@@ -47,8 +44,8 @@ public class PoeTradeHttpClient {
         // make sure cookies is turn on
 //        CookieHandler.setDefault(new CookieManager());
 
-        PoeTradeHttpClient poeTradeHttpClient = new PoeTradeHttpClient();
-        String searchPage = poeTradeHttpClient.search("league=Warbands&type=&base=&name=&dmg_min=&dmg_max=&aps_min=&aps_max=&crit_min=&crit_max=&dps_min=&dps_max=&edps_min=&edps_max=&pdps_min=&pdps_max=&armour_min=&armour_max=&evasion_min=&evasion_max=&shield_min=&shield_max=&block_min=&block_max=&sockets_min=&sockets_max=&link_min=&link_max=&sockets_r=&sockets_g=&sockets_b=&sockets_w=&linked_r=&linked_g=&linked_b=&linked_w=&rlevel_min=&rlevel_max=&rstr_min=&rstr_max=&rdex_min=&rdex_max=&rint_min=&rint_max=&impl=&impl_min=&impl_max=&mods=&modexclude=&modmin=&modmax=&mods=&modexclude=&modmin=&modmax=&q_min=&q_max=&level_min=&level_max=&mapq_min=&mapq_max=&rarity=&seller=&thread=&time=2015-08-29&corrupted=&online=&buyout=&altart=&capquality=x&buyout_min=&buyout_max=&buyout_currency=&crafted=&identified=");
+        BackendClient backendClient = new BackendClient();
+        String searchPage = backendClient.search("league=Warbands&type=&base=&name=&dmg_min=&dmg_max=&aps_min=&aps_max=&crit_min=&crit_max=&dps_min=&dps_max=&edps_min=&edps_max=&pdps_min=&pdps_max=&armour_min=&armour_max=&evasion_min=&evasion_max=&shield_min=&shield_max=&block_min=&block_max=&sockets_min=&sockets_max=&link_min=&link_max=&sockets_r=&sockets_g=&sockets_b=&sockets_w=&linked_r=&linked_g=&linked_b=&linked_w=&rlevel_min=&rlevel_max=&rstr_min=&rstr_max=&rdex_min=&rdex_max=&rint_min=&rint_max=&impl=&impl_min=&impl_max=&mods=&modexclude=&modmin=&modmax=&mods=&modexclude=&modmin=&modmax=&q_min=&q_max=&level_min=&level_max=&mapq_min=&mapq_max=&rarity=&seller=&thread=&time=2015-08-29&corrupted=&online=&buyout=&altart=&capquality=x&buyout_min=&buyout_max=&buyout_currency=&crafted=&identified=");
         System.out.println(searchPage);
         System.out.println("Done");
     }
@@ -57,10 +54,12 @@ public class PoeTradeHttpClient {
         try {
             String url = "http://poe.trade/search";
             String location = post(url, payload);
+            // Add a bit of delay, just in case
+            Thread.sleep(30);
             String searchPage = get(location);
             return searchPage;
         } catch (Exception ex) {
-            Logger.getLogger(PoeTradeHttpClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BackendClient.class.getName()).log(Level.SEVERE, null, ex);
             throw new BlackmarketException(ex);
         }
     }
@@ -69,6 +68,7 @@ public class PoeTradeHttpClient {
             throws Exception {
 
         HttpPost post = new HttpPost(url);
+        post.setConfig(requestConfig);
 
         // add header
         post.setHeader("Host", "poe.trade");
@@ -84,12 +84,12 @@ public class PoeTradeHttpClient {
 //        post.setEntity(new UrlEncodedFormEntity(postParams));
         post.setEntity(new StringEntity(payload));
 
+        System.out.println("\nSending 'POST' request to URL : " + url);
         // bombs away!
         HttpResponse response = client.execute(post);
 
         int responseCode = response.getStatusLine().getStatusCode();
 
-        System.out.println("\nSending 'POST' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
 
         BufferedReader rd = new BufferedReader(
@@ -120,7 +120,8 @@ public class PoeTradeHttpClient {
     private String get(String url) throws Exception {
 
         HttpGet get = new HttpGet(url);
-
+        get.setConfig(requestConfig);
+        
         get.setHeader("Host", "poe.trade");
         get.setHeader("User-Agent", USER_AGENT);
         get.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");

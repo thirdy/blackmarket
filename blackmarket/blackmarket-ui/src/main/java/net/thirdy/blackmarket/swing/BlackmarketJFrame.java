@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,13 +34,13 @@ import org.apache.commons.lang3.StringUtils;
 import com.porty.swing.table.BaseTable;
 import com.porty.swing.util.WindowUtils;
 
-import net.thirdy.blackmarket.AppConfig;
 import net.thirdy.blackmarket.MainApp;
 import net.thirdy.blackmarket.core.BlackmarketLanguageParserInstance;
-import net.thirdy.blackmarket.core.BlackmarketUtil;
 import net.thirdy.blackmarket.core.SearchPageScraper;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 import net.thirdy.blackmarket.core.SearchPayload;
+import net.thirdy.blackmarket.core.util.BlackmarketConfig;
+import net.thirdy.blackmarket.core.util.BlackmarketUtil;
 
 @SuppressWarnings("serial")
 public class BlackmarketJFrame extends JFrame {
@@ -54,7 +55,7 @@ public class BlackmarketJFrame extends JFrame {
 	Action searchAction;
 	
 	public BlackmarketJFrame() {
-		super(AppConfig.TITLE);
+		super(BlackmarketConfig.TITLE);
 		setupIconImage();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Rectangle screenRect = WindowUtils.getScreenRect();
@@ -74,9 +75,7 @@ public class BlackmarketJFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Search button clicked");
-				if (StringUtils.isNotBlank(searchField.getText())) {
-					searchEventHandler();
-				}
+				searchEventHandler();
 			}
 		};
 		searchButton.addActionListener(searchAction);
@@ -129,7 +128,6 @@ public class BlackmarketJFrame extends JFrame {
 				super.mouseClicked(e);
 				int row = table.getSelectedRow();
 		        int col = table.getSelectedColumn();
-		        System.out.println(row + " " + col);
 		        BlackmarketTableModel model = (BlackmarketTableModel) table.getModel();
 	        	SearchResultItem item = model.getItem(row);
 	        	itemViewPanel.setItem(item);
@@ -172,15 +170,19 @@ public class BlackmarketJFrame extends JFrame {
 					List<SearchResultItem> list = Collections.emptyList();
 					System.out.println("loading search params");
 					String searchString = searchField.getText();
+					searchString = StringUtils.isBlank(searchString) ? BlackmarketConfig.properties().blankSearch() : searchString;
 					// String payload = loadDefaultSearchFile();
 					BlackmarketLanguageParserInstance bmLang = new BlackmarketLanguageParserInstance();
 					String payload = bmLang.parse(searchString);
 					
-					System.out.println("RAW payload: " + payload);
+					System.out.println("now formatting payload");
 					payload = new SearchPayload(payload).getPayloadFormatted();
 					System.out.println("Formatted payload: " + payload);
 
-					String searchPage = MainApp.getPoeTradeHttpClient().search(payload );
+					System.out.println("now calling backend");
+					String searchPage = MainApp.getPoeTradeHttpClient().search(payload);
+					System.out.println("Search done, now parsing");
+					
 					SearchPageScraper scraper = new SearchPageScraper(searchPage);
 					list = scraper.parse();
 
@@ -189,8 +191,10 @@ public class BlackmarketJFrame extends JFrame {
 					list.toArray(arr);
 					publish(arr);
 				} catch (Exception e) {
-					System.out.println("error: " + e.getMessage());
+					JOptionPane.showMessageDialog(BlackmarketJFrame.this, "error: " + e.getMessage());
+					System.out.println(e.getMessage());
 					e.printStackTrace();
+					disable(searchButton, 5);
 				}
 
 				return null;
@@ -200,6 +204,7 @@ public class BlackmarketJFrame extends JFrame {
 			protected void process(List<SearchResultItem> chunks) {
 				// This updates the UI
 				loadData(chunks);
+				disable(searchButton, 5);
 			}
 		};
 		sw.execute();
@@ -223,7 +228,6 @@ public class BlackmarketJFrame extends JFrame {
 		table.getColumn("WTB").setCellEditor(new ButtonColumn(table, action, 2));
 		table.packAll();
 		
-		searchButton.setEnabled(true);
 		this.setCursor(Cursor.getDefaultCursor());
 	}
 
@@ -238,5 +242,21 @@ public class BlackmarketJFrame extends JFrame {
 		return scraper.parse();
 	}
 
-
+	void disable(final AbstractButton b, final long seconds) {
+	    b.setEnabled(false);
+	    new SwingWorker() {
+	        @Override protected Object doInBackground() throws Exception {
+	        	String buttonLabel = b.getText();
+	            for (int i = 0; i < seconds; i++) {
+	            	b.setText(buttonLabel + "(" + (seconds - i) + ")");
+	            	Thread.sleep(1000);
+				}
+	            b.setText(buttonLabel);
+	            return null;
+	        }
+	        @Override protected void done() {
+	            b.setEnabled(true);
+	        }
+	    }.execute();
+	}
 }

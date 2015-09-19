@@ -1,6 +1,10 @@
 package net.thirdy.blackmarket.core;
 
+import static net.thirdy.blackmarket.core.util.BlackmarketConfig.properties;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -11,11 +15,19 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+
+import net.thirdy.blackmarket.core.util.BlackmarketConfig;
+import net.thirdy.blackmarket.core.util.BlackmarketUtil;
 
 public class BlackmarketLanguageParserInstance {
 	
@@ -27,17 +39,17 @@ public class BlackmarketLanguageParserInstance {
 	public BlackmarketLanguageParserInstance() {
 		loadDefaultsToMap();
 		
-		Date date = BlackmarketUtil.getDateInThePast(7);
+		Date date = BlackmarketUtil.getDateInThePast(properties().lastDaysSeen());
 		String dateStr = DateFormatUtils.format(date, "yyyy-MM-dd");
 		map.put("time", dateStr);
 		
-		dictionary = BlackmarketUtil.loadLanguageDictionary();
+		dictionary = BlackmarketConfig.loadLanguageDictionary();
 	}
 
 
 
 	private void loadDefaultsToMap() {
-		map.put("league", "Warbands");
+		map.put("league", properties().league());
 		map.put("type", "");
 		map.put("base", "");
 		map.put("name", "");
@@ -109,8 +121,8 @@ public class BlackmarketLanguageParserInstance {
 		map.put("thread", "");
 		map.put("time", "");
 		map.put("corrupted", "");
-		map.put("online", "x");
-		map.put("buyout", "x");
+		map.put("online", properties().onlineOnly() ? "x" : "");
+		map.put("buyout", properties().buyoutOnly() ? "x" : "");
 		map.put("altart", "");
 		map.put("capquality", "x");
 		map.put("buyout_min", "");
@@ -123,21 +135,21 @@ public class BlackmarketLanguageParserInstance {
 
 
 	public String parse(String input) {
-		String[] tokens = StringUtils.split(input);
-		String[] parsedTokens = new String[tokens.length];
+		List<String> tokens = Arrays.asList(StringUtils.split(input));
 		
-		// translate tokens using dictionary
-		for (String token : tokens) {
-			
-			String result = processToken(token);
-			
-			if (StringUtils.isNotBlank(result)) {
-				String key = StringUtils.substringBefore(result, "=");
-				String value = StringUtils.substringAfter(result, "=");
+		// translate tokens using language dictionary
+		Collection<String> dictionaryResults = Lists.transform(tokens, functionProcessToken());
+		dictionaryResults = Collections2.filter(dictionaryResults, BlackmarketUtil.NON_BLANK_STRING);
+		
+		for (String result : dictionaryResults) {
+			String[] resultItems = StringUtils.split(result, '&');
+			for (String resultItem : resultItems) {
+				String key = StringUtils.substringBefore(resultItem, "=");
+				String value = StringUtils.substringAfter(resultItem, "=");
 				
-				if (isExplicitMod(result)) {
+				if (isExplicitMod(resultItem)) {
 					// we need to put these into list since these are repeating data
-					explicitModParams.add(result);
+					explicitModParams.add(resultItem);
 				} else {
 					map.put(key, value);
 				}
@@ -146,6 +158,18 @@ public class BlackmarketLanguageParserInstance {
 		
 		String finalResult = buildFinalOutput(); 
 		return finalResult;
+	}
+
+
+
+	private Function<String, String> functionProcessToken() {
+		return new Function<String, String>() {
+
+			@Override
+			public String apply(String token) {
+				return processToken(token);
+			}
+		};
 	}
 
 
@@ -224,5 +248,6 @@ public class BlackmarketLanguageParserInstance {
 		String finalResult = StringUtils.join(lines1.toArray(), BlackmarketUtil.lineSep());
 		return finalResult;
 	}
+
 
 }
