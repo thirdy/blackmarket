@@ -4,36 +4,16 @@
 
 blackmarket is fan-made and not affiliated with Grinding Gear Games in any way.
 
-## v0.2-pre-alpha changelog
-1. A lot, will update this later
-
 ## Blackmarket Homepage
 [http://thirdy.github.io/blackmarket/](http://thirdy.github.io/blackmarket/)
 
-#### Screenshot:
+## Developer notes:
+The project is written in Java and Swing. It uses maven muti-module directory structure. Use Eclipse 4.5 Mars. WindowBuilderPro is also used. 
 
-![screenshot-1](https://github.com/thirdy/blackmarket/blob/master/blackmarket/v0.2-pre-alpha-release-scrsht1.png)
-![screenshot-2](https://github.com/thirdy/blackmarket/blob/master/blackmarket/v0.2-pre-alpha-in-development2.png)
-![screenshot-3](https://github.com/thirdy/blackmarket/blob/master/blackmarket/v0.2-pre-alpha-in-development.png)
 
-#### Features (or planned features)
-
-1. Search form
-  a. most common fields shown first
-  b. use radio/checkboxes over combobox for usability
-2. Copy item to shortlist
-3. Provide graphical view of the stats
-4. Bookmark items if user is offline
-5. Show improved view on account age and highest level. right now it's a1253h87
-
-6. Query language for searching
-7. Search for upgrades based on item data in the clipboard
-8. Activate application on hotkey press from PoE
-
-#### How to run:
-Double click the jar. Make sure you have java installed, at least java 7 recommended.
-
-#### Attributions 
-https://en.wikipedia.org/wiki/File:Ancient_German_armour_helmet.jpg
-https://lh5.googleusercontent.com/-_zzRy8gEoS4/AAAAAAAAAAI/AAAAAAAAABs/dFFVQ-Yr72Y/photo.jpg?sz=50
-http://www.cebu-tourism.techcellar.net/wp-content/uploads/2010/03/1pbase.com_1.jpg
+## Attributions
+1. See more at pom.xml
+1. http://insubstantial.github.io/insubstantial/substance/ 
+1. https://en.wikipedia.org/wiki/File:Ancient_German_armour_helmet.jpg
+1. https://lh5.googleusercontent.com/-_zzRy8gEoS4/AAAAAAAAAAI/AAAAAAAAABs/dFFVQ-Yr72Y/photo.jpg?sz=50
+1. http://www.cebu-tourism.techcellar.net/wp-content/uploads/2010/03/1pbase.com_1.jpg
