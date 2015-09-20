@@ -4,11 +4,9 @@ import static net.thirdy.blackmarket.core.util.BlackmarketUtil.homeDirectory;
 import static net.thirdy.blackmarket.core.util.BlackmarketUtil.loadOrCreateDirectory;
 import static net.thirdy.blackmarket.core.util.BlackmarketUtil.loadOrCreateFile;
 import static net.thirdy.blackmarket.core.util.BlackmarketUtil.readFileToString;
-import static net.thirdy.blackmarket.core.util.BlackmarketUtil.toFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,10 +66,12 @@ public class BlackmarketConfig {
 		if (blackmarketProperties.isNewInstall() || DEVELOPMENT_MODE) {
 			System.out.println("New install detected, creating/overwriting config files");
 			try {
-				FileUtils.copyFile(getDefaultLanguageConfig(), languageConfig);
-				FileUtils.copyFile(getDefaultPropertiesConfig(), propertiesFile);
+				FileUtils.deleteQuietly(languageConfig);
+				FileUtils.deleteQuietly(propertiesFile);
+				FileUtils.writeStringToFile(languageConfig, getDefaultLanguageConfig());
+				FileUtils.writeStringToFile(propertiesFile, getDefaultPropertiesConfig());
 				// if nothing goes wrong with setup of files, new install is successful
-				blackmarketProperties = new BlackmarketProperties(getDefaultPropertiesConfig());
+				blackmarketProperties = new BlackmarketProperties(propertiesConfigFile());
 			} catch (IOException e) {
 				throw new BlackmarketRuntimeException(e);
 			}
@@ -80,14 +80,12 @@ public class BlackmarketConfig {
 		System.out.println(blackmarketProperties.toString());
 	}
 
-	static File getDefaultLanguageConfig() {
-		URL url = BlackmarketConfig.class.getResource("/default.language");
-		return toFile(url);
+	static String getDefaultLanguageConfig() {
+		return BlackmarketUtil.loadFromClassPath(BlackmarketConfig.class, "/default.language");
 	}
 	
-	static File getDefaultPropertiesConfig() {
-		URL url = BlackmarketConfig.class.getResource("/default.properties");
-		return toFile(url);
+	static String getDefaultPropertiesConfig() {
+		return BlackmarketUtil.loadFromClassPath(BlackmarketConfig.class, "/default.properties");
 	}
 
 	static boolean isLineNotComment(String line) {

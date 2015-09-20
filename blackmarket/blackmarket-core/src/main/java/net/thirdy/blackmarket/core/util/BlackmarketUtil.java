@@ -40,14 +40,6 @@ public class BlackmarketUtil {
 		return page;
 	}
 	
-	public static File toFile(URL url) {
-		try {
-			return new File(url.toURI());
-		} catch (URISyntaxException e) {
-			throw new BlackmarketRuntimeException(e);
-		}
-	}
-
 	public static String readFileToString(File file) {
 		String raw = "";
 		try {

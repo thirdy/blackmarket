@@ -16,6 +16,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.Function;
@@ -125,5 +126,16 @@ public class ItemViewPanel extends JPanel {
 		
 		String s = StringUtils.join(modStrList.toArray(), System.getProperty("line.separator"));
 		taExplicitMods.setText(s);
+	}
+
+	public void generateAndUseRandomItem() {
+		lblName.setText("Random name " + RandomUtils.nextInt(1, 10));
+		taExplicitMods.setText(StringUtils.join(new String[] {
+				"Explicit mod 1",
+				"Explicit mod 2",
+				"Explicit mod 3",
+				"Explicit mod 4",
+				"Explicit mod 5"
+		}, System.getProperty("line.separator")));
 	}
 }
