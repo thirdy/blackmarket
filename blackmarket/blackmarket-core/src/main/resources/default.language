@@ -41,6 +41,14 @@ ring							=		type=Ring
 frag							=		type=Vaal Fragments
 
 ;
+; Leagues
+;
+standard = league=Standard
+tempest  = league=Tempest
+hardcore|hc = league=Hardcore
+warbands? = league=Warbands
+
+;
 ; Seller
 ;
 offline							= 		online=
@@ -48,6 +56,7 @@ online							= 		online=x
 ; We don't wanna show items with 0 b/o
 bo								= 		buyout=x&buyout_currency=alteration&buyout_min=1
 nobo							= 		buyout=
+
 
 ;
 ; Attributes
@@ -102,6 +111,12 @@ es|energyshield					=		shield_min=1
 ; Uniques
 ;
 qotf								=		name=Queen of the forest
+tabula 								= 		name=Tabula Rasa
+
+;
+; Currency max buyout
+;
+(\d{1,2})(ch|chaos) = buyout=x&buyout_currency=chaos&buyout_max=$GROUP1
 
 ;
 ; Explicit Mods
@@ -122,17 +137,17 @@ eleres								=		mods=(pseudo) +#% total Elemental Resistance&modexclude=&modmin
 (\d+)eleres							=		mods=(pseudo) +#% total Elemental Resistance&modexclude=&modmin=$GROUP1&modmax=
 (\d+)-(\d+)eleres					=		mods=(pseudo) +#% total Elemental Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
 
-fireres								=		mods=(pseudo) +#% total Fire Resistance&modexclude=&modmin=&modmax=
-(\d+)fireres						=		mods=(pseudo) +#% total Fire Resistance&modexclude=&modmin=$GROUP1&modmax=
-(\d+)-(\d+)fireres					=		mods=(pseudo) +#% total Fire Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
+fireres								=		mods=(pseudo) (total) +#% to Fire Resistance&modexclude=&modmin=&modmax=
+(\d+)fireres						=		mods=(pseudo) (total) +#% to Fire Resistance&modexclude=&modmin=$GROUP1&modmax=
+(\d+)-(\d+)fireres					=		mods=(pseudo) (total) +#% to Fire Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
 
-coldres								=		mods=(pseudo) +#% total Cold Resistance&modexclude=&modmin=&modmax=
-(\d+)coldres						=		mods=(pseudo) +#% total Cold Resistance&modexclude=&modmin=$GROUP1&modmax=
-(\d+)-(\d+)coldres					=		mods=(pseudo) +#% total Cold Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
+coldres								=		mods=(pseudo) (total) +#% Cold Resistance&modexclude=&modmin=&modmax=
+(\d+)coldres						=		mods=(pseudo) (total) +#% Cold Resistance&modexclude=&modmin=$GROUP1&modmax=
+(\d+)-(\d+)coldres					=		mods=(pseudo) (total) +#% Cold Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
 
-lightres							=		mods=(pseudo) +#% total Lightning Resistance&modexclude=&modmin=&modmax=
-(\d+)lightres						=		mods=(pseudo) +#% total Lightning Resistance&modexclude=&modmin=$GROUP1&modmax=
-(\d+)-(\d+)lightres					=		mods=(pseudo) +#% total Lightning Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
+lightres							=		mods=(pseudo) (total) +#% Lightning Resistance&modexclude=&modmin=&modmax=
+(\d+)lightres						=		mods=(pseudo) (total) +#% Lightning Resistance&modexclude=&modmin=$GROUP1&modmax=
+(\d+)-(\d+)lightres					=		mods=(pseudo) (total) +#% Lightning Resistance&modexclude=&modmin=$GROUP1&modmax=$GROUP2
 
 ms									=		mods=#% increased Movement Speed&modexclude=&modmin=&modmax=
 (\d+)ms								=		mods=#% increased Movement Speed&modexclude=&modmin=$GROUP1&modmax=
