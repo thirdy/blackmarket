@@ -133,6 +133,7 @@ public class SearchPageScraper {
 			item.block = element.getElementsByAttributeValue("data-name", "block").get(0).text();
 			item.crit = element.getElementsByAttributeValue("data-name", "crit").get(0).text();
 			// "level"
+			item.imageUrl = element.getElementsByAttributeValue("alt", "Item icon").get(0).attr("src");
 			
 			Elements onlineSpans = element.getElementsMatchingText("online");
 			if (!onlineSpans.isEmpty()) {
@@ -186,6 +187,8 @@ public class SearchPageScraper {
 		String thread;
 		String sellerid;
 		String threadUrl;
+		
+		String imageUrl;
 
 		Mod implicitMod;
 		List<Mod> explicitMods = new ArrayList<>();
@@ -228,8 +231,23 @@ public class SearchPageScraper {
 				return "Mod [name=" + name + ", value=" + value + "]";
 			}
 
+			/*  Convert the ff into human readable form:
+			    #Socketed Gems are Supported by level # Increased Area of Effect
+				##% increased Physical Damage
+				#+# to Strength
+				#+# to Accuracy Rating
+				#+# Mana Gained on Kill
+				#+# to Weapon range
+			 */
 			public String toStringDisplay() {
-				return name + ": " + value;
+				String display = name;
+				if (StringUtils.startsWith(name, "#") || StringUtils.startsWith(name, "$")) {
+					display = StringUtils.removeStart(display, "#");
+					display = StringUtils.removeStart(display, "$");
+					String val = StringUtils.endsWith(value, ".0") ? StringUtils.substringBefore(value, ".0") : value;
+					display = StringUtils.replaceOnce(display, "#", val);
+				}
+				return display;
 			}
 		}
 
@@ -366,6 +384,10 @@ public class SearchPageScraper {
 		public void setOnline(String online) {
 			this.online = online;
 		}
+		
+		public String getImageUrl() {
+			return imageUrl;
+		}
 
 		public String getFieldValue(String field) {
 			String value;
@@ -406,6 +428,9 @@ public class SearchPageScraper {
 			return "";
 		}
 
+		/**
+		 * Used for showing exceptions in the result table.
+		 */
 		public static SearchResultItem exceptionItem(Exception e) {
 			SearchResultItem item = new SearchResultItem();
 			item.name = e.getMessage();

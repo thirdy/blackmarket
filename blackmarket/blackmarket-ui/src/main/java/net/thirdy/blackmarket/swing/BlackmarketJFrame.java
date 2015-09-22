@@ -20,6 +20,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,14 +28,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.ui.autocomplete.CompletionProvider;
 
 import com.porty.swing.table.BaseTable;
 import com.porty.swing.util.WindowUtils;
 
 import net.thirdy.blackmarket.MainApp;
+import net.thirdy.blackmarket.autocomplete.BlackmarketCompletionProvider;
 import net.thirdy.blackmarket.core.BlackmarketLanguageParserInstance;
 import net.thirdy.blackmarket.core.SearchPageScraper;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
@@ -48,8 +54,9 @@ public class BlackmarketJFrame extends JFrame {
 	BaseTable table = new BaseTable();
 	JButton searchButton = new JButton("Search");
 	JTextField searchField = new JTextField();
+	JComboBox<String> leagueComboBox;
 	
-	JFrame itemViewerWindow = new JFrame();
+//	JFrame itemViewerWindow = new JFrame();
 	ItemViewPanel itemViewPanel = new ItemViewPanel();
 
 	Action searchAction;
@@ -59,28 +66,52 @@ public class BlackmarketJFrame extends JFrame {
 		setupIconImage();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Rectangle screenRect = WindowUtils.getScreenRect();
-		setSize(screenRect.width - 260, screenRect.height - 30);
+		setSize(screenRect.width, screenRect.height - 30);
 //		WindowUtils.centerWindow(this);
+		setExtendedState( getExtendedState() | JFrame.MAXIMIZED_BOTH );
 		
-		itemViewerWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		itemViewerWindow.getContentPane().add(itemViewPanel);
-		itemViewerWindow.setAlwaysOnTop(true);
-		itemViewerWindow.setSize(260, 390);
-		itemViewerWindow.setLocation(screenRect.width - 260, 0);
+//		itemViewerWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+//		itemViewerWindow.getContentPane().add(itemViewPanel);
+//		itemViewerWindow.setAlwaysOnTop(true);
+//		itemViewerWindow.setSize(300, 450);
+//		itemViewerWindow.setLocation(screenRect.width - 260, 0);
+				
+		leagueComboBox = new JComboBox<>(BlackmarketConfig.properties().leagues());
+		leagueComboBox.setSelectedItem(BlackmarketConfig.properties().league());
+		leagueComboBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String league = leagueComboBox.getSelectedItem().toString();
+				BlackmarketConfig.properties().setLeague(league);
+				BlackmarketConfig.properties().save();
+			}
+		});
 		
-//		 setExtendedState( getExtendedState()|JFrame.MAXIMIZED_VERT );
 //		table.setFilterHeaderEnabled(false);
 		searchAction = new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Search button clicked");
-				searchEventHandler();
+				if (searchButton.isEnabled()) {
+					searchEventHandler();
+				}
 			}
 		};
 		searchButton.addActionListener(searchAction);
 		searchField.addActionListener(searchAction);
+		TextFieldPrompt prompt = new TextFieldPrompt(searchField, "Try CTRL + Space");
 //		searchButton.setPreferredSize(new Dimension(100, 50));
+		
+		CompletionProvider provider = new BlackmarketCompletionProvider();
+		AutoCompletion ac = new AutoCompletion(provider);
+//		ac.setAutoCompleteSingleChoices(true);
+		ac.setAutoCompleteEnabled(true);
+		ac.setAutoActivationEnabled(true);
+		ac.setChoicesWindowSize(this.getWidth() - 300, this.getHeight() - 150);
+//		ac.setShowDescWindow(true);
+	    ac.install(searchField);
 		
 		JButton about = new JButton("?");
 		about.addActionListener(new ActionListener() {
@@ -95,12 +126,16 @@ public class BlackmarketJFrame extends JFrame {
 		buttonsPanel.add(about);
 
 		JPanel montherPanel = new JPanel(new BorderLayout());
-		montherPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+		JPanel centerPanel = new JPanel(new BorderLayout(0, 0));
+		centerPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+		centerPanel.add(itemViewPanel, BorderLayout.EAST);
+		montherPanel.add(centerPanel, BorderLayout.CENTER);
 //		 table.setPreferredScrollableViewportSize(table.getPreferredSize());
 //		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.add(buttonsPanel, BorderLayout.EAST);
 		headerPanel.add(searchField, BorderLayout.CENTER);
+		headerPanel.add(leagueComboBox, BorderLayout.WEST);
 
 		montherPanel.add(headerPanel, BorderLayout.NORTH);
 		getContentPane().add(montherPanel);
@@ -109,6 +144,7 @@ public class BlackmarketJFrame extends JFrame {
 			loadData(loadSampleData());
 		}
 		setVisible(true);
+		searchField.requestFocusInWindow();
 	}
 	
 	private void setupIconImage() {
@@ -123,21 +159,30 @@ public class BlackmarketJFrame extends JFrame {
 	}
 
 	private void setupTableSelectionListener() {
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				tableSelectedHandle();
+			}
+		});
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mouseClicked(e);
-				int row = table.getSelectedRow();
-		        int col = table.getSelectedColumn();
-		        BlackmarketTableModel model = (BlackmarketTableModel) table.getModel();
-	        	SearchResultItem item = model.getItem(row);
-	        	itemViewPanel.setItem(item);
-		        if (!itemViewerWindow.isVisible()) {
-		        	itemViewerWindow.setVisible(true);
-				}
+				tableSelectedHandle();
 			}
 		});
+	}
+	
+	private void tableSelectedHandle() {
+		int row = table.getSelectedRow();
+        if (row != -1) {
+        	int col = table.getSelectedColumn();
+            BlackmarketTableModel model = (BlackmarketTableModel) table.getModel();
+        	SearchResultItem item = model.getItem(row);
+        	itemViewPanel.setItem(item);
+		}
 	}
 
 	protected void showAboutDialog() {

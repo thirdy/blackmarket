@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
+import net.thirdy.blackmarket.core.util.BlackmarketUtil;
 
 import static org.junit.Assert.*
 ;
@@ -40,13 +41,14 @@ public class SearchPageScraperTest {
 	
 	@Test
 	public void testParse2() throws Exception {
-		URL url = this.getClass().getResource("SearchChest.search.poetrade");
-		String page = FileUtils.readFileToString(new File(url.toURI()));
+		String page = BlackmarketUtil.loadFromClassPath(this.getClass(), "/test/SearchChest.search.poetrade");
+		
 		SearchPageScraper scraper = new SearchPageScraper(page);
 		List<SearchResultItem> list = scraper.parse();
 		for (SearchResultItem item : list) {
 			if (item.getName().equals("Victory Shroud Destiny Leather")) {
 				assertEquals("79.0", item.getPseudoLife());
+				System.out.println(item.getImageUrl());
 //				for (Mod mod : item.getExplicitMods()) {
 //					System.out.println(mod);
 //				}

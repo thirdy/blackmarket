@@ -2,7 +2,6 @@ package net.thirdy.blackmarket.swing;
 
 import java.util.List;
 
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 import com.google.common.base.Function;
