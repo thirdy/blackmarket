@@ -92,6 +92,11 @@ public class BlackmarketJFrame extends JFrame {
 		
 		CompletionProvider provider = new BlackmarketCompletionProvider();
 		AutoCompletion ac = new AutoCompletion(provider);
+//		ac.setAutoCompleteSingleChoices(true);
+		ac.setAutoCompleteEnabled(true);
+		ac.setAutoActivationEnabled(true);
+		ac.setChoicesWindowSize(this.getWidth() - 300, this.getHeight() - 150);
+//		ac.setShowDescWindow(true);
 	    ac.install(searchField);
 		
 		JButton about = new JButton("?");
@@ -122,6 +127,7 @@ public class BlackmarketJFrame extends JFrame {
 			loadData(loadSampleData());
 		}
 		setVisible(true);
+		searchField.requestFocusInWindow();
 	}
 	
 	private void setupIconImage() {

@@ -133,6 +133,7 @@ public class SearchPageScraper {
 			item.block = element.getElementsByAttributeValue("data-name", "block").get(0).text();
 			item.crit = element.getElementsByAttributeValue("data-name", "crit").get(0).text();
 			// "level"
+			item.imageUrl = element.getElementsByAttributeValue("alt", "Item icon").get(0).attr("src");
 			
 			Elements onlineSpans = element.getElementsMatchingText("online");
 			if (!onlineSpans.isEmpty()) {
@@ -186,6 +187,8 @@ public class SearchPageScraper {
 		String thread;
 		String sellerid;
 		String threadUrl;
+		
+		String imageUrl;
 
 		Mod implicitMod;
 		List<Mod> explicitMods = new ArrayList<>();
@@ -366,6 +369,10 @@ public class SearchPageScraper {
 		public void setOnline(String online) {
 			this.online = online;
 		}
+		
+		public String getImageUrl() {
+			return imageUrl;
+		}
 
 		public String getFieldValue(String field) {
 			String value;
@@ -406,6 +413,9 @@ public class SearchPageScraper {
 			return "";
 		}
 
+		/**
+		 * Used for showing exceptions in the result table.
+		 */
 		public static SearchResultItem exceptionItem(Exception e) {
 			SearchResultItem item = new SearchResultItem();
 			item.name = e.getMessage();

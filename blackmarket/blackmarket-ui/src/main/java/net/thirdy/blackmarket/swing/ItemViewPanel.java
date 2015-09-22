@@ -4,7 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Random;
 
@@ -24,6 +27,7 @@ import com.google.common.collect.Lists;
 
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
+import net.thirdy.blackmarket.swing.SwingUtil.ImageConsumer;
 
 public class ItemViewPanel extends JPanel {
 
@@ -106,6 +110,7 @@ public class ItemViewPanel extends JPanel {
 
 	public void setItem(SearchResultItem item) {
 		this.item = item;
+		final String id = item.getId();
 		lblId.setText(item.getId());
 		lblBuyout.setText(item.getBuyout());
 		Mod implicitMod = item.getImplicitMod();
@@ -126,6 +131,20 @@ public class ItemViewPanel extends JPanel {
 		
 		String s = StringUtils.join(modStrList.toArray(), System.getProperty("line.separator"));
 		taExplicitMods.setText(s);
+		
+		try {
+			URL url = new URL(item.getImageUrl());
+			new SwingUtil.ImageLoader(new ImageConsumer() {
+				
+				public void imageLoaded(BufferedImage img) {
+					if (lblId.getText().equalsIgnoreCase(id)) {
+						lblImg.setIcon(new ImageIcon(img));
+					}
+				}
+			}, url).execute();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void generateAndUseRandomItem() {
@@ -138,4 +157,5 @@ public class ItemViewPanel extends JPanel {
 				"Explicit mod 5"
 		}, System.getProperty("line.separator")));
 	}
+
 }

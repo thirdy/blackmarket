@@ -17,17 +17,6 @@ public class BlackmarketCompletionProvider extends DefaultCompletionProvider {
 		}
 	}
 	
-	
-	// TODO, why ain't this working?
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<Completion> getCompletionByInputText(String inputText) {
-//		String newInputText = inputText;
-//		// Remove any digits or decimals
-//		newInputText = StringUtils.replacePattern(newInputText, "\\d(\\.)?([0-9]{1,2})?", "");
-//		System.out.println("getCompletionByInputText: inputText: " + inputText + " newInputText: " + newInputText);
-//		return super.getCompletionByInputText(newInputText);
-//
-//	}
+//	Pattern pattern = Pattern.compile("(\\d+(\\.)?(\\d+)?).*", Pattern.DOTALL);
 	
 }
