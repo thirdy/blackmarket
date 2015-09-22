@@ -80,12 +80,13 @@ public class ItemViewPanel extends JPanel {
 		lblId = new JLabel("id");
 		panel.add(lblId);
 		
-		lblBuyout = new JLabel("Buyout");
-		panel.add(lblBuyout);
-		lblBuyout.setHorizontalAlignment(SwingConstants.CENTER);
-		
 		lblName = new JLabel("Name");
+		lblName.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblName);
+		
+		lblBuyout = new JLabel("Buyout");
+		lblBuyout.setHorizontalAlignment(SwingConstants.RIGHT);
+		panel.add(lblBuyout);
 		
 		panel_1 = new JPanel(new BorderLayout());
 		add(panel_1, "cell 0 2,grow");
@@ -96,7 +97,7 @@ public class ItemViewPanel extends JPanel {
 		JPanel panel_2 = new JPanel();
 		add(panel_2, "cell 0 1,grow");
 		
-		lblImplicitmod = new JLabel("implicit");
+		lblImplicitmod = new JLabel("");
 		lblImplicitmod.setHorizontalAlignment(SwingConstants.CENTER);
 		lblImplicitmod.setAlignmentX(0.5f);
 		
@@ -111,6 +112,8 @@ public class ItemViewPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane();
 		
 		taExplicitMods = new JTextArea();
+		taExplicitMods.setWrapStyleWord(true);
+		taExplicitMods.setLineWrap(true);
 		taExplicitMods.setRows(7);
 		scrollPane.setViewportView(taExplicitMods);
 		panel_2.add(scrollPane, "cell 0 3,grow");
@@ -151,7 +154,7 @@ public class ItemViewPanel extends JPanel {
 			}
 		});
 		
-		String s = StringUtils.join(modStrList.toArray(), System.getProperty("line.separator"));
+		String s = StringUtils.join(modStrList.toArray(), System.getProperty("line.separator") + System.getProperty("line.separator"));
 		taExplicitMods.setText(s);
 		
 		try {

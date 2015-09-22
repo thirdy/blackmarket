@@ -28,6 +28,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +85,9 @@ public class BlackmarketJFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Search button clicked");
-				searchEventHandler();
+				if (searchButton.isEnabled()) {
+					searchEventHandler();
+				}
 			}
 		};
 		searchButton.addActionListener(searchAction);
@@ -145,21 +149,30 @@ public class BlackmarketJFrame extends JFrame {
 	}
 
 	private void setupTableSelectionListener() {
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				tableSelectedHandle();
+			}
+		});
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mouseClicked(e);
-				int row = table.getSelectedRow();
-		        int col = table.getSelectedColumn();
-		        BlackmarketTableModel model = (BlackmarketTableModel) table.getModel();
-	        	SearchResultItem item = model.getItem(row);
-	        	itemViewPanel.setItem(item);
-//		        if (!itemViewerWindow.isVisible()) {
-//		        	itemViewerWindow.setVisible(true);
-//				}
+				tableSelectedHandle();
 			}
 		});
+	}
+	
+	private void tableSelectedHandle() {
+		int row = table.getSelectedRow();
+        if (row != -1) {
+        	int col = table.getSelectedColumn();
+            BlackmarketTableModel model = (BlackmarketTableModel) table.getModel();
+        	SearchResultItem item = model.getItem(row);
+        	itemViewPanel.setItem(item);
+		}
 	}
 
 	protected void showAboutDialog() {
