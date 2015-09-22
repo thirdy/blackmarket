@@ -67,7 +67,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>net.thirdy.blackmarket.MainApp</mainClass>
+							<mainClass>${mainClass}</mainClass>
 						</manifest>
 					</archive>
 					<finalName>blackmarket-${blackmarket.version}</finalName>

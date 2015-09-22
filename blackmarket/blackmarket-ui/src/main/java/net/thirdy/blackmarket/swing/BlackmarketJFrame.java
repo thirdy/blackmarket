@@ -20,6 +20,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -48,6 +49,7 @@ public class BlackmarketJFrame extends JFrame {
 	BaseTable table = new BaseTable();
 	JButton searchButton = new JButton("Search");
 	JTextField searchField = new JTextField();
+	JComboBox<String> leagueComboBox;
 	
 	JFrame itemViewerWindow = new JFrame();
 	ItemViewPanel itemViewPanel = new ItemViewPanel();
@@ -67,6 +69,9 @@ public class BlackmarketJFrame extends JFrame {
 		itemViewerWindow.setAlwaysOnTop(true);
 		itemViewerWindow.setSize(260, 390);
 		itemViewerWindow.setLocation(screenRect.width - 260, 0);
+				
+		leagueComboBox = new JComboBox<>(BlackmarketConfig.properties().leagues());
+		leagueComboBox.setSelectedItem(BlackmarketConfig.properties().league());
 		
 //		 setExtendedState( getExtendedState()|JFrame.MAXIMIZED_VERT );
 //		table.setFilterHeaderEnabled(false);
@@ -101,6 +106,7 @@ public class BlackmarketJFrame extends JFrame {
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.add(buttonsPanel, BorderLayout.EAST);
 		headerPanel.add(searchField, BorderLayout.CENTER);
+		headerPanel.add(leagueComboBox, BorderLayout.WEST);
 
 		montherPanel.add(headerPanel, BorderLayout.NORTH);
 		getContentPane().add(montherPanel);

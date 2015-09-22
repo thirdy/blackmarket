@@ -90,6 +90,12 @@ public class BlackmarketProperties extends Properties {
 		return Boolean.parseBoolean(getProperty("alwaysSortByBuyout", "true").toString());
 	}
 
+	public String[] leagues() {
+		String rawLeagues = getProperty("leagues", "Standard,Hardcore");
+		String[] leagues = StringUtils.split(rawLeagues, ',');
+		return leagues;
+	}
+
 //	public void updateVersion(String newVersion) {
 //		setProperty(KEY_VERSION, newVersion);
 //	}
