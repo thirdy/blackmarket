@@ -188,7 +188,7 @@ public class BlackmarketLanguageParserInstance {
 			}
 			
 			// if matches by regex
-			Pattern pattern = Pattern.compile(key);
+			Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(token);
 			if (matcher.matches()) {
 				result = value;
