@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -21,10 +22,13 @@ import net.thirdy.blackmarket.core.ex.BlackmarketRuntimeException;
  */
 public class BlackmarketProperties extends Properties {
 
+	private static final String KEY_LEAGUE = "league";
 	private static final String KEY_VERSION = "version";
 	private static final long serialVersionUID = 1L;
+	private File propertiesFile;
 
 	public BlackmarketProperties(File propertiesFile) {
+		this.propertiesFile = propertiesFile;
 		try {
 			// note that Properties.load does not close the input stream
 			FileInputStream is = new FileInputStream(propertiesFile);
@@ -43,7 +47,7 @@ public class BlackmarketProperties extends Properties {
 	}
 	
 	public String league() {
-		return getProperty("league", "Standard");
+		return getProperty(KEY_LEAGUE, "Standard");
 	}
 
 	public int lastDaysSeen() {
@@ -96,16 +100,16 @@ public class BlackmarketProperties extends Properties {
 		return leagues;
 	}
 
-//	public void updateVersion(String newVersion) {
-//		setProperty(KEY_VERSION, newVersion);
-//	}
+	public void setLeague(String league) {
+		setProperty(KEY_LEAGUE, league);
+	}
 
-//	public void storeToFile(File propertiesFile) {
-//		// https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
-//		try(FileOutputStream fos = new FileOutputStream(propertiesFile)) {
-//			super.store(fos, "BlackmarketProperties.store()");
-//		} catch (IOException e) {
-//			throw new BlackmarketRuntimeException(e);
-//		};
-//	}
+	public void save() {
+		// https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+		try(FileOutputStream fos = new FileOutputStream(propertiesFile)) {
+			super.store(fos, "BlackmarketProperties.store()");
+		} catch (IOException e) {
+			throw new BlackmarketRuntimeException(e);
+		};
+	}
 }

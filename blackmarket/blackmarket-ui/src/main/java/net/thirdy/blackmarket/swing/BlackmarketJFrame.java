@@ -78,6 +78,15 @@ public class BlackmarketJFrame extends JFrame {
 				
 		leagueComboBox = new JComboBox<>(BlackmarketConfig.properties().leagues());
 		leagueComboBox.setSelectedItem(BlackmarketConfig.properties().league());
+		leagueComboBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String league = leagueComboBox.getSelectedItem().toString();
+				BlackmarketConfig.properties().setLeague(league);
+				BlackmarketConfig.properties().save();
+			}
+		});
 		
 //		table.setFilterHeaderEnabled(false);
 		searchAction = new AbstractAction() {
