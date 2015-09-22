@@ -92,6 +92,7 @@ public class BlackmarketJFrame extends JFrame {
 		};
 		searchButton.addActionListener(searchAction);
 		searchField.addActionListener(searchAction);
+		TextFieldPrompt prompt = new TextFieldPrompt(searchField, "Try CTRL + Space");
 //		searchButton.setPreferredSize(new Dimension(100, 50));
 		
 		CompletionProvider provider = new BlackmarketCompletionProvider();
