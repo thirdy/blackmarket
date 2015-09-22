@@ -11,6 +11,6 @@
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <blackmarket.version>v0.2.1-pre-alpha</blackmarket.version>
+        <blackmarket.version>v0.3-pre-alpha</blackmarket.version>
     </properties>
 </project>
