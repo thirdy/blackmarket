@@ -28,66 +28,97 @@ import com.google.common.collect.Lists;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem.Mod;
 import net.thirdy.blackmarket.swing.SwingUtil.ImageConsumer;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+import javax.swing.JScrollPane;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import net.miginfocom.swing.MigLayout;
 
 public class ItemViewPanel extends JPanel {
 
 	private JLabel lblName;
-	private JLabel lblImg;
-	private JPanel explicitModsPanel;
 	
 	private SearchResultItem item;
-	private JLabel lblImplicitmod;
 	private JLabel lblId;
 	private JLabel lblBuyout;
+	private JPanel panel;
+	private JPanel panel_1;
+
+	private JLabel lblImplicitmod;
+
+	private JLabel lblImg;
+
 	private JTextArea taExplicitMods;
+	private JLabel lblSocketRaw;
 
 	/**
 	 * Create the panel.
 	 */
 	public ItemViewPanel() {
-		setLayout(null);
-		
-		lblName = new JLabel("Name");
-		lblName.setBounds(57, 11, 210, 14);
-		add(lblName);
-		
-		lblBuyout = new JLabel("Buyout");
-		lblBuyout.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBuyout.setBounds(1, 11, 46, 14);
-		add(lblBuyout);
-		
-		lblImg = new JLabel("");
-		lblImg.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		String[] images = new String[] {
 				"/Ancient_German_armour_helmet.jpg",
 				"/lapulapu.jpg"
 		};
 		String img = images[new Random().nextInt(2)];
+		byte[] imgBytes = null;
 		try {
-			byte[] imgBytes = IOUtils.toByteArray(this.getClass().getResourceAsStream(img));
-			lblImg.setIcon(new ImageIcon(imgBytes));
+			imgBytes = IOUtils.toByteArray(this.getClass().getResourceAsStream(img));
 		} catch (IOException e) {
 			// won't likely happen since file is in classpath
 			e.printStackTrace();
 		}
+		setLayout(new MigLayout("", "[271.00px]", "[24px][441px][23px]"));
 		
-//		lblImg.setIcon(new ImageIcon("account-login-8x.png"));
-		lblImg.setBounds(32, 36, 176, 100);
-		add(lblImg);
+		panel = new JPanel();
+		add(panel, "cell 0 0,growx,aligny top");
 		
-		explicitModsPanel = new JPanel();
-		explicitModsPanel.setBounds(1, 176, 247, 137);
-		add(explicitModsPanel);
-		explicitModsPanel.setLayout(new BorderLayout(0, 0));
+		lblId = new JLabel("id");
+		panel.add(lblId);
 		
-		taExplicitMods = new JTextArea();
-		explicitModsPanel.add(taExplicitMods, BorderLayout.CENTER);
-		taExplicitMods.setRows(7);
+		lblBuyout = new JLabel("Buyout");
+		panel.add(lblBuyout);
+		lblBuyout.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lblName = new JLabel("Name");
+		panel.add(lblName);
+		
+		panel_1 = new JPanel(new BorderLayout());
+		add(panel_1, "cell 0 2,grow");
 		
 		JButton btnWtb = new JButton("WTB");
-		btnWtb.setBounds(76, 324, 89, 23);
-		add(btnWtb);
+		panel_1.add(btnWtb, BorderLayout.CENTER);
+		
+		JPanel panel_2 = new JPanel();
+		add(panel_2, "cell 0 1,grow");
+		
+		lblImplicitmod = new JLabel("implicit");
+		lblImplicitmod.setHorizontalAlignment(SwingConstants.CENTER);
+		lblImplicitmod.setAlignmentX(0.5f);
+		
+		lblImg = new JLabel("");
+		lblImg.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_2.setLayout(new MigLayout("", "[285px]", "[175.00px][25.00][13.00px][298.00px]"));
+		
+		lblSocketRaw = new JLabel("");
+		lblSocketRaw.setHorizontalAlignment(SwingConstants.CENTER);
+		panel_2.add(lblSocketRaw, "cell 0 1,alignx center,aligny center");
+		
+		JScrollPane scrollPane = new JScrollPane();
+		
+		taExplicitMods = new JTextArea();
+		taExplicitMods.setRows(7);
+		scrollPane.setViewportView(taExplicitMods);
+		panel_2.add(scrollPane, "cell 0 3,grow");
+		panel_2.add(lblImg, "cell 0 0,grow");
+		panel_2.add(lblImplicitmod, "cell 0 2,growx,aligny top");
+		if (imgBytes != null) {
+			lblImg.setIcon(new ImageIcon(imgBytes));
+		}
 		btnWtb.addActionListener(new ActionListener() {
 			
 			@Override
@@ -95,16 +126,6 @@ public class ItemViewPanel extends JPanel {
 				SwingUtil.setClipboard(item.getWTB());
 			}
 		});
-		
-		lblImplicitmod = new JLabel("");
-		lblImplicitmod.setFont(new Font("Tahoma", Font.ITALIC, 11));
-		lblImplicitmod.setHorizontalAlignment(SwingConstants.CENTER);
-		lblImplicitmod.setBounds(1, 147, 247, 14);
-		add(lblImplicitmod);
-		
-		lblId = new JLabel("id");
-		lblId.setBounds(11, 33, 36, 14);
-		add(lblId);
 
 	}
 
@@ -120,6 +141,7 @@ public class ItemViewPanel extends JPanel {
 			lblImplicitmod.setText("");
 		}
 		lblName.setText(item.getName());
+		lblSocketRaw.setText(item.getSocketsRaw());
 		
 		List<String> modStrList = Lists.transform(item.getExplicitMods(), new Function<Mod, String>() {
 
@@ -157,5 +179,4 @@ public class ItemViewPanel extends JPanel {
 				"Explicit mod 5"
 		}, System.getProperty("line.separator")));
 	}
-
 }

@@ -231,8 +231,23 @@ public class SearchPageScraper {
 				return "Mod [name=" + name + ", value=" + value + "]";
 			}
 
+			/*  Convert the ff into human readable form:
+			    #Socketed Gems are Supported by level # Increased Area of Effect
+				##% increased Physical Damage
+				#+# to Strength
+				#+# to Accuracy Rating
+				#+# Mana Gained on Kill
+				#+# to Weapon range
+			 */
 			public String toStringDisplay() {
-				return name + ": " + value;
+				String display = name;
+				if (StringUtils.startsWith(name, "#") || StringUtils.startsWith(name, "$")) {
+					display = StringUtils.removeStart(display, "#");
+					display = StringUtils.removeStart(display, "$");
+					String val = StringUtils.endsWith(value, ".0") ? StringUtils.substringBefore(value, ".0") : value;
+					display = StringUtils.replaceOnce(display, "#", val);
+				}
+				return display;
 			}
 		}
 

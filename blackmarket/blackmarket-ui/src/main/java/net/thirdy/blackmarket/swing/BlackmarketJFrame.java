@@ -54,7 +54,7 @@ public class BlackmarketJFrame extends JFrame {
 	JTextField searchField = new JTextField();
 	JComboBox<String> leagueComboBox;
 	
-	JFrame itemViewerWindow = new JFrame();
+//	JFrame itemViewerWindow = new JFrame();
 	ItemViewPanel itemViewPanel = new ItemViewPanel();
 
 	Action searchAction;
@@ -64,19 +64,19 @@ public class BlackmarketJFrame extends JFrame {
 		setupIconImage();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		Rectangle screenRect = WindowUtils.getScreenRect();
-		setSize(screenRect.width - 260, screenRect.height - 30);
+		setSize(screenRect.width, screenRect.height - 30);
 //		WindowUtils.centerWindow(this);
+		setExtendedState( getExtendedState() | JFrame.MAXIMIZED_BOTH );
 		
-		itemViewerWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		itemViewerWindow.getContentPane().add(itemViewPanel);
-		itemViewerWindow.setAlwaysOnTop(true);
-		itemViewerWindow.setSize(260, 390);
-		itemViewerWindow.setLocation(screenRect.width - 260, 0);
+//		itemViewerWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+//		itemViewerWindow.getContentPane().add(itemViewPanel);
+//		itemViewerWindow.setAlwaysOnTop(true);
+//		itemViewerWindow.setSize(300, 450);
+//		itemViewerWindow.setLocation(screenRect.width - 260, 0);
 				
 		leagueComboBox = new JComboBox<>(BlackmarketConfig.properties().leagues());
 		leagueComboBox.setSelectedItem(BlackmarketConfig.properties().league());
 		
-//		 setExtendedState( getExtendedState()|JFrame.MAXIMIZED_VERT );
 //		table.setFilterHeaderEnabled(false);
 		searchAction = new AbstractAction() {
 
@@ -112,7 +112,10 @@ public class BlackmarketJFrame extends JFrame {
 		buttonsPanel.add(about);
 
 		JPanel montherPanel = new JPanel(new BorderLayout());
-		montherPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+		JPanel centerPanel = new JPanel(new BorderLayout(0, 0));
+		centerPanel.add(new JScrollPane(table), BorderLayout.CENTER);
+		centerPanel.add(itemViewPanel, BorderLayout.EAST);
+		montherPanel.add(centerPanel, BorderLayout.CENTER);
 //		 table.setPreferredScrollableViewportSize(table.getPreferredSize());
 //		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		JPanel headerPanel = new JPanel(new BorderLayout());
@@ -152,9 +155,9 @@ public class BlackmarketJFrame extends JFrame {
 		        BlackmarketTableModel model = (BlackmarketTableModel) table.getModel();
 	        	SearchResultItem item = model.getItem(row);
 	        	itemViewPanel.setItem(item);
-		        if (!itemViewerWindow.isVisible()) {
-		        	itemViewerWindow.setVisible(true);
-				}
+//		        if (!itemViewerWindow.isVisible()) {
+//		        	itemViewerWindow.setVisible(true);
+//				}
 			}
 		});
 	}

@@ -6,8 +6,8 @@
 ;
 ; Item Types
 ;
-1h								=		type=Generic One-Handed Weapon
-2h								=		type=Generic Two-Handed Weapon
+1h								=		type=1h
+2h								=		type=2h
 bow								=		type=Bow
 claw							=		type=Claw
 dagger							=		type=Dagger
@@ -117,7 +117,10 @@ tabula 								= 		name=Tabula Rasa
 ;
 ; Currency max buyout
 ;
-(\d{1,2})(ch|chaos) = buyout=x&buyout_currency=chaos&buyout_max=$GROUP1
+(\d{1,2})(ch|chaos) 				= 		buyout=x&buyout_currency=chaos&buyout_max=$GROUP1
+(\d{1,2})(alc|alchemy) 				= 		buyout=x&buyout_currency=alchemy&buyout_max=$GROUP1
+(\d{1,2})(fuse|fusing) 				= 		buyout=x&buyout_currency=fusing&buyout_max=$GROUP1
+(\d{1,2})(ex|exalted) 				= 		buyout=x&buyout_currency=exalted&buyout_max=$GROUP1
 
 ;
 ; Explicit Mods
