@@ -65,7 +65,8 @@ altart							=		altart=x
 corrupt|corrupted				=		corrupted=1
 identified						=		identified=1
 unid|unidentified				=		identified=0
-notcrafted|crafted				=		crafted=1
+notcrafted						=		crafted=0
+crafted							=		crafted=1
 rare							= 		rarity=rare
 normal							= 		rarity=normal
 magic							= 		rarity=magic

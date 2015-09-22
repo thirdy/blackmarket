@@ -31,11 +31,14 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.ui.autocomplete.CompletionProvider;
 
 import com.porty.swing.table.BaseTable;
 import com.porty.swing.util.WindowUtils;
 
 import net.thirdy.blackmarket.MainApp;
+import net.thirdy.blackmarket.autocomplete.BlackmarketCompletionProvider;
 import net.thirdy.blackmarket.core.BlackmarketLanguageParserInstance;
 import net.thirdy.blackmarket.core.SearchPageScraper;
 import net.thirdy.blackmarket.core.SearchPageScraper.SearchResultItem;
@@ -86,6 +89,10 @@ public class BlackmarketJFrame extends JFrame {
 		searchButton.addActionListener(searchAction);
 		searchField.addActionListener(searchAction);
 //		searchButton.setPreferredSize(new Dimension(100, 50));
+		
+		CompletionProvider provider = new BlackmarketCompletionProvider();
+		AutoCompletion ac = new AutoCompletion(provider);
+	    ac.install(searchField);
 		
 		JButton about = new JButton("?");
 		about.addActionListener(new ActionListener() {
