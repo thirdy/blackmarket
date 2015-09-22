@@ -19,7 +19,7 @@ public class BlackmarketConfig {
 
 	public static final String VERSION = "v0.3-pre-alpha";
 	public static final boolean TESTING_MODE = false;
-	public static final boolean DEVELOPMENT_MODE = true;
+	public static final boolean DEVELOPMENT_MODE = false;
 	public static final String TITLE = "Blackmarket " + VERSION + (DEVELOPMENT_MODE ? " - DEVELOPMENT-MODE-ENABLED" : "");
 	
 	private static BlackmarketProperties blackmarketProperties;
