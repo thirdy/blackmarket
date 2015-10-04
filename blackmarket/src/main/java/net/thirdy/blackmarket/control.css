@@ -1,0 +1,3 @@
+.autofill-text {
+    -fx-skin: "net.thirdy.blackmarket.controls.autofilltextbox.AutoFillTextBoxSkin";
+}

@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>net.thirdy</groupId>
-    <artifactId>blackmarket</artifactId>
-    <version>${blackmarket.version}</version>
-    
-    <packaging>jar</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.thirdy</groupId>
+	<artifactId>blackmarket</artifactId>
+	<version>${blackmarket.version}</version>
+
+	<packaging>jar</packaging>
 
 	<name>blackmarket-ui</name>
-   
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <blackmarket.version>v0.4</blackmarket.version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<blackmarket.version>v0.4</blackmarket.version>
 		<mainClass>net.thirdy.blackmarket.Main</mainClass>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-    
-    	<dependencies>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.controlsfx</groupId>
+			<artifactId>controlsfx</artifactId>
+			<version>8.40.10-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
 			<artifactId>unirest-java</artifactId>
@@ -38,12 +44,12 @@
 			<artifactId>jexiletools-es</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-			<!-- jsoup HTML parser library @ http://jsoup.org/ -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.jsoup</groupId> -->
-<!-- 			<artifactId>jsoup</artifactId> -->
-<!-- 			<version>1.8.3</version> -->
-<!-- 		</dependency> -->
+		<!-- jsoup HTML parser library @ http://jsoup.org/ -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.jsoup</groupId> -->
+		<!-- <artifactId>jsoup</artifactId> -->
+		<!-- <version>1.8.3</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -96,4 +102,23 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>oss-sonatype</id>
+			<name>oss-sonatype</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>

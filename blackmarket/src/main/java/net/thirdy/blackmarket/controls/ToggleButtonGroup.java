@@ -15,18 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket.ex;
+package net.thirdy.blackmarket.controls;
+
+import javafx.scene.Node;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 
 /**
- *
  * @author thirdy
+ *
  */
-public class BlackmarketException extends Exception {
+public class ToggleButtonGroup extends ToggleGroup {
+	private ToggleButton[] toggleButtons;
 
-	private static final long serialVersionUID = 1L;
+	public ToggleButtonGroup(ToggleButton ... toggleButtons) {
+		this.toggleButtons = toggleButtons;
+		for (ToggleButton toggleButton : toggleButtons) {
+			toggleButton.setToggleGroup(this);
+		}
+		selectToggle(toggleButtons[0]);
+	}
 
-	public BlackmarketException(Exception ex) {
-        super(ex);
-    }
-    
+	public ToggleButton[] getToggleButtons() {
+		return toggleButtons;
+	}
 }
