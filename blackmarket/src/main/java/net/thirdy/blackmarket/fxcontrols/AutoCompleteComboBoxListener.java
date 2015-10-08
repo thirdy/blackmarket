@@ -15,8 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket.controls;
+package net.thirdy.blackmarket.fxcontrols;
 
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 
@@ -55,8 +57,8 @@ public class AutoCompleteComboBoxListener<T> {
                     )
                 return;
 
-            comboBox.show();
             if (event.getCode().equals(KeyCode.DOWN)) {
+                comboBox.show();
                 return;
             }
 
@@ -110,8 +112,9 @@ public class AutoCompleteComboBoxListener<T> {
         ObservableList items = AutoCompleteComboBoxListener.this.comboBox.getItems();
         boolean found = false;
         for (int i=0; i<items.size(); i++) {
-            String cmbText = AutoCompleteComboBoxListener.this.comboBox.getEditor().getText();
-			if (cmbText != null && cmbText.toLowerCase().equals(items.get(i).toString().toLowerCase())) {
+            String editorText = AutoCompleteComboBoxListener.this.comboBox.getEditor().getText();
+            editorText = StringUtils.trimToEmpty(editorText);
+			if (editorText.toLowerCase().equals(items.get(i).toString().toLowerCase())) {
                 try {
                     ListView lv = ((ComboBoxListViewSkin) AutoCompleteComboBoxListener.this.comboBox.getSkin()).getListView();
                     lv.getSelectionModel().clearAndSelect(i);
@@ -123,7 +126,6 @@ public class AutoCompleteComboBoxListener<T> {
         }
 
         String s = comboBox.getEditor().getText();
-//        System.out.println("Found? " + found);
         if (!found && affect) {
             comboBox.getSelectionModel().clearSelection();
             comboBox.getEditor().setText(s);

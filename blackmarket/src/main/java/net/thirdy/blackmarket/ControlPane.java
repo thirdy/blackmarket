@@ -19,14 +19,20 @@ package net.thirdy.blackmarket;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
+import java.util.Arrays;
+import java.util.TreeSet;
+
+import javax.swing.ButtonGroup;
 
 import org.controlsfx.control.textfield.TextFields;
 
 import javafx.collections.FXCollections;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -34,13 +40,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import net.thirdy.blackmarket.controls.AutoCompleteComboBoxListener;
-import net.thirdy.blackmarket.controls.ButtonToolBar;
-import net.thirdy.blackmarket.controls.ToggleButtonGroup;
+import net.thirdy.blackmarket.controls.ItemTypePane;
+import net.thirdy.blackmarket.controls.autofilltextbox.AutoFillTextBox;
+import net.thirdy.blackmarket.fxcontrols.AutoCompleteComboBoxListener;
+import net.thirdy.blackmarket.fxcontrols.AutoCompleteTextField;
+import net.thirdy.blackmarket.fxcontrols.ButtonToolBar;
+import net.thirdy.blackmarket.fxcontrols.MultiStateButton;
+import net.thirdy.blackmarket.fxcontrols.ToggleButtonGroup;
+import net.thirdy.blackmarket.util.Leagues;
 import net.thirdy.blackmarket.util.Uniques;
 
 /**
@@ -52,68 +64,56 @@ public class ControlPane extends BorderPane {
 	private HBox top;
 //	private GridPane center;
 	
+	Button btnLeague;
+	
 	public ControlPane() {
 		top = new HBox();
 		top.setAlignment(Pos.TOP_RIGHT);
 		setTop(top);
 		
-//		ToggleButton btnScLeague = new ToggleButton();
-//		btnScLeague.setId("btnScLeague");
+	    final ComboBox<String> tfName = new ComboBox<>(observableArrayList(Uniques.names));
+	    new AutoCompleteComboBoxListener<String>(tfName);
 		
-//	    final ComboBox<String> nameComboBox = new ComboBox<>(observableArrayList(Uniques.names));
-//	    new AutoCompleteComboBoxListener<String>(nameComboBox);
-//	    nameComboBox.setEditable(true);
-		
-		TextField tfName = new TextField();
-		
-		TextFields.bindAutoCompletion(
-				tfName,
-	            "Hey", "Hello", "Hello World", "Apple", "Cool", "Costa", "Cola", "Coca Cola");
-		
-		Button btnLeague = new Button("Flashback Event (IC001)");
+	    btnLeague = new MultiStateButton(Leagues.names());
 	    
-//	    comboBox.getItems().addAll("Standard", "Hardcore", "1mo");
-		
+	    FlowPane itemTypesPane = new ItemTypePane();
+	    
 //		Image scImg = new Image(this.getClass().getResourceAsStream("/images/leagues/sc.png"));
 //		btnScLeague.setGraphic(new ImageView(scImg));
 	    
-//	    ToggleButtonGroup leagueToggleGroup = new ToggleButtonGroup(
-//	    			new ToggleButton("Flashback Event (IC001)"),
-//	    			new ToggleButton("Flashback Event HC (IC002)"),
-//	    			new ToggleButton("Standard"),
-//	    			new ToggleButton("Hardcore")
-//	    		);
-//	    
-//	    ButtonToolBar buttonBar = new ButtonToolBar(true, leagueToggleGroup);
-		
-//	    VBox center = new VBox();
-//		center.getChildren().addAll(leagueToggleGroup.getToggleButtons());
-//		center.getChildren().addAll(tfName);
-	    
-//	    GridPane center = new GridPane();
-//	    center.setPadding(new Insets(0, 5, 0, 5));
-//	    center.add
 	    
 	    GridPane gridpane = new GridPane();
 	    gridpane.setPadding(new Insets(5));
 	    gridpane.setHgap(5);
 	    gridpane.setVgap(5);
-	    ColumnConstraints column1 = new ColumnConstraints(40);
-	    ColumnConstraints column2 = new ColumnConstraints(200);
+	    ColumnConstraints column1 = new ColumnConstraints();
+	    column1.setPercentWidth(3);
+	    ColumnConstraints column2 = new ColumnConstraints();
+	    column2.setPercentWidth(20);
+	    ColumnConstraints column3 = new ColumnConstraints();
+	    column3.setPercentWidth(77);
 	    column2.setHgrow(Priority.ALWAYS);
-	    gridpane.getColumnConstraints().addAll(column1, column2);
+	    gridpane.getColumnConstraints().addAll(column1, column2, column3);
 //	    column1.set
 //	    ColumnConstraints column2 = new ColumnConstraints(50, 150, 300);
 	    
 	    gridpane.add(new Label("League:"), 0, 0);
 	    gridpane.add(new Label("Name:"), 0, 1);
+	    gridpane.add(new Label("Type:"), 0, 2);
+	    gridpane.add(new Label("x:"), 0, 3);
+	    gridpane.add(new Label("y:"), 0, 4);
 	    
 	    gridpane.add(btnLeague, 1, 0);
 	    gridpane.add(tfName, 1, 1);
+	    gridpane.add(itemTypesPane, 1, 2);
 	    
 	    Separator separator = new Separator(Orientation.VERTICAL);
-		gridpane.add(separator, 2, 0, 1, 2);
+		gridpane.add(separator, 2, 0, 1, 14); // col, row, colspan, rowspan
 	    
+		Button btnSearch = new Button("Search");
+		btnSearch.setPrefWidth(400);
+		GridPane.setHalignment(btnSearch, HPos.CENTER);
+		gridpane.add(btnSearch, 0, 15, 3, 1); // col, row, colspan, rowspan
 	    
 		setCenter(gridpane);
 	}

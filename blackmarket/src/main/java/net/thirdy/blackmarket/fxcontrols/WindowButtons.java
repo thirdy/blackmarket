@@ -29,7 +29,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.thirdy.blackmarket.controls;
+package net.thirdy.blackmarket.fxcontrols;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

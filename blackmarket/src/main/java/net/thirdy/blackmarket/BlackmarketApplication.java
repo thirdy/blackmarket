@@ -36,9 +36,9 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import net.thirdy.blackmarket.controls.SlidingPane;
-import net.thirdy.blackmarket.controls.WindowButtons;
-import net.thirdy.blackmarket.controls.WindowResizeButton;
+import net.thirdy.blackmarket.fxcontrols.SlidingPane;
+import net.thirdy.blackmarket.fxcontrols.WindowButtons;
+import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
 
 /**
  * @author thirdy

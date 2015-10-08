@@ -15,28 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket.controls;
+package net.thirdy.blackmarket.fxcontrols;
 
-import javafx.scene.Node;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import java.util.List;
+
+import javafx.scene.control.Button;
 
 /**
  * @author thirdy
  *
  */
-public class ToggleButtonGroup extends ToggleGroup {
-	private ToggleButton[] toggleButtons;
+public class MultiStateButton extends Button {
+	
+	private List<String> labels;
+	private int currentIndex = 0;
 
-	public ToggleButtonGroup(ToggleButton ... toggleButtons) {
-		this.toggleButtons = toggleButtons;
-		for (ToggleButton toggleButton : toggleButtons) {
-			toggleButton.setToggleGroup(this);
-		}
-		selectToggle(toggleButtons[0]);
+	public MultiStateButton(List<String> labels) {
+		this.labels = labels;
+		
+		setText(labels.get(currentIndex));
+		
+		setOnAction(e -> 
+				setText(labels.get(++currentIndex % labels.size()))
+				);
 	}
+	
+	
 
-	public ToggleButton[] getToggleButtons() {
-		return toggleButtons;
-	}
 }
