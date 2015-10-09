@@ -17,9 +17,28 @@
  */
 package net.thirdy.blackmarket;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import org.controlsfx.control.GridView;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.jexiletools.es.ExileToolsESClient;
+import io.jexiletools.es.model.ExileToolsHit;
+import io.searchbox.core.SearchResult;
+import io.searchbox.core.SearchResult.Hit;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.DepthTest;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,6 +47,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -36,6 +56,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.thirdy.blackmarket.controls.ControlPane;
+import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
@@ -45,8 +67,12 @@ import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
  *
  */
 public class BlackmarketApplication extends Application {
+	
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	private static BlackmarketApplication blackmarketApplication;
+	private static ExileToolsESClient exileToolsESClient;
 	
     private Scene scene;
     private BorderPane root;
@@ -56,6 +82,8 @@ public class BlackmarketApplication extends Application {
 
     private double mouseDragOffsetX = 0;
     private double mouseDragOffsetY = 0;
+
+	private ObservableList<ExileToolsHit> searchResultCurrentHits = FXCollections.observableArrayList();
     
 	/**
 	 * Get the singleton instance of BlackmarketApplication
@@ -63,10 +91,17 @@ public class BlackmarketApplication extends Application {
 	public static BlackmarketApplication getBlackmarketApplication() {
 		return blackmarketApplication;
 	}
+	
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		exileToolsESClient.shutdown();
+	}
 
 	@Override
 	public void start(final Stage stage) {
 		blackmarketApplication = this;
+		exileToolsESClient = new ExileToolsESClient();
 		stage.setTitle("Blackmarket");
 		
 		// create root stack pane that we use to be able to overlay proxy dialog
@@ -182,15 +217,30 @@ public class BlackmarketApplication extends Application {
 		
 		this.root.setTop(toolBar);
 		
-		ControlPane controlPane = new ControlPane();
+		ControlPane controlPane = new ControlPane(e -> searchHandler(e));
 		SlidingPane searchPane = new SlidingPane(250, 40, controlPane);
 		Button showCollapseButton = searchPane.getControlButton();
 		controlPane.installShowCollapseButton(showCollapseButton);
 		searchPane.setId("searchPane");
 		
-		this.root.setBottom(searchPane);
+		GridView<ExileToolsHit> searchResultsPane = new GridView<>(searchResultCurrentHits);
+		AnchorPane centerPane = new AnchorPane();
 		
-//		this.root.setCenter(backButton);
+		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
+		AnchorPane.setLeftAnchor(searchResultsPane, 0.0);
+		AnchorPane.setRightAnchor(searchResultsPane, 0.0);
+		AnchorPane.setBottomAnchor(searchResultsPane, 0.0);
+		
+	    AnchorPane.setBottomAnchor(searchPane, 10.0);
+	    AnchorPane.setLeftAnchor(searchPane, 10.0);
+	    AnchorPane.setRightAnchor(searchPane, 10.0);
+		centerPane.getChildren().addAll(searchResultsPane, searchPane);
+		
+//		StackPane.setAlignment(searchPane, Pos.BOTTOM_CENTER);
+//		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
+//		AnchorPane.setBottomAnchor(searchPane, 0.0);
+
+		this.root.setCenter(centerPane);
 		
 
         // add window resize button so its on top
@@ -200,5 +250,32 @@ public class BlackmarketApplication extends Application {
         // show stage
         stage.setScene(scene);
         stage.show();
+        
+//        searchPane.relocate(1000, 5000);
+//        searchPane.setTranslateY(stage.getHeight() / 1.5);
+	}
+
+	private void searchHandler(Search search) {
+		logger.info("searchHandler: " + search.toString());
+		
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		
+		BoolQueryBuilder query = QueryBuilders.boolQuery();
+		query.must(QueryBuilders.termQuery("attributes.league", search.getLeague()));
+		search.getName().map(s -> query.must(QueryBuilders.termQuery("info.name", s)));
+		
+		searchSourceBuilder.query(query);
+		searchSourceBuilder.size(10);
+		
+		try {
+			SearchResult result = exileToolsESClient.execute(searchSourceBuilder.toString());
+			List<Hit<ExileToolsHit, Void>> hits = result.getHits(ExileToolsHit.class);
+			for (Hit<ExileToolsHit, Void> hit : hits) {
+				searchResultCurrentHits.add(hit.source);
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 	}
 }

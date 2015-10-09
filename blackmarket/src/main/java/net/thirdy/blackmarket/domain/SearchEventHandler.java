@@ -15,16 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.domain;
 
-
-import javafx.application.Application;
-
-
-public class Main {
-	
-	public static void main(String[] args) {
-        Application.launch(BlackmarketApplication.class, args);
-    }
-
+/**
+ * @author thirdy
+ *
+ */
+public interface SearchEventHandler {
+	void search(Search search);
 }

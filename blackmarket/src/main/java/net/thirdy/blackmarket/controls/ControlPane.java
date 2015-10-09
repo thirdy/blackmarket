@@ -15,45 +15,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.controls;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
-import java.util.Arrays;
-import java.util.TreeSet;
+import java.util.Optional;
 
-import javax.swing.ButtonGroup;
+import org.apache.commons.lang3.StringUtils;
 
-import org.controlsfx.control.textfield.TextFields;
-
-import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import net.thirdy.blackmarket.controls.ItemTypePane;
-import net.thirdy.blackmarket.controls.autofilltextbox.AutoFillTextBox;
+import net.thirdy.blackmarket.domain.League;
+import net.thirdy.blackmarket.domain.Search;
+import net.thirdy.blackmarket.domain.SearchEventHandler;
+import net.thirdy.blackmarket.domain.Unique;
 import net.thirdy.blackmarket.fxcontrols.AutoCompleteComboBoxListener;
-import net.thirdy.blackmarket.fxcontrols.AutoCompleteTextField;
-import net.thirdy.blackmarket.fxcontrols.ButtonToolBar;
 import net.thirdy.blackmarket.fxcontrols.MultiStateButton;
-import net.thirdy.blackmarket.fxcontrols.ToggleButtonGroup;
-import net.thirdy.blackmarket.util.Leagues;
-import net.thirdy.blackmarket.util.Uniques;
 
 /**
  * @author thirdy
@@ -65,18 +54,22 @@ public class ControlPane extends BorderPane {
 //	private GridPane center;
 	
 	Button btnLeague;
+
+	private ItemTypePane itemTypesPane;
+
+	private ComboBox<String> tfName;
 	
-	public ControlPane() {
+	public ControlPane(SearchEventHandler searchEventHandler) {
 		top = new HBox();
 		top.setAlignment(Pos.TOP_RIGHT);
 		setTop(top);
 		
-	    final ComboBox<String> tfName = new ComboBox<>(observableArrayList(Uniques.names));
+	    tfName = new ComboBox<>(observableArrayList(Unique.names));
 	    new AutoCompleteComboBoxListener<String>(tfName);
 		
-	    btnLeague = new MultiStateButton(Leagues.names());
+	    btnLeague = new MultiStateButton(League.names());
 	    
-	    FlowPane itemTypesPane = new ItemTypePane();
+	    itemTypesPane = new ItemTypePane();
 	    
 //		Image scImg = new Image(this.getClass().getResourceAsStream("/images/leagues/sc.png"));
 //		btnScLeague.setGraphic(new ImageView(scImg));
@@ -111,12 +104,21 @@ public class ControlPane extends BorderPane {
 		gridpane.add(separator, 2, 0, 1, 14); // col, row, colspan, rowspan
 	    
 		Button btnSearch = new Button("Search");
+		btnSearch.setOnAction(e -> searchEventHandler.search(buildSearchInstance()));
 		btnSearch.setPrefWidth(400);
 		GridPane.setHalignment(btnSearch, HPos.CENTER);
 		gridpane.add(btnSearch, 0, 15, 3, 1); // col, row, colspan, rowspan
 	    
 		setCenter(gridpane);
 	}
+
+
+	private Search buildSearchInstance() {
+		Optional<String> name = Optional.ofNullable(tfName.getSelectionModel().getSelectedItem());
+		Search search = new Search(name, btnLeague.getText(), itemTypesPane.getSelected());
+		return search;
+	}
+
 
 	public void installShowCollapseButton(Button showCollapseButton) {
 		

@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket.util;
+package net.thirdy.blackmarket.domain;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
  * @author thirdy
  *
  */
-public class Leagues {
+public class League {
 
 	public static List<String> names() {
 		return Arrays.asList("Flashback Event (IC001)", "Flashback Event HC (IC002)", "Standard", "Hardcore");

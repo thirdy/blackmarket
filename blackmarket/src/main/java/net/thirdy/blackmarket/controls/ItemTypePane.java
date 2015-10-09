@@ -19,9 +19,11 @@ package net.thirdy.blackmarket.controls;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.FlowPane;
+import net.thirdy.blackmarket.domain.ItemType;
 
 /**
  * @author thirdy
@@ -40,14 +42,23 @@ public class ItemTypePane extends FlowPane {
     CheckBox chkbxAxe2h = new CheckBox("Axe 2h");
     CheckBox chkbxMace2h = new CheckBox("Mace 2h");
     
-    List<CheckBox> itemTypes;
+    List<CheckBox> itemTypesChkbxs;
     
-	public ItemTypePane() {
+    public ItemTypePane() {
 		super(3, 3);
-		itemTypes = Arrays.asList(chkbxArmour, chkbxHelm, chkbxGloves,
+		// Note the ordering here should follow the order in ItemType enum
+		itemTypesChkbxs = Arrays.asList(chkbxArmour, chkbxHelm, chkbxGloves,
 	    		chkbx1h, chkbx2h, chkbxBow, chkbxAxe, chkbxMace, chkbxAxe2h, chkbxMace2h);
-		this.getChildren().addAll(itemTypes);
+		this.getChildren().addAll(itemTypesChkbxs);
 	}
 	
-	
+	public List<ItemType> getSelected() {
+		ItemType[] itemTypes = ItemType.values();
+		List<ItemType> collect = itemTypesChkbxs.stream()
+		.filter(e -> e.isSelected())
+		.map(e -> itemTypesChkbxs.indexOf(e))
+		.map(e -> itemTypes[e])
+		.collect(Collectors.toList());
+		return collect;
+	}
 }

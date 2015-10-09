@@ -23,14 +23,10 @@ import javafx.animation.Animation;
 import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 /** Animates a node on and off screen to the left. */
@@ -71,9 +67,9 @@ import javafx.util.Duration;
               double translateValue = -(-expandedHeight + curHeight);
               if (translateValue >= (expandedHeight - collapse)) {
             	  // STOP!
-            	  setTranslateY(expandedHeight - collapse);
+            	  SlidingPane.this.setTranslateY(expandedHeight - collapse);
               } else {
-            	  setTranslateY(translateValue);
+            	  SlidingPane.this.setTranslateY(translateValue);
               }
               
             }
@@ -93,7 +89,7 @@ import javafx.util.Duration;
             protected void interpolate(double frac) {
               final double curHeight = expandedHeight * frac;
               double translateValue = -(-expandedHeight + curHeight + collapse);
-              if(translateValue > 0) setTranslateY(translateValue);
+              if(translateValue > 0) SlidingPane.this.setTranslateY(translateValue);
             }
           };
           showSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {

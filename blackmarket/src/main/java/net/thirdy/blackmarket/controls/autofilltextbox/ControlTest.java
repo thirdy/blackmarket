@@ -1,4 +1,4 @@
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.controls.autofilltextbox;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import net.thirdy.blackmarket.controls.autofilltextbox.AutoFillTextBox;
 
 /**
  *

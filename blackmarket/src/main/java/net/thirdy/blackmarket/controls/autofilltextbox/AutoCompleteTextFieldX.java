@@ -1,4 +1,4 @@
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.controls.autofilltextbox;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,7 +18,7 @@ import java.util.TreeSet;
  * This class is a TextField which implements an "autocomplete" functionality, based on a supplied list of entries.
  * @author Caleb Brinkman
  */
-public class AutoCompleteTextField extends TextField
+public class AutoCompleteTextFieldX extends TextField
 {
   /** The existing autocomplete entries. */
   private final SortedSet<String> entries;
@@ -26,7 +26,7 @@ public class AutoCompleteTextField extends TextField
   private ContextMenu entriesPopup;
 
   /** Construct a new AutoCompleteTextField. */
-  public AutoCompleteTextField() {
+  public AutoCompleteTextFieldX() {
     super();
     entries = new TreeSet<>();
     entriesPopup = new ContextMenu();
@@ -46,7 +46,7 @@ public class AutoCompleteTextField extends TextField
             populatePopup(searchResult);
             if (!entriesPopup.isShowing())
             {
-              entriesPopup.show(AutoCompleteTextField.this, Side.BOTTOM, 0, 0);
+              entriesPopup.show(AutoCompleteTextFieldX.this, Side.BOTTOM, 0, 0);
             }
           } else
           {
