@@ -66,6 +66,9 @@ public class ImageCache {
 		if (StringUtils.isNotBlank(key)) {
 			try {
 				image = imageCache.get(key);
+				
+//				image = new WritableImage(image.getPixelReader(), 0, 0, 50, 50);
+				
 			} catch (ExecutionException e) {
 				logger.warn("Exception in loading image: " + key + ". Returning default image.",  e);
 			}

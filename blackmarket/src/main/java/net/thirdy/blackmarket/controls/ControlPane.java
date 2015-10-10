@@ -19,6 +19,8 @@ package net.thirdy.blackmarket.controls;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
+import java.awt.Event;
+import java.beans.EventHandler;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
@@ -58,6 +62,7 @@ public class ControlPane extends BorderPane {
 	private ItemTypePane itemTypesPane;
 
 	private ComboBox<String> tfName;
+	private Button btnSearch;
 	
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		top = new HBox();
@@ -103,7 +108,7 @@ public class ControlPane extends BorderPane {
 	    Separator separator = new Separator(Orientation.VERTICAL);
 		gridpane.add(separator, 2, 0, 1, 14); // col, row, colspan, rowspan
 	    
-		Button btnSearch = new Button("Search");
+		btnSearch = new Button("Search");
 		btnSearch.setOnAction(e -> searchEventHandler.search(buildSearchInstance()));
 		btnSearch.setPrefWidth(400);
 		GridPane.setHalignment(btnSearch, HPos.CENTER);
@@ -121,14 +126,11 @@ public class ControlPane extends BorderPane {
 
 
 	public void installShowCollapseButton(Button showCollapseButton) {
-		
-//		Region spacer = new Region();
-//        HBox.setHgrow(spacer, Priority.ALWAYS);
-//        top.getChildren().add(spacer);
-		
-//		showCollapseButton.setAlignment(Pos.CENTER_RIGHT);
-//		BorderPane.setAlignment(showCollapseButton, Pos.CENTER_RIGHT);
-//		HBox.
 		top.getChildren().add(showCollapseButton);
+	}
+
+
+	public void fireSearchEvent() {
+		btnSearch.fire();
 	}
 }

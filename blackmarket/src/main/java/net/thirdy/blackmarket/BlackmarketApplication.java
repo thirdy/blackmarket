@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import io.jexiletools.es.ExileToolsESClient;
 import io.jexiletools.es.model.ExileToolsHit;
 import javafx.application.Application;
+import javafx.beans.property.DoubleProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.DepthTest;
@@ -43,6 +44,11 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.Mnemonic;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -52,12 +58,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import net.thirdy.blackmarket.controls.ControlPane;
 import net.thirdy.blackmarket.controls.Dialogs;
+import net.thirdy.blackmarket.controls.ItemGridCell;
 import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
@@ -149,19 +155,38 @@ public class BlackmarketApplication extends Application {
 		ControlPane controlPane = new ControlPane(e -> searchHandler(e));
 		SlidingPane searchPane = new SlidingPane(250, 40, controlPane);
 		Button showCollapseButton = searchPane.getControlButton();
+
+		scene.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
+			if ((keyEvent.isControlDown() || keyEvent.isAltDown()) 
+					&& (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.DOWN)) {
+				showCollapseButton.fire();
+			}
+			
+			if (keyEvent.getCode() == KeyCode.ENTER
+					&& !progressIndicator.isVisible()) {
+				controlPane.fireSearchEvent();
+			}
+		});
+		
 		controlPane.installShowCollapseButton(showCollapseButton);
 		searchPane.setId("searchPane");
 		
+		AnchorPane centerPane = new AnchorPane();
+		
+//		DoubleProperty wProp = DoubleProperty.
+		
 		searchResultsPane = new GridView<>();
-		searchResultsPane.setCellHeight(200);
-		searchResultsPane.setCellWidth(100);
+//		searchResultsPane.setB
+//		searchResultsPane.setCellHeight(300);
+		searchResultsPane.setCellWidth(300);
+//		searchResultsPane.cellWidthProperty().bind(centerPane.widthProperty());
+		searchResultsPane.setCellHeight(189);
 		searchResultsPane.setCellFactory(new Callback<GridView<ExileToolsHit>, GridCell<ExileToolsHit>>() {
 		     public GridCell<ExileToolsHit> call(GridView<ExileToolsHit> gridView) {
 				return new ItemGridCell();
 		     }
 		 });
 		
-		AnchorPane centerPane = new AnchorPane();
 		
 		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
 		AnchorPane.setLeftAnchor(searchResultsPane, 0.0);
@@ -174,14 +199,12 @@ public class BlackmarketApplication extends Application {
 		centerPane.getChildren().addAll(searchResultsPane, searchPane);
 		
 		Label progressIndicatorLabel = new Label();
-		TilePane loadingLayer = new TilePane(progressIndicator, progressIndicatorLabel);
         
         progressIndicator.progressProperty().bind(searchService.progressProperty());
         progressIndicatorLabel.textProperty().bind(searchService.messageProperty());
         veilOfTheNight.visibleProperty().bind(searchService.runningProperty());
         progressIndicatorLabel.visibleProperty().bind(searchService.runningProperty());
         progressIndicator.visibleProperty().bind(searchService.runningProperty());
-//        loadingLayer.visibleProperty().bind(searchService.runningProperty());
         
         searchService.setOnSucceeded(e -> 
         	searchResultsPane.setItems(searchService.getValue()));
@@ -277,7 +300,7 @@ public class BlackmarketApplication extends Application {
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
-		searchSourceBuilder.size(50);
+		searchSourceBuilder.size(100);
 		String json = searchSourceBuilder.toString();
 		
 		searchService.setJson(json);
