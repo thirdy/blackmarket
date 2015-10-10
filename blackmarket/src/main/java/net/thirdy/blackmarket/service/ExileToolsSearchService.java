@@ -1,6 +1,7 @@
 package net.thirdy.blackmarket.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import io.jexiletools.es.model.ExileToolsHit;
@@ -13,6 +14,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import net.thirdy.blackmarket.BlackmarketApplication;
 import net.thirdy.blackmarket.ex.BlackmarketException;
+import net.thirdy.blackmarket.util.ImageCache;
 
 public class ExileToolsSearchService extends Service<ObservableList<ExileToolsHit>> {
 	
@@ -28,15 +30,24 @@ public class ExileToolsSearchService extends Service<ObservableList<ExileToolsHi
             @Override protected ObservableList<ExileToolsHit> call() throws Exception {
             	try {
         			// FIXME: not sure if ExileToolsESClient is thread-safe, maybe we should just instantiate here and then shutdown afterwards
+            		updateMessage("Querying against Exile Tools Elastic Search Public API...");
         			SearchResult result = BlackmarketApplication.getExileToolsESClient().execute(s);
-        			ObservableList<ExileToolsHit> hits = FXCollections.observableArrayList();
-        			hits.addAll(result.getHits(ExileToolsHit.class)
+        			List<ExileToolsHit> exileToolHits = result.getHits(ExileToolsHit.class)
         					.stream()
         					.map(e -> e.source)
-        					.collect(Collectors.toList())
-        					);
+        					.collect(Collectors.toList());
+
         			
-        			return hits;
+        			// cache images
+        			updateMessage("Caching images...");
+        			
+					for (ExileToolsHit h : exileToolHits) {
+						String icon = h.getInfo().getIcon();
+						updateMessage("Caching image: " + icon);
+						ImageCache.getInstance().preLoad(icon);
+					}
+        			
+        			return FXCollections.observableArrayList(exileToolHits);
         		} catch (IOException e) {
         			String msg = "Error while running search to the backend. Json query is: " + json;
         			updateMessage(msg);

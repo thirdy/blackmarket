@@ -17,11 +17,10 @@
  */
 package net.thirdy.blackmarket;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -37,12 +36,9 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.DepthTest;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,9 +51,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import net.thirdy.blackmarket.controls.ControlPane;
+import net.thirdy.blackmarket.controls.Dialogs;
 import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
@@ -69,7 +69,6 @@ import net.thirdy.blackmarket.service.ExileToolsSearchService;
  *
  */
 public class BlackmarketApplication extends Application {
-	
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -115,7 +114,7 @@ public class BlackmarketApplication extends Application {
         
         Region veilOfTheNight = new Region();
 
-        veilOfTheNight.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4)");
+        veilOfTheNight.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7)");
 
         ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
         progressIndicator.setMaxSize(150, 150);
@@ -154,6 +153,14 @@ public class BlackmarketApplication extends Application {
 		searchPane.setId("searchPane");
 		
 		searchResultsPane = new GridView<>();
+		searchResultsPane.setCellHeight(200);
+		searchResultsPane.setCellWidth(100);
+		searchResultsPane.setCellFactory(new Callback<GridView<ExileToolsHit>, GridCell<ExileToolsHit>>() {
+		     public GridCell<ExileToolsHit> call(GridView<ExileToolsHit> gridView) {
+				return new ItemGridCell();
+		     }
+		 });
+		
 		AnchorPane centerPane = new AnchorPane();
 		
 		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
@@ -165,18 +172,24 @@ public class BlackmarketApplication extends Application {
 	    AnchorPane.setLeftAnchor(searchPane, 10.0);
 	    AnchorPane.setRightAnchor(searchPane, 10.0);
 		centerPane.getChildren().addAll(searchResultsPane, searchPane);
+		
+		Label progressIndicatorLabel = new Label();
+		TilePane loadingLayer = new TilePane(progressIndicator, progressIndicatorLabel);
         
         progressIndicator.progressProperty().bind(searchService.progressProperty());
+        progressIndicatorLabel.textProperty().bind(searchService.messageProperty());
         veilOfTheNight.visibleProperty().bind(searchService.runningProperty());
+        progressIndicatorLabel.visibleProperty().bind(searchService.runningProperty());
         progressIndicator.visibleProperty().bind(searchService.runningProperty());
+//        loadingLayer.visibleProperty().bind(searchService.runningProperty());
         
         searchService.setOnSucceeded(e -> 
         	searchResultsPane.setItems(searchService.getValue()));
         
         searchService.setOnFailed(e ->
-        	showExceptionDialog(searchService.getException()));
+        	Dialogs.showExceptionDialog(searchService.getException()));
         
-        StackPane centerStackPane = new StackPane(centerPane, veilOfTheNight, progressIndicator);
+		StackPane centerStackPane = new StackPane(centerPane, veilOfTheNight, progressIndicator, progressIndicatorLabel);
         
         this.root.setCenter(centerStackPane);
         
@@ -215,7 +228,6 @@ public class BlackmarketApplication extends Application {
         Region spacer2 = new Region();
         HBox.setHgrow(spacer2, Priority.ALWAYS);
         toolBar.getItems().add(spacer2);
-
 
         toolBar.setPrefHeight(66);
         toolBar.setMinHeight(66);
@@ -265,7 +277,7 @@ public class BlackmarketApplication extends Application {
 
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
-		searchSourceBuilder.size(10);
+		searchSourceBuilder.size(50);
 		String json = searchSourceBuilder.toString();
 		
 		searchService.setJson(json);
@@ -281,38 +293,4 @@ public class BlackmarketApplication extends Application {
 		return filters;
 	}
 	
-	private void showExceptionDialog(Throwable throwable) {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Exception Dialog");
-		alert.setHeaderText("Exception Dialog");
-		alert.setContentText(throwable.getMessage());
-
-		// Create expandable Exception.
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		throwable.printStackTrace(pw);
-		String exceptionText = sw.toString();
-
-		Label label = new Label("The exception stacktrace was:");
-
-		TextArea textArea = new TextArea(exceptionText);
-		textArea.setEditable(false);
-		textArea.setWrapText(true);
-
-		textArea.setMaxWidth(Double.MAX_VALUE);
-		textArea.setMaxHeight(Double.MAX_VALUE);
-		GridPane.setVgrow(textArea, Priority.ALWAYS);
-		GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-		GridPane expContent = new GridPane();
-		expContent.setMaxWidth(Double.MAX_VALUE);
-		expContent.add(label, 0, 0);
-		expContent.add(textArea, 0, 1);
-
-		// Set expandable Exception into the dialog pane.
-		alert.getDialogPane().setExpandableContent(expContent);
-		alert.getDialogPane().setExpanded(true);
-
-		alert.showAndWait();
-	}
 }
