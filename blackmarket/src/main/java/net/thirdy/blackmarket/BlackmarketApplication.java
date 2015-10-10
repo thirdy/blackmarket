@@ -17,13 +17,14 @@
  */
 package net.thirdy.blackmarket;
 
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.controlsfx.control.GridView;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
@@ -31,17 +32,17 @@ import org.slf4j.LoggerFactory;
 
 import io.jexiletools.es.ExileToolsESClient;
 import io.jexiletools.es.model.ExileToolsHit;
-import io.searchbox.core.SearchResult;
-import io.searchbox.core.SearchResult.Hit;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.DepthTest;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -61,6 +62,7 @@ import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
+import net.thirdy.blackmarket.service.ExileToolsSearchService;
 
 /**
  * @author thirdy
@@ -83,15 +85,19 @@ public class BlackmarketApplication extends Application {
     private double mouseDragOffsetX = 0;
     private double mouseDragOffsetY = 0;
 
-	private ObservableList<ExileToolsHit> searchResultCurrentHits = FXCollections.observableArrayList();
+//	private final ObservableList<ExileToolsHit> searchResultCurrentHits = FXCollections.observableArrayList();
     
-	/**
-	 * Get the singleton instance of BlackmarketApplication
-	 */
 	public static BlackmarketApplication getBlackmarketApplication() {
 		return blackmarketApplication;
 	}
+	public static ExileToolsESClient getExileToolsESClient() {
+		return exileToolsESClient;
+	}
 	
+	private final ExileToolsSearchService searchService = new ExileToolsSearchService();
+
+	private GridView<ExileToolsHit> searchResultsPane;
+
 	@Override
 	public void stop() throws Exception {
 		super.stop();
@@ -106,6 +112,13 @@ public class BlackmarketApplication extends Application {
 		
 		// create root stack pane that we use to be able to overlay proxy dialog
         StackPane layerPane = new StackPane();
+        
+        Region veilOfTheNight = new Region();
+
+        veilOfTheNight.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4)");
+
+        ProgressIndicator progressIndicator = new ProgressIndicator(-1.0f);
+        progressIndicator.setMaxSize(150, 150);
         
         stage.initStyle(StageStyle.UNDECORATED);
         // create window resize button
@@ -130,7 +143,54 @@ public class BlackmarketApplication extends Application {
 		scene.getStylesheets().add(this.getClass().getResource("ensemble2.css").toExternalForm());
 		
 		// create main toolbar
-        toolBar = new ToolBar();
+        setupToolbar(stage);
+		
+		this.root.setTop(toolBar);
+		
+		ControlPane controlPane = new ControlPane(e -> searchHandler(e));
+		SlidingPane searchPane = new SlidingPane(250, 40, controlPane);
+		Button showCollapseButton = searchPane.getControlButton();
+		controlPane.installShowCollapseButton(showCollapseButton);
+		searchPane.setId("searchPane");
+		
+		searchResultsPane = new GridView<>();
+		AnchorPane centerPane = new AnchorPane();
+		
+		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
+		AnchorPane.setLeftAnchor(searchResultsPane, 0.0);
+		AnchorPane.setRightAnchor(searchResultsPane, 0.0);
+		AnchorPane.setBottomAnchor(searchResultsPane, 0.0);
+		
+	    AnchorPane.setBottomAnchor(searchPane, 10.0);
+	    AnchorPane.setLeftAnchor(searchPane, 10.0);
+	    AnchorPane.setRightAnchor(searchPane, 10.0);
+		centerPane.getChildren().addAll(searchResultsPane, searchPane);
+        
+        progressIndicator.progressProperty().bind(searchService.progressProperty());
+        veilOfTheNight.visibleProperty().bind(searchService.runningProperty());
+        progressIndicator.visibleProperty().bind(searchService.runningProperty());
+        
+        searchService.setOnSucceeded(e -> 
+        	searchResultsPane.setItems(searchService.getValue()));
+        
+        searchService.setOnFailed(e ->
+        	showExceptionDialog(searchService.getException()));
+        
+        StackPane centerStackPane = new StackPane(centerPane, veilOfTheNight, progressIndicator);
+        
+        this.root.setCenter(centerStackPane);
+        
+        // add window resize button so its on top
+        windowResizeButton.setManaged(false);
+        this.root.getChildren().add(windowResizeButton);
+
+        // show stage
+        stage.setScene(scene);
+        stage.show();
+	}
+
+	private void setupToolbar(final Stage stage) {
+		toolBar = new ToolBar();
         toolBar.setId("mainToolBar");
         
         Image logoImg = new Image(this.getClass().getResourceAsStream("/images/blackmarket-logo.png"));
@@ -151,43 +211,23 @@ public class BlackmarketApplication extends Application {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         toolBar.getItems().add(spacer);
-//        Button highlightsButton = new Button();
-//        highlightsButton.setId("highlightsButton");
-//        highlightsButton.setMinSize(120, 66);
-//        highlightsButton.setPrefSize(120, 66);
-//        highlightsButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override public void handle(ActionEvent event) {
-//                goToPage(Pages.HIGHLIGHTS);
-//            }
-//        });
-//        toolBar.getItems().add(highlightsButton);
-//        Button newButton = new Button();
-//        newButton.setId("newButton");
-//        newButton.setMinSize(120,66);
-//        newButton.setPrefSize(120,66);
-//        newButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override public void handle(ActionEvent event) {
-//                goToPage(Pages.NEW);
-//            }
-//        });
-//        toolBar.getItems().add(newButton);
+
         Region spacer2 = new Region();
         HBox.setHgrow(spacer2, Priority.ALWAYS);
         toolBar.getItems().add(spacer2);
-//        ImageView searchTest = new ImageView(new Image(this.getClass().getResourceAsStream("/images/search-text.png")));
-//        toolBar.getItems().add(searchTest);
-//        SearchBox searchBox = new SearchBox();
-//        HBox.setMargin(searchBox, new Insets(0,5,0,0));
-//        toolBar.getItems().add(searchBox);
+
+
         toolBar.setPrefHeight(66);
         toolBar.setMinHeight(66);
         toolBar.setMaxHeight(66);
         GridPane.setConstraints(toolBar, 0, 0);
+        
 		// add close min max
 		final WindowButtons windowButtons = new WindowButtons(stage);
 //		Text versionText = new Text("v0.4");
 //		toolBar.getItems().add(versionText);
 		toolBar.getItems().add(windowButtons);
+		
 		// add window header double clicking
 		toolBar.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -205,6 +245,7 @@ public class BlackmarketApplication extends Application {
 				mouseDragOffsetY = event.getSceneY();
 			}
 		});
+		
 		toolBar.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -214,68 +255,64 @@ public class BlackmarketApplication extends Application {
 				}
 			}
 		});
-		
-		this.root.setTop(toolBar);
-		
-		ControlPane controlPane = new ControlPane(e -> searchHandler(e));
-		SlidingPane searchPane = new SlidingPane(250, 40, controlPane);
-		Button showCollapseButton = searchPane.getControlButton();
-		controlPane.installShowCollapseButton(showCollapseButton);
-		searchPane.setId("searchPane");
-		
-		GridView<ExileToolsHit> searchResultsPane = new GridView<>(searchResultCurrentHits);
-		AnchorPane centerPane = new AnchorPane();
-		
-		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
-		AnchorPane.setLeftAnchor(searchResultsPane, 0.0);
-		AnchorPane.setRightAnchor(searchResultsPane, 0.0);
-		AnchorPane.setBottomAnchor(searchResultsPane, 0.0);
-		
-	    AnchorPane.setBottomAnchor(searchPane, 10.0);
-	    AnchorPane.setLeftAnchor(searchPane, 10.0);
-	    AnchorPane.setRightAnchor(searchPane, 10.0);
-		centerPane.getChildren().addAll(searchResultsPane, searchPane);
-		
-//		StackPane.setAlignment(searchPane, Pos.BOTTOM_CENTER);
-//		AnchorPane.setTopAnchor(searchResultsPane, 0.0);
-//		AnchorPane.setBottomAnchor(searchPane, 0.0);
-
-		this.root.setCenter(centerPane);
-		
-
-        // add window resize button so its on top
-		windowResizeButton.setManaged(false);
-        this.root.getChildren().add(windowResizeButton);
-
-        // show stage
-        stage.setScene(scene);
-        stage.show();
-        
-//        searchPane.relocate(1000, 5000);
-//        searchPane.setTranslateY(stage.getHeight() / 1.5);
 	}
 
 	private void searchHandler(Search search) {
 		logger.info("searchHandler: " + search.toString());
 		
+		List<FilterBuilder> filters = searchToFilters(search);
+		FilterBuilder filter = FilterBuilders.andFilter(filters.toArray(new FilterBuilder[filters.size()]));
+
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		
-		BoolQueryBuilder query = QueryBuilders.boolQuery();
-		query.must(QueryBuilders.termQuery("attributes.league", search.getLeague()));
-		search.getName().map(s -> query.must(QueryBuilders.termQuery("info.name", s)));
-		
-		searchSourceBuilder.query(query);
+		searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
 		searchSourceBuilder.size(10);
+		String json = searchSourceBuilder.toString();
 		
-		try {
-			SearchResult result = exileToolsESClient.execute(searchSourceBuilder.toString());
-			List<Hit<ExileToolsHit, Void>> hits = result.getHits(ExileToolsHit.class);
-			for (Hit<ExileToolsHit, Void> hit : hits) {
-				searchResultCurrentHits.add(hit.source);
-			}
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		searchService.setJson(json);
+		searchService.restart();
 		
+	}
+
+	private List<FilterBuilder> searchToFilters(Search search) {
+		List<FilterBuilder> filters = new LinkedList<>();
+		
+		filters.add(FilterBuilders.termFilter("attributes.league", search.getLeague()));
+		search.getName().map(s -> filters.add(FilterBuilders.termFilter("info.name", s)));
+		return filters;
+	}
+	
+	private void showExceptionDialog(Throwable throwable) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Exception Dialog");
+		alert.setHeaderText("Exception Dialog");
+		alert.setContentText(throwable.getMessage());
+
+		// Create expandable Exception.
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		throwable.printStackTrace(pw);
+		String exceptionText = sw.toString();
+
+		Label label = new Label("The exception stacktrace was:");
+
+		TextArea textArea = new TextArea(exceptionText);
+		textArea.setEditable(false);
+		textArea.setWrapText(true);
+
+		textArea.setMaxWidth(Double.MAX_VALUE);
+		textArea.setMaxHeight(Double.MAX_VALUE);
+		GridPane.setVgrow(textArea, Priority.ALWAYS);
+		GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+		GridPane expContent = new GridPane();
+		expContent.setMaxWidth(Double.MAX_VALUE);
+		expContent.add(label, 0, 0);
+		expContent.add(textArea, 0, 1);
+
+		// Set expandable Exception into the dialog pane.
+		alert.getDialogPane().setExpandableContent(expContent);
+		alert.getDialogPane().setExpanded(true);
+
+		alert.showAndWait();
 	}
 }
