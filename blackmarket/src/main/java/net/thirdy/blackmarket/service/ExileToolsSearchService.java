@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import io.jexiletools.es.model.ExileToolsHit;
+import io.jexiletools.es.model.json.ExileToolsHit;
 import io.searchbox.core.SearchResult;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

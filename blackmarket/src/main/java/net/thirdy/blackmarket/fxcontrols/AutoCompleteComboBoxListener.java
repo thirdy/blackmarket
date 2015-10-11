@@ -132,11 +132,11 @@ public class AutoCompleteComboBoxListener<T> {
             comboBox.getEditor().end();
         }
 
-        if (!found) {
-            comboBox.getEditor().setText(null);
-            comboBox.getSelectionModel().select(null);
-            comboBox.setValue(null);
-        }
+//        if (!found) {
+//            comboBox.getEditor().setText(null);
+//            comboBox.getSelectionModel().select(null);
+//            comboBox.setValue(null);
+//        }
 
         if (!inFocus && comboBox.getEditor().getText() != null && comboBox.getEditor().getText().trim().length() > 0) {
             // press enter key programmatically to have this entry added

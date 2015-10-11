@@ -15,26 +15,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket.ex;
+package net.thirdy.blackmarket.util;
+
+import java.awt.Desktop;
+import java.net.URI;
+
+import net.thirdy.blackmarket.ex.BlackmarketException;
 
 /**
- *
  * @author thirdy
+ *
  */
-public class BlackmarketException extends Exception {
-
-	private static final long serialVersionUID = 1L;
-
-	public BlackmarketException(Exception ex) {
-        super(ex);
-    }
-	
-	public BlackmarketException(String msg, Exception ex) {
-		super(msg, ex);
+public class SwingUtil {
+	public static void openUrlViaBrowser(String url) throws BlackmarketException {
+		String s = url;
+		if (Desktop.isDesktopSupported()) {
+			try {
+				Desktop.getDesktop().browse(new URI(s));
+			} catch (Exception e) {
+				throw new BlackmarketException(
+						"Error on opening browser, address: " + s + ": " + e.getMessage(), e
+							);
+			}
+		} else {
+			throw new BlackmarketException("Launch browser failed, please manually visit: " + s);
+		}
 	}
-
-	public BlackmarketException(String msg) {
-		super(msg);
-	}
-    
 }

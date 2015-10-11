@@ -56,6 +56,28 @@
     -fx-background-position: left top;
     -fx-background-repeat: no-repeat;
 }
+#mainToolBar .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-style: italic; 
+    -fx-font-weight: bold;
+}
+#propertiesGridPane .label {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #FFFFFF;
+}
+.explcit-mod {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #FFFFFF;
+}
+.implicit-mod {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #FFFFFF;
+}
+.item-name {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.4) , 10, 0.5 , 0.4 , 0 );
+	-fx-font-style: italic; -fx-font-weight: bold; -fx-padding: 0 0 5 0; -fx-font-size: 9pt;
+}
+
 #newButton {
     -fx-background-color: null;
     -fx-padding: -10 0 -10 0;
