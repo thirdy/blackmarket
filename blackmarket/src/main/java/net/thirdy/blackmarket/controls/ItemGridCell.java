@@ -121,7 +121,6 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		borderPane.setPadding(new Insets(5, 0, 5, 5));
 	}
 	
-
 	private void wtbHandler() {
 		StringSelection stringSelection = new StringSelection(getItem().toWTB());
 			Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -337,11 +336,17 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		itemNameGraphics.getChildren().clear();
 		if (item.getAttributes().getCorrupted()) {
 			Image image = ImageCache.getInstance().get(Currencies.vaal.icon().get());
-			itemNameGraphics.getChildren().add(new ImageView(image));
+			ImageView imageView = new ImageView(image);
+			imageView.setPreserveRatio(true);
+			imageView.setFitHeight(21);
+			itemNameGraphics.getChildren().add(imageView);
 		}
 		if (item.getAttributes().getMirrored()) {
 			Image image = ImageCache.getInstance().get(Currencies.mirror.icon().get());
-			itemNameGraphics.getChildren().add(new ImageView(image));
+			ImageView imageView = new ImageView(image);
+			imageView.setPreserveRatio(true);
+			imageView.setFitHeight(21);
+			itemNameGraphics.getChildren().add(imageView);
 		}
 	}
 

@@ -31,6 +31,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -40,10 +44,8 @@ import javafx.scene.layout.Region;
 import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
 import net.thirdy.blackmarket.domain.Unique;
-import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.fxcontrols.AutoCompleteComboBoxListener;
 import net.thirdy.blackmarket.fxcontrols.MultiStateButton;
-import net.thirdy.blackmarket.util.SwingUtil;
 
 /**
  * @author thirdy
@@ -61,24 +63,29 @@ public class ControlPane extends BorderPane {
 	private Button btnSearch;
 	
 	private Label lblHitCount = new Label();
-	private Button btnWebsite = new Button();
+	private Button btnAbout = new Button("About");
+	private ToggleButton toggleAdvanceMode = new ToggleButton("Advance Mode");
+	
+	private TextArea txtAreaJson = new TextArea();
+
+	private GridPane simpleSearchGridPane;
 	
 	public ControlPane(SearchEventHandler searchEventHandler) {
-		btnWebsite.setId("website-button");
-		btnWebsite.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent actionEvent) {
-                try {
-					SwingUtil.openUrlViaBrowser("http://thirdy.github.io/blackmarket/");
-				} catch (BlackmarketException e) {
-					Dialogs.showInfo(e.getMessage());
-				}
-            }
-        });
+		// Do not propagate the CTRL key since it will trigger slide of control pane
+		txtAreaJson.setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+		
+		btnAbout.setOnAction(e -> Dialogs.showAbout());
+		
+		toggleAdvanceMode.setOnAction(e -> {
+			if(toggleAdvanceMode.isSelected()) {
+				txtAreaJson.setText(buildSearchInstance(true).buildSearchJson());
+				setCenter(txtAreaJson);
+			}
+			else setCenter(simpleSearchGridPane);
+		});
 		
 		top = new HBox(5);
-		Region spacer = new Region();
-		HBox.setHgrow(spacer, Priority.ALWAYS);
-		top.getChildren().addAll(lblHitCount, spacer, btnWebsite);
+		top.getChildren().addAll(lblHitCount, newSpacer());
 		setTop(top);
 		
 	    tfName = new ComboBox<>(observableArrayList(Unique.names));
@@ -88,51 +95,77 @@ public class ControlPane extends BorderPane {
 	    
 	    itemTypesPane = new ItemTypePane();
 	    
-	    GridPane gridpane = new GridPane();
-	    gridpane.setPadding(new Insets(5));
-	    gridpane.setHgap(5);
-	    gridpane.setVgap(5);
+	    simpleSearchGridPane = new GridPane();
+	    simpleSearchGridPane.setPadding(new Insets(5));
+	    simpleSearchGridPane.setHgap(5);
+	    simpleSearchGridPane.setVgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();
-	    column1.setPercentWidth(5);
+	    column1.setPercentWidth(4);
 	    ColumnConstraints column2 = new ColumnConstraints();
-	    column2.setPercentWidth(25);
+	    column2.setPercentWidth(36);
 	    ColumnConstraints column3 = new ColumnConstraints();
-	    column3.setPercentWidth(70);
-	    column2.setHgrow(Priority.ALWAYS);
-	    gridpane.getColumnConstraints().addAll(column1, column2, column3);
-	    
-	    gridpane.add(new Label("League:"), 0, 0);
-	    gridpane.add(new Label("Name:"), 0, 1);
-	    gridpane.add(new Label("Type:"), 0, 2);
-	    
-	    gridpane.add(btnLeague, 1, 0);
-	    gridpane.add(tfName, 1, 1);
-	    gridpane.add(itemTypesPane, 1, 2);
-	    
+	    column3.setPercentWidth(1);
+	    ColumnConstraints column4 = new ColumnConstraints();
+	    column4.setPercentWidth(29);
+	    ColumnConstraints column5 = new ColumnConstraints();
+	    column5.setPercentWidth(34);
+	    column5.setHgrow(Priority.ALWAYS);
+	    simpleSearchGridPane.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
+
+	    // Column 1
+	    simpleSearchGridPane.add(new Label("League:"), 0, 0);
+	    simpleSearchGridPane.add(new Label("Name:"), 0, 1);
+	    simpleSearchGridPane.add(new Label("Type:"), 0, 2);
+
+	    // Column 2
+	    simpleSearchGridPane.add(btnLeague, 1, 0);
+	    simpleSearchGridPane.add(tfName, 1, 1);
+	    simpleSearchGridPane.add(itemTypesPane, 1, 2);
+
+	    // Column 3
 	    Separator separator = new Separator(Orientation.VERTICAL);
-		gridpane.add(separator, 2, 0, 1, 4); // col, row, colspan, rowspan
+		simpleSearchGridPane.add(separator, 2, 0, 1, 4); // col, row, colspan, rowspan
 		
-//		gridpane.add(new Label("League:"), 0, 0);
-//		gridpane.add(new Label("Name:"), 0, 1);
-//		gridpane.add(new Label("Type:"), 0, 2);
-//		
-//		gridpane.add(btnLeague, 1, 0);
-//		gridpane.add(tfName, 1, 1);
-//		gridpane.add(itemTypesPane, 1, 2);
+	    // Column 4
+		simpleSearchGridPane.add(new Label("Online:"), 3, 0);
+		simpleSearchGridPane.add(new Label("Name:"), 3, 1);
+		simpleSearchGridPane.add(new Label("Type:"), 3, 2);
+
+	    // Column 5
+//		 Slider slider = new Slider(1, 1000, 10);
+//		 slider.setShowTickMarks(true);
+//		 slider.setShowTickLabels(true);
+//		 slider.setMajorTickUnit(200);
+//		 slider.setBlockIncrement(10);
+//		simpleSearchGridPane.add(slider, 4, 0);
+//		simpleSearchGridPane.add(tfName, 1, 1);
+//		simpleSearchGridPane.add(itemTypesPane, 1, 2);
 	    
 		btnSearch = new Button("Search");
-		btnSearch.setOnAction(e -> searchEventHandler.search(buildSearchInstance()));
+		btnSearch.setOnAction(e -> searchEventHandler.search(buildSearchInstance(false)));
 		btnSearch.setPrefWidth(400);
-		GridPane.setHalignment(btnSearch, HPos.CENTER);
-		gridpane.add(btnSearch, 0, 4, 3, 1); // col, row, colspan, rowspan
+//		HBox.setHalignment(btnSearch, HPos.CENTER);
+		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnAbout);
+		
+		GridPane.setHalignment(bottomPane, HPos.CENTER);
+//		gridpane.add(btnSearch, 0, 4, 3, 1); // col, row, colspan, rowspan
 	    
-		setCenter(gridpane);
+		setCenter(simpleSearchGridPane);
+		setBottom(bottomPane);
 	}
 
 
-	private Search buildSearchInstance() {
+	private Region newSpacer() {
+		Region spacer = new Region();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+		return spacer;
+	}
+	
+	private Search buildSearchInstance(boolean forTextArea) {
 		Optional<String> name = Optional.ofNullable(tfName.getSelectionModel().getSelectedItem());
 		Search search = new Search(name, btnLeague.getText(), itemTypesPane.getSelected());
+		search.setAdvanceMode(!forTextArea && toggleAdvanceMode.isSelected());
+		search.setAdvanceOptionJson(txtAreaJson.getText());
 		return search;
 	}
 

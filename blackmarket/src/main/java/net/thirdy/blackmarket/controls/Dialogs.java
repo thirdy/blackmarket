@@ -20,18 +20,35 @@ package net.thirdy.blackmarket.controls;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import net.thirdy.blackmarket.BlackmarketApplication;
+import net.thirdy.blackmarket.ex.BlackmarketException;
+import net.thirdy.blackmarket.util.SwingUtil;
 
 /**
  * @author thirdy
  *
  */
 public class Dialogs {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Dialogs.class.getName());
+
+	
 	public static void showExceptionDialog(Throwable throwable) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Exception Dialog");
@@ -73,5 +90,67 @@ public class Dialogs {
 		alert.setHeaderText("");
 		alert.setContentText(string);
 		alert.showAndWait();
+	}
+	
+	public static void showAbout() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setGraphic(new Region());
+		alert.setTitle("Blackmarket " + BlackmarketApplication.VERSION);
+		alert.setContentText("");
+		alert.setHeaderText("");
+		
+		TextArea textArea = new TextArea("Copyright 2015 Vicente de Rivera III"
+				  + "\r\n"
+				  + "\r\n http://thirdy.github.io/blackmarket"
+				  + "\r\n"
+				  + "\r\n This program is free software; you can redistribute it and/or"
+				  + "\r\n modify it under the terms of the GNU General Public License"
+				  + "\r\n as published by the Free Software Foundation; either version 2"
+				  + "\r\n of the License, or (at your option) any later version."
+				  + "\r\n"
+				  + "\r\n This program is distributed in the hope that it will be useful,"
+				  + "\r\n but WITHOUT ANY WARRANTY; without even the implied warranty of"
+				  + "\r\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
+				  + "\r\n GNU General Public License for more details."
+				  + "\r\n"
+				  + "\r\n You should have received a copy of the GNU General Public License"
+				  + "\r\n along with this program; if not, write to the Free Software"
+				  + "\r\n Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA."
+				  + "\r\n"
+				);
+		textArea.setEditable(false);
+		textArea.setWrapText(true);
+		
+		Hyperlink website = new Hyperlink("Visit Blackmarket Homepage");
+		website.setOnAction(e -> {
+			try {
+				SwingUtil.openUrlViaBrowser("http://thirdy.github.io/blackmarket/");
+			} catch (BlackmarketException ex) {
+				logger.error(ex.getMessage(), ex);
+			}
+		});
+		
+		Hyperlink exwebsite = new Hyperlink("Visit Exile Tools Homepage");
+		exwebsite.setOnAction(e -> {
+			try {
+				SwingUtil.openUrlViaBrowser("http://exiletools.com/");
+			} catch (BlackmarketException ex) {
+				logger.error(ex.getMessage(), ex);
+			}
+		});
+		
+		VBox content = new VBox(
+				new ImageView(new Image("/images/blackmarket-logo.png")),
+				new Label("Blackmarket is fan-made and not affiliated with Grinding Gear Games in any way."),
+				new HBox(new Label("Blackmarket uses Exile Tools Shop Indexer Elastic Search API")),
+				website,
+				exwebsite,
+				new Label("Blackmarket is 100% Free and Open Source under GPLv2"),
+				textArea);
+		content.setSpacing(3);
+		alert.getDialogPane().setContent(content);
+		alert.showAndWait();
+		
+
 	}
 }

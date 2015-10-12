@@ -17,12 +17,15 @@
  */
 package net.thirdy.blackmarket;
 
+import static com.google.common.collect.Iterables.toArray;
 import static org.elasticsearch.index.query.FilterBuilders.andFilter;
+import static org.elasticsearch.index.query.FilterBuilders.orFilter;
 import static org.elasticsearch.index.query.FilterBuilders.termFilter;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
@@ -32,6 +35,8 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Iterables;
 
 import io.jexiletools.es.ExileToolsESClient;
 import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
@@ -79,6 +84,8 @@ import net.thirdy.blackmarket.service.ExileToolsSearchService;
  *
  */
 public class BlackmarketApplication extends Application {
+
+	public static final String VERSION = "Version: 0.4";
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -286,7 +293,7 @@ public class BlackmarketApplication extends Application {
         
 		// add close min max
 		final WindowButtons windowButtons = new WindowButtons(stage);
-		versionText = new Label("Version: 0.4");
+		versionText = new Label(VERSION);
 		indexerLastUpdateText = new Label("Indexer Last Update: ");
 		Label indexerLastUpdateValueText = new Label();
 		indexerLastUpdateValueText.textProperty().bind(lastIndexUpdateService.messageProperty());
@@ -329,41 +336,11 @@ public class BlackmarketApplication extends Application {
 	}
 
 	private void searchHandler(Search search) {
-		logger.info("searchHandler: " + search.toString());
-
-		List<FilterBuilder> filters = searchToFilters(search);
-		FilterBuilder filter = FilterBuilders.andFilter(filters.toArray(new FilterBuilder[filters.size()]));
-
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
-		searchSourceBuilder.size(100);
-		String json = searchSourceBuilder.toString();
-
+		logger.debug("Search: " + search.toString());
+		String json = search.buildSearchJson();
 		searchService.setJson(json);
 		searchService.restart();
-
 	}
 
-	private List<FilterBuilder> searchToFilters(Search search) {
-		List<FilterBuilder> filters = new LinkedList<>();
-
-		filters.add(termFilter("attributes.league", search.getLeague()));
-		search.getName().map(s -> filters.add(termFilter("info.name", s)));
-		
-
-		if (!search.getItemTypes().isEmpty()) {
-			Optional<FilterBuilder> itemTypeFilter = search.getItemTypes()
-					.stream().map(it -> {
-						FilterBuilder itFilter = termFilter("attributes.itemType", it.itemType());
-						if (it.equipType() != null) {
-							itFilter = andFilter(itFilter, termFilter("attributes.equipType", it.equipType()));
-						}
-						return itFilter;
-					}).findFirst();
-			itemTypeFilter.ifPresent(it -> filters.add(it));
-		}
-		
-		return filters;
-	}
 
 }

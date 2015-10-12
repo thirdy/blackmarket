@@ -42,7 +42,9 @@ public class ExileToolsSearchService extends Service<ExileToolsSearchResult> {
         			
         			return result;
         		} catch (IOException e) {
-        			String msg = "Error while running search to the backend. Json query is: " + json;
+        			String msg = "Error while running search to the backend. "
+        					+ e.getMessage() +
+        					". Json query is: " + json;
         			updateMessage(msg);
 					throw new BlackmarketException(msg, e);
         		}
