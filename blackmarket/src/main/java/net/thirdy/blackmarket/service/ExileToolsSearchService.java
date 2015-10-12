@@ -7,8 +7,6 @@ import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import net.thirdy.blackmarket.BlackmarketApplication;

@@ -17,23 +17,14 @@
  */
 package net.thirdy.blackmarket.controls;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import io.jexiletools.es.model.ItemType;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Separator;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 
 /**
  * @author thirdy
@@ -56,18 +47,18 @@ public class ItemTypePane extends TilePane {
 				})
 				.collect(Collectors.toList());
 		
-        DropShadow ds1 = new DropShadow();
-        ds1.setOffsetY(0.1f);
-        ds1.setOffsetX(0.0f);
-        ds1.setColor(Color.BLACK);
+//        DropShadow ds1 = new DropShadow();
+//        ds1.setOffsetY(0.1f);
+//        ds1.setOffsetX(0.0f);
+//        ds1.setColor(Color.BLACK);
         
 //        DropShadow ds2 = new DropShadow();
 //        ds2.setOffsetY(0.3f);
 //        ds2.setOffsetX(0.3f);
 //        ds2.setColor(Color.GHOSTWHITE);
 		
-		itemTypesChkbxs.subList(0, 8).stream().forEach(c -> c.setEffect(ds1));
-		itemTypesChkbxs.subList(19, 28).stream().forEach(c -> c.setEffect(ds1));
+//		itemTypesChkbxs.subList(0, 8).stream().forEach(c -> c.setEffect(ds1));
+//		itemTypesChkbxs.subList(19, 28).stream().forEach(c -> c.setEffect(ds1));
 		this.getChildren().addAll(itemTypesChkbxs);
 	}
 	

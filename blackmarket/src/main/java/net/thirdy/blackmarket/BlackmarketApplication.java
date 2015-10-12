@@ -17,13 +17,12 @@
  */
 package net.thirdy.blackmarket;
 
-import static org.elasticsearch.index.query.FilterBuilders.*;
+import static org.elasticsearch.index.query.FilterBuilders.andFilter;
+import static org.elasticsearch.index.query.FilterBuilders.termFilter;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
@@ -38,10 +37,7 @@ import io.jexiletools.es.ExileToolsESClient;
 import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
