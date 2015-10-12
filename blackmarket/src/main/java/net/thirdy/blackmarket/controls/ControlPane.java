@@ -19,34 +19,33 @@ package net.thirdy.blackmarket.controls;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
-import java.awt.Event;
-import java.beans.EventHandler;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
-
+import io.jexiletools.es.model.League;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import net.thirdy.blackmarket.domain.League;
+import javafx.scene.layout.Region;
 import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
 import net.thirdy.blackmarket.domain.Unique;
+import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.fxcontrols.AutoCompleteComboBoxListener;
 import net.thirdy.blackmarket.fxcontrols.MultiStateButton;
+import net.thirdy.blackmarket.util.SwingUtil;
 
 /**
  * @author thirdy
@@ -55,7 +54,6 @@ import net.thirdy.blackmarket.fxcontrols.MultiStateButton;
 public class ControlPane extends BorderPane {
 	
 	private HBox top;
-//	private GridPane center;
 	
 	Button btnLeague;
 
@@ -64,9 +62,25 @@ public class ControlPane extends BorderPane {
 	private ComboBox<String> tfName;
 	private Button btnSearch;
 	
+	private Label lblHitCount = new Label();
+	private Button btnWebsite = new Button();
+	
 	public ControlPane(SearchEventHandler searchEventHandler) {
-		top = new HBox();
-		top.setAlignment(Pos.TOP_RIGHT);
+		btnWebsite.setId("website-button");
+		btnWebsite.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent actionEvent) {
+                try {
+					SwingUtil.openUrlViaBrowser("http://thirdy.github.io/blackmarket/");
+				} catch (BlackmarketException e) {
+					Dialogs.showInfo(e.getMessage());
+				}
+            }
+        });
+		
+		top = new HBox(5);
+		Region spacer = new Region();
+		HBox.setHgrow(spacer, Priority.ALWAYS);
+		top.getChildren().addAll(lblHitCount, spacer, btnWebsite);
 		setTop(top);
 		
 	    tfName = new ComboBox<>(observableArrayList(Unique.names));
@@ -76,43 +90,43 @@ public class ControlPane extends BorderPane {
 	    
 	    itemTypesPane = new ItemTypePane();
 	    
-//		Image scImg = new Image(this.getClass().getResourceAsStream("/images/leagues/sc.png"));
-//		btnScLeague.setGraphic(new ImageView(scImg));
-	    
-	    
 	    GridPane gridpane = new GridPane();
 	    gridpane.setPadding(new Insets(5));
 	    gridpane.setHgap(5);
 	    gridpane.setVgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();
-	    column1.setPercentWidth(3);
+	    column1.setPercentWidth(5);
 	    ColumnConstraints column2 = new ColumnConstraints();
-	    column2.setPercentWidth(20);
+	    column2.setPercentWidth(25);
 	    ColumnConstraints column3 = new ColumnConstraints();
-	    column3.setPercentWidth(77);
+	    column3.setPercentWidth(70);
 	    column2.setHgrow(Priority.ALWAYS);
 	    gridpane.getColumnConstraints().addAll(column1, column2, column3);
-//	    column1.set
-//	    ColumnConstraints column2 = new ColumnConstraints(50, 150, 300);
 	    
 	    gridpane.add(new Label("League:"), 0, 0);
 	    gridpane.add(new Label("Name:"), 0, 1);
 	    gridpane.add(new Label("Type:"), 0, 2);
-	    gridpane.add(new Label("x:"), 0, 3);
-	    gridpane.add(new Label("y:"), 0, 4);
 	    
 	    gridpane.add(btnLeague, 1, 0);
 	    gridpane.add(tfName, 1, 1);
 	    gridpane.add(itemTypesPane, 1, 2);
 	    
 	    Separator separator = new Separator(Orientation.VERTICAL);
-		gridpane.add(separator, 2, 0, 1, 14); // col, row, colspan, rowspan
+		gridpane.add(separator, 2, 0, 1, 4); // col, row, colspan, rowspan
+		
+//		gridpane.add(new Label("League:"), 0, 0);
+//		gridpane.add(new Label("Name:"), 0, 1);
+//		gridpane.add(new Label("Type:"), 0, 2);
+//		
+//		gridpane.add(btnLeague, 1, 0);
+//		gridpane.add(tfName, 1, 1);
+//		gridpane.add(itemTypesPane, 1, 2);
 	    
 		btnSearch = new Button("Search");
 		btnSearch.setOnAction(e -> searchEventHandler.search(buildSearchInstance()));
 		btnSearch.setPrefWidth(400);
 		GridPane.setHalignment(btnSearch, HPos.CENTER);
-		gridpane.add(btnSearch, 0, 15, 3, 1); // col, row, colspan, rowspan
+		gridpane.add(btnSearch, 0, 4, 3, 1); // col, row, colspan, rowspan
 	    
 		setCenter(gridpane);
 	}
@@ -132,5 +146,9 @@ public class ControlPane extends BorderPane {
 
 	public void fireSearchEvent() {
 		btnSearch.fire();
+	}
+	
+	public void setSearchHitCount(int count, int show) {
+		lblHitCount.setText(String.format("%d items found. Showing %d items.", count, show));
 	}
 }

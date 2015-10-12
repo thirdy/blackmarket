@@ -1,4 +1,4 @@
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.samples;
 /**
 
  * Copyright (c) 2008, 2012 Oracle and/or its affiliates.

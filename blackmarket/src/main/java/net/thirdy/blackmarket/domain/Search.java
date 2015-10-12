@@ -20,6 +20,8 @@ package net.thirdy.blackmarket.domain;
 import java.util.List;
 import java.util.Optional;
 
+import io.jexiletools.es.model.ItemType;
+
 /**
  * Immutable class that represents an instance of a Search.
  * 

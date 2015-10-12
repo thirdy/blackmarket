@@ -66,4 +66,12 @@ public class Dialogs {
 
 		alert.showAndWait();
 	}
+
+	public static void showInfo(String string) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("");
+		alert.setHeaderText("");
+		alert.setContentText(string);
+		alert.showAndWait();
+	}
 }

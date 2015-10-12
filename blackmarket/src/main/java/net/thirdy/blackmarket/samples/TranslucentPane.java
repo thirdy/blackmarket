@@ -1,4 +1,4 @@
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.samples;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;

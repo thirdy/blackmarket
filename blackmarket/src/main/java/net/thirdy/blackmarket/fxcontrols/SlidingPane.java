@@ -112,4 +112,8 @@ import javafx.util.Duration;
         }
       });
     }
-  }
+ 
+    public boolean isExpanded() {
+    	return expanded.get();
+    }
+ }

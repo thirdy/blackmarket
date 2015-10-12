@@ -2,10 +2,9 @@ package net.thirdy.blackmarket.service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
-import io.searchbox.core.SearchResult;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -16,7 +15,7 @@ import net.thirdy.blackmarket.BlackmarketApplication;
 import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.util.ImageCache;
 
-public class ExileToolsSearchService extends Service<ObservableList<ExileToolsHit>> {
+public class ExileToolsSearchService extends Service<ExileToolsSearchResult> {
 	
 	private StringProperty json = new SimpleStringProperty(this, "json");
     public final void setJson(String value) { json.set(value); }
@@ -24,19 +23,15 @@ public class ExileToolsSearchService extends Service<ObservableList<ExileToolsHi
     public final StringProperty jsonProperty() { return json; }
     
 	@Override
-    protected Task<ObservableList<ExileToolsHit>> createTask() {
-        return new Task<ObservableList<ExileToolsHit>>() {    
+    protected Task<ExileToolsSearchResult> createTask() {
+        return new Task<ExileToolsSearchResult>() {    
         	final String s = getJson();
-            @Override protected ObservableList<ExileToolsHit> call() throws Exception {
+            @Override protected ExileToolsSearchResult call() throws Exception {
             	try {
         			// FIXME: not sure if ExileToolsESClient is thread-safe, maybe we should just instantiate here and then shutdown afterwards
             		updateMessage("Querying against Exile Tools Elastic Search Public API...");
-        			SearchResult result = BlackmarketApplication.getExileToolsESClient().execute(s);
-        			List<ExileToolsHit> exileToolHits = result.getHits(ExileToolsHit.class)
-        					.stream()
-        					.map(e -> e.source)
-        					.collect(Collectors.toList());
-
+            		ExileToolsSearchResult result = BlackmarketApplication.getExileToolsESClient().execute(s);
+        			List<ExileToolsHit> exileToolHits = result.getExileToolHits();
         			
         			// cache images
         			updateMessage("Caching images...");
@@ -47,7 +42,7 @@ public class ExileToolsSearchService extends Service<ObservableList<ExileToolsHi
 						ImageCache.getInstance().preLoad(icon);
 					}
         			
-        			return FXCollections.observableArrayList(exileToolHits);
+        			return result;
         		} catch (IOException e) {
         			String msg = "Error while running search to the backend. Json query is: " + json;
         			updateMessage(msg);
@@ -56,4 +51,5 @@ public class ExileToolsSearchService extends Service<ObservableList<ExileToolsHi
             }
         };
 	}
+	
 }

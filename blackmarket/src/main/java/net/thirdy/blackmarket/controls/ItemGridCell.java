@@ -15,10 +15,10 @@ import org.elasticsearch.common.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.jexiletools.es.model.Currencies;
 import io.jexiletools.es.model.Mod;
 import io.jexiletools.es.model.Price;
 import io.jexiletools.es.model.json.ExileToolsHit;
-import io.jexiletools.es.model.json.Sockets;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -53,6 +53,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	private final VBox modsPane = new VBox();
 	private final ItemPropertiesGridPane propertiesGridPane = new ItemPropertiesGridPane();
 	private final Label itemName = new Label("Item Name Here");
+	private final HBox itemNameGraphics = new HBox(1);
 	private final Label implicitMod = new Label("Implicit Mod Here");
 	private final Separator implicitModSeparator = new Separator(Orientation.HORIZONTAL);
 	private final Separator itemNameSeparator = new Separator(Orientation.HORIZONTAL);
@@ -97,6 +98,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		implicitMod.setWrapText(true);
 		itemName.getStyleClass().add("item-name");
 		itemName.setWrapText(true);
+		itemName.setGraphic(itemNameGraphics);
+		itemName.setContentDisplay(ContentDisplay.LEFT);
 		priceLbl.setTextFill(Color.WHITE);
 		priceLbl.setContentDisplay(ContentDisplay.RIGHT);
 
@@ -331,6 +334,15 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	private void setupItemName(ExileToolsHit item) {
 		itemName.setText(item.getInfo().getFullName());
 		itemName.setTextFill(Color.web(item.getAttributes().getRarityAsEnum().webColor()));
+		itemNameGraphics.getChildren().clear();
+		if (item.getAttributes().getCorrupted()) {
+			Image image = ImageCache.getInstance().get(Currencies.vaal.icon().get());
+			itemNameGraphics.getChildren().add(new ImageView(image));
+		}
+		if (item.getAttributes().getMirrored()) {
+			Image image = ImageCache.getInstance().get(Currencies.mirror.icon().get());
+			itemNameGraphics.getChildren().add(new ImageView(image));
+		}
 	}
 
 	private void clearModLabels() {

@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 .root{
-    -fx-font-size: 6pt;
+    -fx-font-size: 7pt;
     /*-fx-font-family: "Courier New";*/
     -fx-base: #555555;
     /*-fx-background: rgb(225, 228, 203);*/
@@ -187,16 +187,25 @@
     -fx-background-image: url("/images/window-expand.png");
     -fx-padding: 6 6 4 6;
 }
+#website-button {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/website-button.png");
+    -fx-padding: 6 6 4 6;
+}
 #window-close:hover {
     -fx-background-image: url("/images/window-close-over.png");
 }
 #window-min:hover {
     -fx-background-image: url("/images/window-min-over.png");
 }
+#website-button:hover {
+    -fx-background-image: url("/images/website-button-over.png");
+}
 #window-max:hover {
     -fx-background-image: url("/images/window-expand-over.png");
 }
-#window-close:focused, #window-min:focused , #window-max:focused {
+#window-close:focused, #window-min:focused , #window-max:focused, #website-button:focused {
     -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 5, 0.7 , 0 , 0 );
 }
 #page-area {

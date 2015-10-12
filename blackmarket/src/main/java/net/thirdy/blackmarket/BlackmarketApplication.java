@@ -17,9 +17,13 @@
  */
 package net.thirdy.blackmarket;
 
+import static org.elasticsearch.index.query.FilterBuilders.*;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
@@ -31,10 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.jexiletools.es.ExileToolsESClient;
+import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -110,6 +117,8 @@ public class BlackmarketApplication extends Application {
 	private Label versionText;
 	private Label indexerLastUpdateText;
 
+	private ControlPane controlPane;
+
 	@Override
 	public void stop() throws Exception {
 		super.stop();
@@ -153,24 +162,29 @@ public class BlackmarketApplication extends Application {
 		boolean is3dSupported = false;
 		scene = new Scene(layerPane, 1020, 700, is3dSupported);
 
-		scene.getStylesheets().add(this.getClass().getResource("ensemble2.css").toExternalForm());
+		scene.getStylesheets().add(this.getClass().getResource("blackmarket.css").toExternalForm());
 
 		// create main toolbar
 		setupToolbar(stage);
 
 		this.root.setTop(toolBar);
 
-		ControlPane controlPane = new ControlPane(e -> searchHandler(e));
-		SlidingPane searchPane = new SlidingPane(250, 40, controlPane);
+		controlPane = new ControlPane(e -> searchHandler(e));
+		SlidingPane searchPane = new SlidingPane(270, 12, controlPane);
 		Button showCollapseButton = searchPane.getControlButton();
 
 		scene.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
-			if ((keyEvent.isControlDown() || keyEvent.isAltDown())
-					&& (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.DOWN)) {
+//			if ((keyEvent.isControlDown() || keyEvent.isAltDown())
+//					&& (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.DOWN)) {
+//				showCollapseButton.fire();
+//			}
+			if (keyEvent.getCode() == KeyCode.CONTROL) {
 				showCollapseButton.fire();
 			}
 
-			if (keyEvent.getCode() == KeyCode.ENTER && !progressIndicator.isVisible()) {
+			if (keyEvent.getCode() == KeyCode.ENTER 
+					&& !progressIndicator.isVisible() 
+					&& searchPane.isExpanded()) {
 				controlPane.fireSearchEvent();
 			}
 		});
@@ -187,7 +201,7 @@ public class BlackmarketApplication extends Application {
 		searchResultsPane.setVerticalCellSpacing(5);
 		// searchResultsPane.setB
 		// searchResultsPane.setCellHeight(300);
-		searchResultsPane.setCellWidth(314);
+		searchResultsPane.setCellWidth(315);
 //		DoubleBinding oneThirdWidthBinding = Bindings.createDoubleBinding(
 //				() -> (centerPane.getWidth() / 3.4), centerPane.widthProperty());
 //		 searchResultsPane.cellWidthProperty().bind(oneThirdWidthBinding);
@@ -216,7 +230,7 @@ public class BlackmarketApplication extends Application {
 		progressIndicatorLabel.visibleProperty().bind(searchService.runningProperty());
 		progressIndicator.visibleProperty().bind(searchService.runningProperty());
 
-		searchService.setOnSucceeded(e -> searchResultsPane.setItems(searchService.getValue()));
+		searchService.setOnSucceeded(e -> searchSucceeded());
 
 		searchService.setOnFailed(e -> Dialogs.showExceptionDialog(searchService.getException()));
 
@@ -234,6 +248,12 @@ public class BlackmarketApplication extends Application {
 		stage.show();
 		
 		lastIndexUpdateService.restart();
+	}
+
+	private void searchSucceeded() {
+		ExileToolsSearchResult result = searchService.getValue();
+		searchResultsPane.setItems(FXCollections.observableList(result.getExileToolHits()));
+		controlPane.setSearchHitCount(result.getSearchResult().getTotal(), result.getExileToolHits().size());
 	}
 
 	private void setupToolbar(final Stage stage) {
@@ -331,8 +351,22 @@ public class BlackmarketApplication extends Application {
 	private List<FilterBuilder> searchToFilters(Search search) {
 		List<FilterBuilder> filters = new LinkedList<>();
 
-		filters.add(FilterBuilders.termFilter("attributes.league", search.getLeague()));
-		search.getName().map(s -> filters.add(FilterBuilders.termFilter("info.name", s)));
+		filters.add(termFilter("attributes.league", search.getLeague()));
+		search.getName().map(s -> filters.add(termFilter("info.name", s)));
+		
+
+		if (!search.getItemTypes().isEmpty()) {
+			Optional<FilterBuilder> itemTypeFilter = search.getItemTypes()
+					.stream().map(it -> {
+						FilterBuilder itFilter = termFilter("attributes.itemType", it.itemType());
+						if (it.equipType() != null) {
+							itFilter = andFilter(itFilter, termFilter("attributes.equipType", it.equipType()));
+						}
+						return itFilter;
+					}).findFirst();
+			itemTypeFilter.ifPresent(it -> filters.add(it));
+		}
+		
 		return filters;
 	}
 

@@ -17,48 +17,66 @@
  */
 package net.thirdy.blackmarket.controls;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.jexiletools.es.model.ItemType;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.layout.FlowPane;
-import net.thirdy.blackmarket.domain.ItemType;
+import javafx.scene.control.Separator;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 /**
  * @author thirdy
  *
  */
-public class ItemTypePane extends FlowPane {
+public class ItemTypePane extends TilePane {
 	
-	CheckBox chkbxArmour = new CheckBox("Body Armour");
-    CheckBox chkbxHelm = new CheckBox("Helm");
-    CheckBox chkbxGloves = new CheckBox("Gloves");
-    CheckBox chkbx1h = new CheckBox("1h");
-    CheckBox chkbx2h = new CheckBox("2h");
-    CheckBox chkbxBow = new CheckBox("Bow");
-    CheckBox chkbxAxe = new CheckBox("Axe");
-    CheckBox chkbxMace = new CheckBox("Mace");
-    CheckBox chkbxAxe2h = new CheckBox("Axe 2h");
-    CheckBox chkbxMace2h = new CheckBox("Mace 2h");
-    
     List<CheckBox> itemTypesChkbxs;
     
     public ItemTypePane() {
-		super(3, 3);
-		// Note the ordering here should follow the order in ItemType enum
-		itemTypesChkbxs = Arrays.asList(chkbxArmour, chkbxHelm, chkbxGloves,
-	    		chkbx1h, chkbx2h, chkbxBow, chkbxAxe, chkbxMace, chkbxAxe2h, chkbxMace2h);
+		super(1, 1);
+		setTileAlignment(Pos.TOP_LEFT);
+		setPrefColumns(4);
+		itemTypesChkbxs = Arrays.asList(ItemType.values())
+				.stream()
+				.map(it -> {
+					CheckBox chbBx = new CheckBox(it.displayName());
+					chbBx.setUserData(it);
+					return chbBx;
+				})
+				.collect(Collectors.toList());
+		
+        DropShadow ds1 = new DropShadow();
+        ds1.setOffsetY(0.1f);
+        ds1.setOffsetX(0.0f);
+        ds1.setColor(Color.BLACK);
+        
+//        DropShadow ds2 = new DropShadow();
+//        ds2.setOffsetY(0.3f);
+//        ds2.setOffsetX(0.3f);
+//        ds2.setColor(Color.GHOSTWHITE);
+		
+		itemTypesChkbxs.subList(0, 8).stream().forEach(c -> c.setEffect(ds1));
+		itemTypesChkbxs.subList(19, 28).stream().forEach(c -> c.setEffect(ds1));
 		this.getChildren().addAll(itemTypesChkbxs);
 	}
 	
 	public List<ItemType> getSelected() {
-		ItemType[] itemTypes = ItemType.values();
-		List<ItemType> collect = itemTypesChkbxs.stream()
-		.filter(e -> e.isSelected())
-		.map(e -> itemTypesChkbxs.indexOf(e))
-		.map(e -> itemTypes[e])
-		.collect(Collectors.toList());
+		List<ItemType> collect = itemTypesChkbxs
+				.stream()
+				.filter(e -> e.isSelected())
+				.map(e -> (ItemType) e.getUserData())
+				.collect(Collectors.toList());
 		return collect;
 	}
 }
