@@ -15,18 +15,33 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.domain;
 
+import java.util.Optional;
 
-import javafx.application.Application;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.RangeFilterBuilder;
 
+/**
+ * @author thirdy
+ *
+ */
+public class RangeOptional {
+	public Optional<Double> min, max;
 
-public class Main {
+	public RangeOptional(Optional<Double> min, Optional<Double> max) {
+		super();
+		this.min = min;
+		this.max = max;
+	}
+
+	public FilterBuilder rangeFilter(String name) {
+		RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter(name);
+		min.ifPresent(m -> rangeFilter.from(m));
+		max.ifPresent(m -> rangeFilter.to(m));
+		return rangeFilter;
+	}
 	
-	public static final boolean DEBUG_MODE = false;
-
-	public static void main(String[] args) {
-        Application.launch(BlackmarketApplication.class, args);
-    }
-
+	
 }

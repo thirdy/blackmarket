@@ -17,26 +17,13 @@
  */
 package net.thirdy.blackmarket;
 
-import static com.google.common.collect.Iterables.toArray;
-import static org.elasticsearch.index.query.FilterBuilders.andFilter;
-import static org.elasticsearch.index.query.FilterBuilders.orFilter;
-import static org.elasticsearch.index.query.FilterBuilders.termFilter;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Iterables;
 
 import io.jexiletools.es.ExileToolsESClient;
 import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
@@ -72,7 +59,6 @@ import javafx.util.Callback;
 import net.thirdy.blackmarket.controls.ControlPane;
 import net.thirdy.blackmarket.controls.Dialogs;
 import net.thirdy.blackmarket.controls.ItemGridCell;
-import net.thirdy.blackmarket.domain.Search;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
@@ -85,6 +71,13 @@ import net.thirdy.blackmarket.service.ExileToolsSearchService;
  */
 public class BlackmarketApplication extends Application {
 
+	private static final int ITEM_GRID_CELL_WIDTH = 380;
+	private static final int ITEM_GRID_CELL_HEIGHT = 210;
+
+	private static final int WINDOW_HEIGHT = 720;
+
+	private static final int WINDOW_WIDTH = 1220;
+	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
 	public static final String VERSION = "Version: 0.4";
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -131,7 +124,7 @@ public class BlackmarketApplication extends Application {
 	@Override
 	public void start(final Stage stage) {
 		blackmarketApplication = this;
-		exileToolsESClient = new ExileToolsESClient();
+		exileToolsESClient = new ExileToolsESClient(BLACK_MARKET_API_KEY);
 		stage.setTitle("Blackmarket");
 
 		// create root stack pane that we use to be able to overlay proxy dialog
@@ -146,7 +139,7 @@ public class BlackmarketApplication extends Application {
 
 		stage.initStyle(StageStyle.UNDECORATED);
 		// create window resize button
-		windowResizeButton = new WindowResizeButton(stage, 1020, 700);
+		windowResizeButton = new WindowResizeButton(stage, WINDOW_WIDTH, WINDOW_HEIGHT);
 		// create root
 		root = new BorderPane() {
 			@Override
@@ -163,7 +156,7 @@ public class BlackmarketApplication extends Application {
 		layerPane.getChildren().add(root);
 
 		boolean is3dSupported = false;
-		scene = new Scene(layerPane, 1020, 700, is3dSupported);
+		scene = new Scene(layerPane, WINDOW_WIDTH, WINDOW_HEIGHT, is3dSupported);
 
 		scene.getStylesheets().add(this.getClass().getResource("blackmarket.css").toExternalForm());
 
@@ -185,7 +178,8 @@ public class BlackmarketApplication extends Application {
 				showCollapseButton.fire();
 			}
 
-			if (keyEvent.getCode() == KeyCode.ENTER 
+			if (keyEvent.getCode() == KeyCode.ENTER
+					&& keyEvent.isShiftDown()
 					&& !progressIndicator.isVisible() 
 					&& searchPane.isExpanded()) {
 				controlPane.fireSearchEvent();
@@ -204,11 +198,11 @@ public class BlackmarketApplication extends Application {
 		searchResultsPane.setVerticalCellSpacing(5);
 		// searchResultsPane.setB
 		// searchResultsPane.setCellHeight(300);
-		searchResultsPane.setCellWidth(315);
+		searchResultsPane.setCellWidth(ITEM_GRID_CELL_WIDTH);
 //		DoubleBinding oneThirdWidthBinding = Bindings.createDoubleBinding(
 //				() -> (centerPane.getWidth() / 3.4), centerPane.widthProperty());
 //		 searchResultsPane.cellWidthProperty().bind(oneThirdWidthBinding);
-		searchResultsPane.setCellHeight(200);
+		searchResultsPane.setCellHeight(ITEM_GRID_CELL_HEIGHT);
 		searchResultsPane.setCellFactory(new Callback<GridView<ExileToolsHit>, GridCell<ExileToolsHit>>() {
 			public GridCell<ExileToolsHit> call(GridView<ExileToolsHit> gridView) {
 				return new ItemGridCell();
@@ -256,7 +250,7 @@ public class BlackmarketApplication extends Application {
 	private void searchSucceeded() {
 		ExileToolsSearchResult result = searchService.getValue();
 		searchResultsPane.setItems(FXCollections.observableList(result.getExileToolHits()));
-		controlPane.setSearchHitCount(result.getSearchResult().getTotal(), result.getExileToolHits().size());
+			controlPane.setSearchHitCount(result.getSearchResult().getTotal(), result.getExileToolHits().size());
 	}
 
 	private void setupToolbar(final Stage stage) {
@@ -335,11 +329,27 @@ public class BlackmarketApplication extends Application {
 		});
 	}
 
-	private void searchHandler(Search search) {
-		logger.debug("Search: " + search.toString());
-		String json = search.buildSearchJson();
-		searchService.setJson(json);
-		searchService.restart();
+	private void searchHandler(String json) {
+		logger.debug("Search: " + json);
+		if (json.isEmpty()) {
+			return;
+		}
+		boolean sizeIsThousands = Pattern.compile("\"size\"\\s:\\s\\d{4,}").matcher(json).find();
+		if (sizeIsThousands) {
+//			logger.info("Playing /audio/youarebeingselfish.wav");
+			try {
+				// Doesn't work damn
+//				AudioClip malachi = new AudioClip(BlackmarketApplication.class.getResource("/audio/youarebeingselfish.wav").toString());
+//				malachi.play(1.0);
+				Dialogs.showInfo("You are being selfish!");
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e.getMessage(), e);
+			}
+		} else {
+			searchService.setJson(json);
+			searchService.restart();
+		} 
 	}
 
 

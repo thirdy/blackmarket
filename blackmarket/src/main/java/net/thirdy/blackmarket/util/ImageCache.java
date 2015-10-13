@@ -90,35 +90,33 @@ public class ImageCache {
 			if(!imagesDirectory.exists()) imagesDirectory.mkdir();
 					
 			String fileName = null;
-
-			URL url = new URL(key);
-			fileName = url.toURI().getRawPath();
-			File imageFile = new File(imagesDirectory, fileName);
-			
 			Image image = null;
 			
-			if (imageFile.exists()) {
-				// Try loading from disk
-				String _url = imageFile.toURI().toString();
-				image = new Image(_url, false);
+			// handle classpath
+			if (key.startsWith("/")) {
+				image = new Image(key, false);
 			} else {
-				// Load from url and save to disk
-				image = new Image(key);
-				
-				Files.createParentDirs(imageFile);
-
-				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-				
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write( bufferedImage, StringUtils.substringAfterLast(fileName, "."), baos );
-				baos.flush();
-				byte[] imageInByte = baos.toByteArray();
-				baos.close();
-				
-				Files.write(imageInByte, imageFile);
+				URL url = new URL(key);
+				fileName = url.toURI().getRawPath();
+				File imageFile = new File(imagesDirectory, fileName);
+				if (imageFile.exists()) {
+					// Try loading from disk
+					String _url = imageFile.toURI().toString();
+					image = new Image(_url, false);
+				} else {
+					// Load from url and save to disk
+					image = new Image(key);
+					Files.createParentDirs(imageFile);
+					BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write( bufferedImage, StringUtils.substringAfterLast(fileName, "."), baos );
+					baos.flush();
+					byte[] imageInByte = baos.toByteArray();
+					baos.close();
+					Files.write(imageInByte, imageFile);
+				}
 			}
-			
-			
+
 			return image;
 		}
 

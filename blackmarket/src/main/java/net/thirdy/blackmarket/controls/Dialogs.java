@@ -19,7 +19,9 @@ package net.thirdy.blackmarket.controls;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Random;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.BlackmarketApplication;
 import net.thirdy.blackmarket.ex.BlackmarketException;
+import net.thirdy.blackmarket.util.ImageCache;
 import net.thirdy.blackmarket.util.SwingUtil;
 
 /**
@@ -48,12 +51,17 @@ public class Dialogs {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Dialogs.class.getName());
 
+	public static final String[] comics = new String[]{"craft", "sad", "rhoa"};
 	
 	public static void showExceptionDialog(Throwable throwable) {
 		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Exception Dialog");
-		alert.setHeaderText("Exception Dialog");
-		alert.setContentText(throwable.getMessage());
+		alert.setTitle("An error occured");
+		alert.setHeaderText("Sorry something wrong happened");
+//		alert.setGraphic(new ImageView(ImageCache.getInstance().get("/images/gallio/gallio-"
+//				+ comics[RandomUtils.nextInt(0, 3)] +
+//				".png")));
+		alert.setGraphic(new ImageView(ImageCache.getInstance().get("/images/gallio/gallio-sad.png")));
+		alert.setContentText("Error: " + throwable.getMessage());
 
 		// Create expandable Exception.
 		StringWriter sw = new StringWriter();
@@ -141,13 +149,20 @@ public class Dialogs {
 		
 		VBox content = new VBox(
 				new ImageView(new Image("/images/blackmarket-logo.png")),
-				new Label("Blackmarket is fan-made and not affiliated with Grinding Gear Games in any way."),
-				new HBox(new Label("Blackmarket uses Exile Tools Shop Indexer Elastic Search API")),
+				new Label("Blackmarket is fan-made software for Path of Exile but is not affiliated with Grinding Gear Games in any way."),
+				new Label("A few tips:"),
+				new Label("CTRL - hot key to slide the search control pane"),
+				new Label("SHIFT + Enter - hot key to run the search"),
+				new Label("Advance mode grants you power overwhelming of Elastic Search"),
+				new Label("For more information and updates,"),
 				website,
+				new Label("Blackmarket uses Exile Tools Shop Indexer Elastic Search API:"),
 				exwebsite,
-				new Label("Blackmarket is 100% Free and Open Source under GPLv2"),
-				textArea);
-		content.setSpacing(3);
+				new Label("Comics by /u/gallio"),
+				new Label("Blackmarket is 100% Free and Open Source Software under GPLv2:"),
+				textArea
+				);
+		content.setSpacing(8);
 		alert.getDialogPane().setContent(content);
 		alert.showAndWait();
 		

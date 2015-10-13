@@ -32,11 +32,11 @@ import javafx.scene.layout.Priority;
  * @author thirdy
  *
  */
-public class ItemPropertiesGridPane extends GridPane {
+public class ItemGridCellPropertiesPane extends GridPane {
 	
 	private int row = 0;
 	
-	public ItemPropertiesGridPane() {
+	public ItemGridCellPropertiesPane() {
 		setHgap(2);
 		ColumnConstraints column1 = new ColumnConstraints();
 		column1.setPercentWidth(50);
@@ -65,6 +65,11 @@ public class ItemPropertiesGridPane extends GridPane {
 //		index++;
 //	}
 	
+	public void add(String s) {
+		add(new Label(s), 0, row, 2, 1);
+		row++;
+	}
+	
 	public void add(String label, String s) {
 		add(new Label(label), 0, row);
 		add(new Label(s), 1, row);
@@ -75,6 +80,11 @@ public class ItemPropertiesGridPane extends GridPane {
 		DecimalFormat df = new DecimalFormat("#.##");
 		add(new Label(label), 0, row);
 		add(new Label(df.format(d)), 1, row);
+		row++;
+	}
+	
+	public void add(String label, Integer i) {
+		add(label, i.toString());
 		row++;
 	}
 	

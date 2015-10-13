@@ -4,9 +4,12 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,18 +43,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import net.thirdy.blackmarket.ex.BlackmarketException;
+import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 import net.thirdy.blackmarket.util.ImageCache;
 import net.thirdy.blackmarket.util.SwingUtil;
 
 public class ItemGridCell extends GridCell<ExileToolsHit> {
 	
-	public static final Double DOUBLE_ZERO = Double.valueOf(0);
-
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	private final List<Label> explicitModsLbls; 
 	private final VBox modsPane = new VBox();
-	private final ItemPropertiesGridPane propertiesGridPane = new ItemPropertiesGridPane();
+	private final ItemGridCellPropertiesPane propertiesGridPane = new ItemGridCellPropertiesPane();
 	private final Label itemName = new Label("Item Name Here");
 	private final HBox itemNameGraphics = new HBox(1);
 	private final Label implicitMod = new Label("Implicit Mod Here");
@@ -133,9 +135,9 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 //		gridpane.setPadding(new Insets(5));
 		gridpane.setHgap(2);
 		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setPercentWidth(70);
+		column1.setPercentWidth(77);
 		ColumnConstraints column2 = new ColumnConstraints();
-		column2.setPercentWidth(30);
+		column2.setPercentWidth(23);
 		column1.setHgrow(Priority.ALWAYS);
 		column2.setHgrow(Priority.ALWAYS);
 		gridpane.getColumnConstraints().addAll(column1, column2);
@@ -155,6 +157,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			try {
 				setupItemUI(item);
 			} catch (Exception e) {
+				e.printStackTrace();
 				Dialogs.showExceptionDialog(e);
 			}
 			setGraphic(stackPane);
@@ -182,6 +185,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		}
 		
 		// Setup labels
+		wtbBtn.setText(StringUtils.trimToNull(item.getShop().getSellerIGN()) != null ? "Want to buy" : "Copy shop url");
 		clearModLabels();
 		setupPrice(item);
 		setupItemName(item);
@@ -201,8 +205,48 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		modsPane.getChildren().addAll(
 				explicitModsLbls.stream().filter(l -> StringUtils.isNotBlank(l.getText())).collect(Collectors.toList()));
 		
+		setupModsPseudo(item);
+		
 		stackPane.getChildren().clear();
 		stackPane.getChildren().addAll(imageView, borderPane);
+	}
+
+	private void setupModsPseudo(ExileToolsHit item) {
+		String resTxt = String.format("[pseudo res] %d %d %d %d",
+				item.getPseudoEleRes().orElse(0),
+				item.getPseudoFire().orElse(0),
+				item.getPseudoCold().orElse(0),
+				item.getPseudoLightning().orElse(0)
+				);
+		
+		String attrTxt = String.format("[pseudo attr] %d %d %d %d",
+				item.getPseudoAttr().orElse(0),
+				item.getPseudoStr().orElse(0),
+				item.getPseudoDex().orElse(0),
+				item.getPseudoInt().orElse(0)
+				);
+		
+		String lifeTxt = String.format("[pseudo life] %d",
+				item.getPseudoAttr().orElse(0)
+				);
+		
+		if (resTxt.length() > 20) {
+			Label resLabel = new Label(resTxt); 
+			resLabel.getStyleClass().add("pseudo-mod");
+			modsPane.getChildren().add(resLabel);
+		}
+
+		if (attrTxt.length() > 21) {
+			Label attrLabel = new Label(attrTxt); 
+			attrLabel.getStyleClass().add("pseudo-mod");
+			modsPane.getChildren().add(attrLabel);
+		}
+
+		if (lifeTxt.length() > 15) {
+			Label lifeLabel = new Label(lifeTxt); 
+			lifeLabel.getStyleClass().addAll("pseudo-mod");
+			modsPane.getChildren().add(lifeLabel);
+		}
 	}
 
 	private void updatePropertiesPane(ExileToolsHit item) {
@@ -210,56 +254,25 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		
 		Optional<String> socks = Optional.ofNullable(item.getSockets())
 			.map(s -> s.getAllSockets());
-		if(socks.isPresent()) propertiesGridPane.add("S:", socks.get());
+		if(socks.isPresent()) propertiesGridPane.add(socks.get());
 		else propertiesGridPane.add("", "");
 		
-		item.getQuality().ifPresent(d -> {
-			propertiesGridPane.add("Q:", d);
-		});
-		
-		item.getTotalDPS().ifPresent(d -> {
-			propertiesGridPane.add("DPS:", d);
-		});
-		
-		item.getPhysicalDPS().ifPresent(d -> {
-			propertiesGridPane.add("pDPS:", d);
-		});
-		
-		item.getPhysicalDamage().ifPresent(d -> {
-			propertiesGridPane.add("Phys:", d);
-		});
-		
-		item.getElementalDPS().ifPresent(d -> {
-			propertiesGridPane.add("eDPS:", d);
-		});
-		
-		item.getElementalDamage().ifPresent(d -> {
-			propertiesGridPane.add("Elem:", d);
-		});
-		
-		item.getAPS().ifPresent(d -> {
-			propertiesGridPane.add("APS:", d);
-		});
-		
-		item.getCriticalStrikeChance().ifPresent(d -> {
-			propertiesGridPane.add("Crit:", d);
-		});
-		
-		item.getArmour().ifPresent(d -> {
-			propertiesGridPane.add("Ar:", d);
-		});
-		
-		item.getEvasionRating().ifPresent(d -> {
-			propertiesGridPane.add("Ev:", d);
-		});
-		
-		item.getEnergyShield().ifPresent(d -> {
-			propertiesGridPane.add("Es:", d);
-		});
-		
-		item.getChanceToBlock().ifPresent(d -> {
-			propertiesGridPane.add("Blk:", d);
-		});
+		item.getQuality().ifPresent(d -> propertiesGridPane.add("Q:", d));
+		item.getTotalDPS().ifPresent(d -> propertiesGridPane.add("DPS:", d));
+		item.getPhysicalDPS().ifPresent(d -> propertiesGridPane.add("pDPS:", d));
+		item.getPhysicalDamage().ifPresent(d -> propertiesGridPane.add("Phys:", d));
+		item.getElementalDPS().ifPresent(d -> propertiesGridPane.add("eDPS:", d) );
+		item.getElementalDamage().ifPresent(d -> propertiesGridPane.add("Elem:", d));
+		item.getAPS().ifPresent(d ->  propertiesGridPane.add("APS:", d));
+		item.getCriticalStrikeChance().ifPresent(d ->  propertiesGridPane.add("Crit:", d) );
+		item.getArmour().ifPresent(d -> propertiesGridPane.add("Ar:", d));
+		item.getEvasionRating().ifPresent(d -> propertiesGridPane.add("Ev:", d));
+		item.getEnergyShield().ifPresent(d -> propertiesGridPane.add("Es:", d));
+		item.getChanceToBlock().ifPresent(d -> propertiesGridPane.add("Blk:", d));
+		item.getRLvl().ifPresent(d -> propertiesGridPane.add("RLvl:", d));
+		item.getRStr().ifPresent(d -> propertiesGridPane.add("RStr:", d));
+		item.getRDex().ifPresent(d -> propertiesGridPane.add("RDex:", d));
+		item.getRInt().ifPresent(d -> propertiesGridPane.add("RInt:", d));
 		
 	}
 
@@ -310,6 +323,13 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			playerInfo.getChildren().addAll(
 					shopText, link);
 		}
+		
+		Date date = new Date(item.getShop().getUpdated());
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d h:mm a z");
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		Label shopUpdate = new Label(" " + sdf.format(date));
+		shopUpdate.getStyleClass().add("shop-update");
+		playerInfo.getChildren().add(shopUpdate);
 	}
 
 	private String truncateIgn(String ign) {
@@ -335,18 +355,10 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		itemName.setTextFill(Color.web(item.getAttributes().getRarityAsEnum().webColor()));
 		itemNameGraphics.getChildren().clear();
 		if (item.getAttributes().getCorrupted()) {
-			Image image = ImageCache.getInstance().get(Currencies.vaal.icon().get());
-			ImageView imageView = new ImageView(image);
-			imageView.setPreserveRatio(true);
-			imageView.setFitHeight(21);
-			itemNameGraphics.getChildren().add(imageView);
+			itemNameGraphics.getChildren().add(new SmallCurrencyIcon(Currencies.vaal));
 		}
 		if (item.getAttributes().getMirrored()) {
-			Image image = ImageCache.getInstance().get(Currencies.mirror.icon().get());
-			ImageView imageView = new ImageView(image);
-			imageView.setPreserveRatio(true);
-			imageView.setFitHeight(21);
-			itemNameGraphics.getChildren().add(imageView);
+			itemNameGraphics.getChildren().add(new SmallCurrencyIcon(Currencies.mirror));
 		}
 	}
 
@@ -356,11 +368,26 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	}
 
 	private void populateModLabels(ExileToolsHit item) {
-		List<Mod> explicitMods = item.getExplicitMods();
+		List<Mod> explicitMods = item.getExplicitOrCraftedMods();
 		IntStream.range(0, explicitMods.size())
 			.forEachOrdered(i -> {
 				String m = explicitMods.get(i).toDisplay();
 				Label l = explicitModsLbls.get(i);
+				if (explicitMods.get(i).isCrafted()) {
+					l.getStyleClass().add("mod-crafted");
+				} else {
+					l.getStyleClass().remove("mod-crafted");
+				}
+				
+				if (m.endsWith("% to Fire Resistance")) {
+					l.getStyleClass().add("explcit-mod-fireres");
+				} else if (m.endsWith("% to Cold Resistance")) {
+					l.getStyleClass().add("explcit-mod-coldres");
+				} else if (m.endsWith("% to Lightning Resistance")) {
+					l.getStyleClass().add("explcit-mod-lightningres");
+				} else {
+					l.getStyleClass().removeAll("explcit-mod-fireres", "explcit-mod-coldres", "explcit-mod-lightningres");
+				}
 				l.setText(m);
 			});
 	}

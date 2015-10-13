@@ -15,12 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket.domain;
+package net.thirdy.blackmarket.fxcontrols;
+
+import java.util.Optional;
+
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.input.KeyCode;
+import javafx.util.converter.IntegerStringConverter;
 
 /**
  * @author thirdy
  *
  */
-public interface SearchEventHandler {
-	void search(String json);
+public class IntegerTextField extends TextField {
+	IntegerStringConverter valueConverter = new IntegerStringConverter();
+	public IntegerTextField(String promptText) {
+		setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+		setTextFormatter(new TextFormatter<>(valueConverter));
+	    setPromptText(promptText);
+	}
+	public Optional<Integer> getOptionalValue() {
+		// getText returns empty string
+		return Optional.of(getText()).filter(s -> !s.isEmpty()).map(s -> valueConverter.fromString(s));
+	}
 }

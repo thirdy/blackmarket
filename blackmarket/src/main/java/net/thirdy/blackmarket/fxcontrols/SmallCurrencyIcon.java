@@ -15,18 +15,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.fxcontrols;
 
+import io.jexiletools.es.model.Currencies;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import net.thirdy.blackmarket.util.ImageCache;
 
-import javafx.application.Application;
-
-
-public class Main {
-	
-	public static final boolean DEBUG_MODE = false;
-
-	public static void main(String[] args) {
-        Application.launch(BlackmarketApplication.class, args);
-    }
-
+/**
+ * @author thirdy
+ *
+ */
+public class SmallCurrencyIcon extends ImageView {
+public SmallCurrencyIcon(Currencies currencies) {
+	super(ImageCache.getInstance().get(currencies.icon().get()));
+	setPreserveRatio(true);
+	setFitHeight(21);
+}
 }

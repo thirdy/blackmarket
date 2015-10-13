@@ -15,18 +15,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.fxcontrols;
 
+import javafx.scene.control.CheckBox;
 
-import javafx.application.Application;
-
-
-public class Main {
+/**
+ * @author thirdy
+ *
+ */
+public class TriStateCheckBox extends CheckBox {
+	public TriStateCheckBox(String label) {
+		super(label);
+		setAllowIndeterminate(true);
+		setIndeterminate(false);
+	}
 	
-	public static final boolean DEBUG_MODE = false;
-
-	public static void main(String[] args) {
-        Application.launch(BlackmarketApplication.class, args);
-    }
-
+	public enum State {
+		checked, unchecked, undefined;
+	}
+	
+	public State state() {
+		return isIndeterminate()
+              ? State.undefined
+              : isSelected() ? State.checked: State.unchecked;
+	}
 }

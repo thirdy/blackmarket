@@ -33,6 +33,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import io.jexiletools.es.model.ItemType;
+import io.jexiletools.es.model.json.Range;
 
 /**
  * Immutable class that represents an instance of a Search.
@@ -41,29 +42,36 @@ import io.jexiletools.es.model.ItemType;
  *
  */
 public class Search {
+	
+	private boolean advanceMode;
+	private String advanceOptionJson;
+
 	private Optional<String> name;
 	private String league;
 	private List<ItemType> itemTypes;
-	private boolean advanceMode;
-	private String advanceOptionJson;
-	public Search(Optional<String> name, String league, List<ItemType> itemTypes) {
+
+	private Optional<Range> dps;
+	private Optional<Range> pDps;
+	private Optional<Range> eDps;
+	private Optional<Range> aps;
+	private Optional<Range> critchance;
+	
+	public Search(boolean advanceMode, String advanceOptionJson, Optional<String> name, String league,
+			List<ItemType> itemTypes, Optional<Range> dps, Optional<Range> pDps, Optional<Range> eDps,
+			Optional<Range> aps, Optional<Range> critchance) {
 		super();
+		this.advanceMode = advanceMode;
+		this.advanceOptionJson = advanceOptionJson;
 		this.name = name;
 		this.league = league;
 		this.itemTypes = itemTypes;
-	}
-	public Optional<String> getName() {
-		return name;
-	}
-	public String getLeague() {
-		return league;
-	}
-	public List<ItemType> getItemTypes() {
-		return itemTypes;
+		this.dps = dps;
+		this.pDps = pDps;
+		this.eDps = eDps;
+		this.aps = aps;
+		this.critchance = critchance;
 	}
 
-
-	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -91,42 +99,5 @@ public class Search {
 	}
 	public void setAdvanceOptionJson(String json) {
 		this.advanceOptionJson = json;
-	}
-	
-	public String buildSearchJson() {
-		String json = null;
-		if (isAdvanceMode()) {
-			json = getAdvanceOptionJson();
-		} else {
-			List<FilterBuilder> filters = searchToFilters();
-			FilterBuilder filter = FilterBuilders.andFilter(toArray(filters, FilterBuilder.class));
-			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-			searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
-			searchSourceBuilder.size(100);
-			json = searchSourceBuilder.toString();
-		}
-		return json;
-	}
-	
-	private List<FilterBuilder> searchToFilters() {
-		List<FilterBuilder> filters = new LinkedList<>();
-
-		filters.add(termFilter("attributes.league", getLeague()));
-		getName().map(s -> filters.add(termFilter("info.name", s)));
-		
-
-		if (!getItemTypes().isEmpty()) {
-			List<FilterBuilder> itemTypeFilters = getItemTypes()
-					.stream().map(it -> {
-						FilterBuilder itFilter = termFilter("attributes.itemType", it.itemType());
-						if (it.equipType() != null) {
-							itFilter = andFilter(itFilter, termFilter("attributes.equipType", it.equipType()));
-						}
-						return itFilter;
-					}).collect(Collectors.toList());
-			if(!itemTypeFilters.isEmpty()) filters.add( orFilter(toArray(itemTypeFilters, FilterBuilder.class)) );
-		}
-		
-		return filters;
 	}
 }

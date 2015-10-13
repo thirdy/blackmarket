@@ -19,6 +19,7 @@ package net.thirdy.blackmarket.controls;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import io.jexiletools.es.model.ItemType;
@@ -33,9 +34,11 @@ import javafx.scene.layout.TilePane;
 public class ItemTypePane extends TilePane {
 	
     List<CheckBox> itemTypesChkbxs;
+    Consumer<List<ItemType>> onChangeConsumer;
     
-    public ItemTypePane() {
+    public ItemTypePane(Consumer<List<ItemType>> onChangeConsumer) {
 		super(1, 1);
+		this.onChangeConsumer = onChangeConsumer;
 		setTileAlignment(Pos.TOP_LEFT);
 		setPrefColumns(4);
 		itemTypesChkbxs = Arrays.asList(ItemType.values())
@@ -43,6 +46,7 @@ public class ItemTypePane extends TilePane {
 				.map(it -> {
 					CheckBox chbBx = new CheckBox(it.displayName());
 					chbBx.setUserData(it);
+					chbBx.setOnAction(e -> checked());
 					return chbBx;
 				})
 				.collect(Collectors.toList());
@@ -62,6 +66,10 @@ public class ItemTypePane extends TilePane {
 		this.getChildren().addAll(itemTypesChkbxs);
 	}
 	
+	private void checked() {
+		onChangeConsumer.accept(getSelected());
+	}
+
 	public List<ItemType> getSelected() {
 		List<ItemType> collect = itemTypesChkbxs
 				.stream()
