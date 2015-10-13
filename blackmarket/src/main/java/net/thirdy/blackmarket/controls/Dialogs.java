@@ -100,6 +100,14 @@ public class Dialogs {
 		alert.showAndWait();
 	}
 	
+	public static void showInfo(String string, String title) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(title);
+		alert.setHeaderText("");
+		alert.setContentText(string);
+		alert.showAndWait();
+	}
+	
 	public static void showAbout() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setGraphic(new Region());
