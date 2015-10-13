@@ -10,6 +10,9 @@ blackmarket is fan-made and not affiliated with Grinding Gear Games in any way.
 ## Developer notes:
 The project is written in Java and Swing. It uses maven muti-module directory structure. Use Eclipse 4.5 Mars. WindowBuilderPro is also used. 
 
+Setup attach javafx source in Eclipse:
+http://blog.codefx.org/tools/javafx-sources-in-eclipse/
+
 
 ## Attributions
 1. See more at pom.xml

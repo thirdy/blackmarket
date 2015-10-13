@@ -1,0 +1,419 @@
+/*
+ * Copyright (C) 2015 thirdy
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+.root{
+    -fx-font-size: 7pt;
+    /*-fx-font-family: "Courier New";*/
+    -fx-base: #555555;
+    /*-fx-background: rgb(225, 228, 203);*/
+}
+
+#root {
+    -fx-background-color: #333333;
+    -fx-padding: 1px;
+}
+.shop-update {
+	-fx-font-size: 6pt;
+}
+.separator *.line { 
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
+}
+
+#ModalDimmer {
+    -fx-background-color: rgb(0,0,0,0.5);
+}
+#ProxyDialog {
+    -fx-background-color: black, white, 
+        linear-gradient(rgb(250,250,250), rgb(230,230,230));
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 15, 14, 13;
+    -fx-padding: 15;
+    -fx-effect: dropshadow( three-pass-box , black , 20, 0 , 0 , 0 );
+}
+#ProxyDialog #title {
+    -fx-font-size: 1.4em;
+    -fx-font-weight: bold;
+    -fx-text-fill: orangered;
+}
+#mainToolBar {
+    -fx-padding: 10 10 10 5;
+    -fx-background-image: url("/images/top-bar.png");
+    -fx-background-size: cover;
+    -fx-background-position: left top;
+    -fx-background-repeat: no-repeat;
+}
+#mainToolBar .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-style: italic; 
+    -fx-font-weight: bold;
+}
+#propertiesGridPane .label {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #FFFFFF;
+}
+.pseudo-mod {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #DDDDDD;
+	-fx-font-style: italic;
+}
+.explcit-mod {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #FFFFFF;
+}
+.implicit-mod {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
+	-fx-text-fill: #FFFFFF;
+}
+.mod-crafted {
+	-fx-underline : true;
+}
+.explcit-mod-fireres {
+	-fx-text-fill: #AA1111;
+}
+.explcit-mod-coldres {
+	-fx-text-fill: #5555CC;
+}
+.explcit-mod-lightningres {
+	-fx-text-fill: #FFFF11;
+}
+.item-name {
+	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.4) , 10, 0.5 , 0.4 , 0 );
+	-fx-font-style: italic; -fx-font-weight: bold; -fx-padding: 0 0 5 0; -fx-font-size: 9pt;
+}
+
+#newButton {
+    -fx-background-color: null;
+    -fx-padding: -10 0 -10 0;
+    -fx-background-image: url("/images/ribbon-new.png");
+    -fx-background-position: left top;
+    -fx-background-repeat: no-repeat;
+}
+#highlightsButton {
+    -fx-background-color: null;
+    -fx-padding: -10 0 -10 0;
+    -fx-background-image: url("/images/ribbon-highlights.png");
+    -fx-background-position: left top;
+    -fx-background-repeat: no-repeat;
+}
+#highlightsButton:hover, #newButton:hover {
+    -fx-effect: dropshadow( three-pass-box , rgba(255,255,255,0.6) , 10, 0.5 , 0 , 0 );
+}
+#highlightsButton:focused, #newButton:focused {
+    -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 5, 0.7 , 0 , 0 );
+}
+/*
+#highlightsButton:focus, #newButton:focus {
+    -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 10, 0.5 , 0 , 0 );
+}
+#highlightsButton .button:focus, #newButton .button:focus {
+    -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 10, 0.5 , 0 , 0 );
+}
+*/
+#SearchBox .text-field {
+    -fx-background-color: white;
+    -fx-background-insets: 1;
+    -fx-background-radius: 15;
+    -fx-padding: -9 5 -11 0;
+    -fx-border-image-source: url("/images/search-box.png");
+    -fx-border-image-slice: 12 12 12 22 fill;
+    -fx-border-image-width: 12 12 12 22;
+    -fx-border-image-repeat: stretch; 
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: grey;
+}
+#SearchBox .text-field:focused {
+    -fx-background-color: -fx-focus-color, white;
+    -fx-background-insets: -1.4, 1;
+    -fx-background-radius: 14.4;
+}
+#SearchBox .button {
+    -fx-background-color: null;
+    -fx-background-image: url("/images/search-clear.png");
+}
+#SearchBox .button:hover {
+    -fx-background-image: url("/images/search-clear-over.png");
+}
+.search-menu-item {
+    -fx-border-color: transparent transparent transparent #bbbbbb;
+    -fx-border-insets: 0 0 0 69;
+    -fx-padding: 4 5 4 -64;
+}
+.search-menu-item:selected , .search-menu-item:hover , .search-menu-item:focused {
+    -fx-border-color: transparent transparent transparent derive(-fx-focus-color,30%);
+}
+.search-menu-item-popup-region { -fx-opacity: 0; }
+.search-menu-item:hover .search-menu-item-popup-region , .search-menu-item:focused .search-menu-item-popup-region {
+    -fx-opacity: 100%;
+}
+#search-info-box {
+    -fx-padding: -30 -6 -8 -2;
+    -fx-border-image-source: url("/images/info-tooltip.png");
+    -fx-border-image-slice: 34 20 12 12 fill;
+    -fx-border-image-width: 34 20 12 12;
+    -fx-border-image-repeat: stretch;
+}
+#search-info-name {
+    -fx-text-fill: white;
+}
+#search-info-description {
+    -fx-padding: 5 0 5 0;
+    -fx-text-fill: white;
+}
+.group-label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 11px;
+    -fx-padding: 2 10 0 0;
+}
+.search-menu-item:selected .group-label, .search-menu-item:hover .group-label, .search-menu-item:focused .group-label{
+    -fx-text-fill: white;
+}
+#window-resize-button {
+    -fx-background-image: url("/images/window-corner.png");
+    -fx-background-position: right 1px bottom 1px;
+    -fx-background-repeat: no-repeat;
+}
+#window-close {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/window-close.png");
+    -fx-padding: 6 6 4 6;
+}
+#window-min {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/window-min.png");
+    -fx-padding: 6 6 4 6;
+}
+#window-max {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/window-expand.png");
+    -fx-padding: 6 6 4 6;
+}
+#website-button {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/website-button.png");
+    -fx-padding: 6 6 4 6;
+}
+#window-close:hover {
+    -fx-background-image: url("/images/window-close-over.png");
+}
+#window-min:hover {
+    -fx-background-image: url("/images/window-min-over.png");
+}
+#website-button:hover {
+    -fx-background-image: url("/images/website-button-over.png");
+}
+#window-max:hover {
+    -fx-background-image: url("/images/window-expand-over.png");
+}
+#window-close:focused, #window-min:focused , #window-max:focused, #website-button:focused {
+    -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 5, 0.7 , 0 , 0 );
+}
+#page-area {
+    -fx-padding: 0;
+}
+#searchPane {
+  -fx-padding: 10 10 10 10;
+  -fx-background-insets: 0 10 0 10;
+  -fx-background-color: transparent, #555555;
+  /*-fx-background-image: url("/images/top-bar.png");
+  -fx-background-size: cover;
+  -fx-background-position: left top;
+  -fx-background-repeat: no-repeat;*/
+  -fx-border-insets: 0 10 0 10;
+  -fx-border-color: derive(grey, -20%);
+  -fx-border-width: 2;
+}
+
+.controlPane-min {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/window-min.png");
+    -fx-padding: 6 6 4 6;
+}
+.controlPane-max {
+    -fx-font-size: 1px;
+    -fx-background-color: null;
+    -fx-background-image: url("/images/window-expand.png");
+    -fx-padding: 6 6 4 6;
+}
+.controlPane-min:hover {
+    -fx-background-image: url("/images/window-min-over.png");
+}
+.controlPane-max:hover {
+    -fx-background-image: url("/images/window-expand-over.png");
+}
+.controlPane-min:focused , .controlPane-max:focused {
+    -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 5, 0.7 , 0 , 0 );
+}
+
+#btnScLeague {
+    -fx-graphic: url("/images/leagues/sc.png");
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+}
+
+.toggle-button:selected {
+	-fx-text-fill: -fx-focus-color;
+}
+
+/* Window Button Styles */
+.window-button {
+    -fx-skin: "com.sun.javafx.scene.control.skin.ButtonSkin";
+    -fx-background-color: #616161, #464646, #505050;
+    -fx-background-insets: 0,1,2;
+    -fx-background-radius: 6,5,4;
+    -fx-padding: 0 0 0 0;
+    /* workaround for button sizing */
+    -fx-font-size: 1px;
+}
+.window-button:focused {
+    -fx-background-color: -fx-accent, #464646, #505050;
+    -fx-background-insets: -0.4,1,2;
+    -fx-background-radius: 6.4,5,4;
+}
+.window-button:hover {
+    -fx-background-color: #616161, white, -fx-accent;
+}
+.window-button:pressed {
+    -fx-background-color: #616161, white, #303030;
+}
+.window-button Rectangle {
+    -fx-fill: #949494;
+}
+.window-button:hover Rectangle {
+    -fx-fill: white;
+}
+
+/* Right Side Bar Styles */
+.right-sidebar {
+    -fx-background-color: linear-gradient(#353E4A, #18212B);
+    -fx-padding: 10;
+}
+.right-sidebar-title {
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+    -fx-padding: 5 0 0 0;
+}
+.right-sidebar-body {
+    -fx-text-fill: #b7babe;
+    -fx-fill: #b7babe;
+    -fx-padding: 0 0 5px 0;
+}
+.right-sidebar .separator .line {
+    -fx-background-color: #212930, #3f4856;
+    -fx-padding: 6 0 0 0;
+    -fx-background-insets: 4 -10 0 -10,5 -10 0 -10;
+    -fx-border-style: none;
+    -fx-border-color: null;
+}
+.right-sidebar .hyperlink {
+    -fx-text-fill: #b7babe;
+}
+.right-sidebar .hyperlink:hover {
+    -fx-text-fill: -fx-accent;
+}
+/* Remove all scrollpane borders */
+.noborder-scroll-pane {
+    -fx-padding: 0;
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+}
+/* move buttom arrow up to make room for window rewsize button */
+.application .noborder-scroll-pane > * > .scroll-bar:vertical {
+    -fx-padding: -1.0 -1.0 12 0.0;
+}
+.application .web-view-window-corner .scroll-bar:vertical {
+    -fx-padding: 0 0 12 0;
+}
+
+/* make scroll bar arrow buttons little bigger */
+.scroll-bar:vertical .increment-button {
+    -fx-padding: 0.25em 0.25em 0.35em 0.25em;
+}
+.scroll-bar:horizontal .increment-button {
+    -fx-padding: 0.25em 0.25em 0.25em 0.35em;
+}
+.scroll-bar:vertical .decrement-button {
+    -fx-padding: 0.35em 0.25em 0.25em 0.25em;
+}
+.scroll-bar:horizontal .decrement-button {
+    -fx-padding: 0.25em 0.35em 0.25em 0.25em;
+}
+/* Styles for Property Sheet in side bar */
+
+.right-sidebar .property-sheet .titled-pane {
+    -fx-text-fill: #b7babe;
+}
+
+.right-sidebar .property-sheet .titled-pane .label {
+    -fx-text-fill: white;
+}
+.right-sidebar .property-sheet .property-label {
+    -fx-text-fill: white;
+}
+.right-sidebar .property-sheet .titled-pane > .title {
+    -fx-background-color: transparent;
+    -fx-padding: 2 0 3 0;
+}
+.right-sidebar .property-sheet .titled-pane > *.content {
+    -fx-font-size: 10px;
+    -fx-background-color: transparent;
+}
+.right-sidebar .property-sheet .titled-pane > * > .arrow-button .arrow {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+}
+/** side bar property sheet hyperlink */
+.right-sidebar .property-sheet .hyperlink {
+    -fx-font-size: 10px;
+    -fx-text-fill: white;
+}
+/** side bar property sheet checkbox */
+.right-sidebar .property-sheet .check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-radius: 2;
+}
+.right-sidebar .property-sheet .check-box:focused .box {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-focus-color, white;
+    -fx-border-insets: -1.4, 0;
+    -fx-border-radius: 3.4, 2;
+}
+.right-sidebar .property-sheet .check-box:selected .mark {
+    -fx-background-color: transparent, white;
+}
+/** side bar property sheet choicebox */
+.right-sidebar .property-sheet .choice-box {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+}
+.right-sidebar .property-sheet .choice-box:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-focus-color, white;
+    -fx-border-insets: -1.4, 0;
+    -fx-border-radius: 6.4, 5;
+}
+.right-sidebar .property-sheet .choice-box .arrow {
+    -fx-background-color: transparent, white;
+}
