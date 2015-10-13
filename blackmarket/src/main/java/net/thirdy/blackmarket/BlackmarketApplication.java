@@ -17,7 +17,6 @@
  */
 package net.thirdy.blackmarket;
 
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 
 import org.controlsfx.control.GridCell;
@@ -158,7 +157,7 @@ public class BlackmarketApplication extends Application {
 		boolean is3dSupported = false;
 		scene = new Scene(layerPane, WINDOW_WIDTH, WINDOW_HEIGHT, is3dSupported);
 
-		scene.getStylesheets().add(this.getClass().getResource("blackmarket.css").toExternalForm());
+		scene.getStylesheets().add(this.getClass().getResource("/css/blackmarket.css").toExternalForm());
 
 		// create main toolbar
 		setupToolbar(stage);

@@ -56,6 +56,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -95,6 +96,7 @@ public class ControlPane extends BorderPane {
 
 	private ComboBox<String> tfName;
 	private Button btnSearch;
+	private Button btnDurianMode = new Button("Durian Mode");
 	
 	private Label lblHitCount = new Label();
 	private Button btnAbout = new Button("About");
@@ -237,8 +239,10 @@ public class ControlPane extends BorderPane {
 						: buildSimpleSearch()
 				));
 		btnSearch.setPrefWidth(400);
+		btnDurianMode.setOnAction(e -> Dialogs.showInfo("Durian mode will be implemented next. In Durian mode, your searches will be ran in intervals and notify you if items are found. Stay tuned!", "Durian mode coming soon!"));
+		
 //		HBox.setHalignment(btnSearch, HPos.CENTER);
-		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnAbout);
+		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnDurianMode, btnAbout);
 		
 		GridPane.setHalignment(bottomPane, HPos.CENTER);
 //		gridpane.add(btnSearch, 0, 4, 3, 1); // col, row, colspan, rowspan
@@ -246,7 +250,6 @@ public class ControlPane extends BorderPane {
 		setCenter(simpleSearchGridPane);
 		setBottom(bottomPane);
 	}
-
 
 	private Region newSpacer() {
 		Region spacer = new Region();
