@@ -275,7 +275,7 @@ public class ControlPane extends BorderPane {
 		tfpDPS.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Physical DPS")));
 		tfeDPS.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Elemental DPS")));
 		tfAPS.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Attacks per Second")));
-		tfCritChance.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Critical Strike Chance")));
+		tfCritChance.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Critical Strike Chance")));
 		if(btn3Corrupt.state() != State.unchecked) filters.add(termFilter("attributes.corrupted", btn3Corrupt.state() == State.checked)); 
 		if(btn3Identified.state() != State.unchecked) filters.add(termFilter("attributes.identified", btn3Identified.state() == State.checked)); 
 		if(btn3Crafted.state() != State.unchecked) filters.add(
