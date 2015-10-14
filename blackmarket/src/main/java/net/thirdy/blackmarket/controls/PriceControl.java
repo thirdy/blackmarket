@@ -74,17 +74,18 @@ public class PriceControl extends HBox {
 	public PriceControl() {
 		super(1);
 		currenCmbx.getSelectionModel().selectFirst();
+		btnBuyoutOnly.setSelected(true);
 		btnBuyoutOnly.setPrefWidth(70);
 		currenCmbx.setPrefWidth(140);
 		priceMinMax.setPrefWidth(100);
 		priceMinMax.getMin().setText("1");
-		priceMinMax.getMax().setText("5");
+		priceMinMax.getMax().setText("15");
 		currenCmbx.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
 		priceMinMax.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
 		getChildren().addAll(btnBuyoutOnly, currenCmbx, priceMinMax);
 	}
 	public Optional<RangeOptional> val() {
-		return btnBuyoutOnly.isDisable() ?
+		return !btnBuyoutOnly.isSelected() ?
 				Optional.empty() :
 					priceMinMax.val().map(p -> cevVals(p)) ;
 				
