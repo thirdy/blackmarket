@@ -63,6 +63,7 @@ import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
 import net.thirdy.blackmarket.service.ExileToolsLastIndexUpdateService;
 import net.thirdy.blackmarket.service.ExileToolsSearchService;
+import net.thirdy.blackmarket.util.ImageCache;
 
 /**
  * @author thirdy
@@ -125,6 +126,7 @@ public class BlackmarketApplication extends Application {
 		blackmarketApplication = this;
 		exileToolsESClient = new ExileToolsESClient(BLACK_MARKET_API_KEY);
 		stage.setTitle("Blackmarket");
+		stage.getIcons().add(ImageCache.getInstance().get("/black-market.png"));
 
 		// create root stack pane that we use to be able to overlay proxy dialog
 		StackPane layerPane = new StackPane();
