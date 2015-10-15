@@ -39,11 +39,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-		<dependency>
-			<groupId>io.jexiletools</groupId>
-			<artifactId>jexiletools-es</artifactId>
-			<version>0.0.1</version>
-		</dependency>
 		<!-- jsoup HTML parser library @ http://jsoup.org/ -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.jsoup</groupId> -->
@@ -65,6 +60,42 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.searchbox</groupId>
+			<artifactId>jest</artifactId>
+			<version>0.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>1.7.1</version>
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>*</groupId> -->
+			<!-- <artifactId>*</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Why can't logging be simpler? -->
+		<!-- Read the 2 page slf4j manual to undestand this stuff: http://www.slf4j.org/manual.html -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.12</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -105,49 +136,52 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			
-		<plugin>
-          <groupId>com.akathist.maven.plugins.launch4j</groupId>
-          <artifactId>launch4j-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>l4j-gui</id>
-              <phase>package</phase>
-              <goals><goal>launch4j</goal></goals>
-              <configuration>
-                <headerType>gui</headerType>
-                <outfile>target/blackmarket.exe</outfile>
-                <jar>target/blackmarket-v0.4.jar</jar>
-                <errTitle>blackmarket</errTitle>
-                <supportUrl>http://thirdy.github.io/blackmarket/</supportUrl>
-                <classPath>
-                  <mainClass>${mainClass}</mainClass>
-                </classPath>
-                <dontWrapJar>false</dontWrapJar>
-				<icon>black-market-small.ico</icon>
-                <jre>
-                  <path>jre1.8.0_60</path>
-                  <bundledJreAsFallback>false</bundledJreAsFallback>
-                  <minVersion>1.8.0_60</minVersion>
-                  <bundledJre64Bit>true</bundledJre64Bit>
-                  <jdkPreference>jreOnly</jdkPreference>
-                </jre>
-                <versionInfo>
-                  <fileVersion>0.4.0.0</fileVersion>
-                  <txtFileVersion>0.4</txtFileVersion>
-                  <fileDescription>Blackmarket is an open source fan-made tool for Path of Exile for searching items.</fileDescription>
-                  <copyright>Copyright (C) 2015 Vicente de Rivera III</copyright>
-                  <productVersion>0.4.0.0</productVersion>
-                  <txtProductVersion>0.4</txtProductVersion>
-                  <productName>Blackmarket</productName>
-                  <internalName>blackmarket-v0.4</internalName>
-                  <originalFilename>blackmarket.exe</originalFilename>
-                </versionInfo>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+
+
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>l4j-gui</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<outfile>target/blackmarket.exe</outfile>
+							<jar>target/blackmarket-v0.4.jar</jar>
+							<errTitle>blackmarket</errTitle>
+							<supportUrl>http://thirdy.github.io/blackmarket/</supportUrl>
+							<classPath>
+								<mainClass>${mainClass}</mainClass>
+							</classPath>
+							<dontWrapJar>false</dontWrapJar>
+							<icon>black-market-small.ico</icon>
+							<jre>
+								<path>jre1.8.0_60</path>
+								<bundledJreAsFallback>false</bundledJreAsFallback>
+								<minVersion>1.8.0_60</minVersion>
+								<bundledJre64Bit>true</bundledJre64Bit>
+								<jdkPreference>jreOnly</jdkPreference>
+							</jre>
+							<versionInfo>
+								<fileVersion>0.4.0.0</fileVersion>
+								<txtFileVersion>0.4</txtFileVersion>
+								<fileDescription>Blackmarket is an open source fan-made tool for
+									Path of Exile for searching items.</fileDescription>
+								<copyright>Copyright (C) 2015 Vicente de Rivera III</copyright>
+								<productVersion>0.4.0.0</productVersion>
+								<txtProductVersion>0.4</txtProductVersion>
+								<productName>Blackmarket</productName>
+								<internalName>blackmarket-v0.4</internalName>
+								<originalFilename>blackmarket.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
