@@ -144,7 +144,7 @@
 				<executions>
 					<execution>
 						<id>l4j-gui</id>
-						<phase>package</phase>
+						<phase>deploy</phase>
 						<goals>
 							<goal>launch4j</goal>
 						</goals>
