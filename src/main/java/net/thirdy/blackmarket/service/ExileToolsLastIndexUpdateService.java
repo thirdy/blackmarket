@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.util.UrlReaderUtil;
 
 public class ExileToolsLastIndexUpdateService extends Service<Void> {
@@ -26,7 +27,10 @@ public class ExileToolsLastIndexUpdateService extends Service<Void> {
         	
             @Override protected Void call() throws Exception {
 				String lastUpdate = retrieveIndexerLastUpdate();
-				logger.debug("Last Indexer Update Value: " + lastUpdate);
+				if (!Main.DEBUG_MODE) {
+					// annoying, disable if on development
+					logger.debug("Last Indexer Update Value: " + lastUpdate);
+				}
 				updateMessage(lastUpdate);
 
 				for (int i = 60; i >= 0; i--) {

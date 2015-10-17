@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 .root{
-    -fx-font-size: 7pt;
+    -fx-font-size: 10pt;
     /*-fx-font-family: "Courier New";*/
     -fx-base: #555555;
     /*-fx-background: rgb(225, 228, 203);*/
@@ -27,7 +27,7 @@
     -fx-padding: 1px;
 }
 .shop-update {
-	-fx-font-size: 6pt;
+	-fx-font-size: 8pt;
 }
 .separator *.line { 
 	-fx-border-style: solid;
@@ -61,7 +61,7 @@
 #mainToolBar .label {
     -fx-text-fill: #FFFFFF;
     -fx-font-style: italic; 
-    -fx-font-weight: bold;
+    /*-fx-font-weight: bold;*/
 }
 #propertiesGridPane .label {
 	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );
@@ -264,7 +264,9 @@
 .controlPane-min:focused , .controlPane-max:focused {
     -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 5, 0.7 , 0 , 0 );
 }
-
+.itemGridCellStackPane {
+	-fx-background-color: rgba(30, 30, 30, 0.5); -fx-background-radius: 5; -fx-font-size: 8pt;
+}
 #btnScLeague {
     -fx-graphic: url("/images/leagues/sc.png");
     -fx-background-position: center;

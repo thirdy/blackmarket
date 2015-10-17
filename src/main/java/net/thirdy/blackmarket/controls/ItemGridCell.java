@@ -74,22 +74,11 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 
 	public ItemGridCell() {
 		getStyleClass().add("image-grid-cell"); //$NON-NLS-1$
+		stackPane.getStyleClass().add("itemGridCellStackPaneEmpty");
 		propertiesGridPane.setId("propertiesGridPane");
 		explicitModsLbls = Arrays.asList(
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label(),
-				new Label()
+				new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(),
+				new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label()
 				);
 		explicitModsLbls.stream()
 			.forEach(l -> {
@@ -107,7 +96,6 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 
 		wtbBtn.setOnAction(e -> wtbHandler());
 		wtbBtn.setStyle("-fx-font-size: 8pt;");
-		stackPane.setStyle("-fx-background-color: rgba(30, 30, 30, 0.5); -fx-background-radius: 5; -fx-font-size: 8pt;");
 		
 		Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -151,7 +139,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	protected void updateItem(ExileToolsHit item, boolean empty) {
 		super.updateItem(item, empty);
 
-		if (empty) {
+		if (empty || item == ExileToolsHit.EMPTY) {
 			setGraphic(null);
 		} else {
 			try {
@@ -166,6 +154,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 
 
 	private void setupItemUI(ExileToolsHit item) {
+		stackPane.getChildren().clear();
+		
 		ImageView imageView = new ImageView();
 		imageView.setPreserveRatio(true);
 		imageView.setSmooth(true);
@@ -207,7 +197,6 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		
 		setupModsPseudo(item);
 		
-		stackPane.getChildren().clear();
 		stackPane.getChildren().addAll(imageView, borderPane);
 	}
 

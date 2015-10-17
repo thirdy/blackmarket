@@ -60,7 +60,7 @@ public class TwoColumnGridPane extends GridPane {
 //		column2.setPercentWidth(50);
 //		column1.setHgrow(Priority.ALWAYS);
 		column2.setHalignment(HPos.CENTER);
-		column2.setHgrow(Priority.ALWAYS);
+//		column2.setHgrow(Priority.ALWAYS);
 		getColumnConstraints().addAll(column1, column2);
 	}
 

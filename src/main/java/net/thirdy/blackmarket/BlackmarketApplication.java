@@ -29,6 +29,7 @@ import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -74,9 +75,10 @@ public class BlackmarketApplication extends Application {
 	private static final int ITEM_GRID_CELL_WIDTH = 380;
 	private static final int ITEM_GRID_CELL_HEIGHT = 210;
 
-	private static final int WINDOW_HEIGHT = 720;
-
-	private static final int WINDOW_WIDTH = 1220;
+	private static final int WINDOW_HEIGHT = 738;
+	private static final int WINDOW_WIDTH = 1366;
+	
+	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
 	public static final String VERSION = "Version: 0.4";
 
@@ -167,7 +169,7 @@ public class BlackmarketApplication extends Application {
 		this.root.setTop(toolBar);
 
 		controlPane = new ControlPane(e -> searchHandler(e));
-		SlidingPane searchPane = new SlidingPane(270, 12, controlPane);
+		SlidingPane searchPane = new SlidingPane(640, 18, controlPane);
 		Button showCollapseButton = searchPane.getControlButton();
 
 		scene.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
@@ -217,7 +219,7 @@ public class BlackmarketApplication extends Application {
 
 		AnchorPane.setBottomAnchor(searchPane, 10.0);
 		AnchorPane.setLeftAnchor(searchPane, 10.0);
-		AnchorPane.setRightAnchor(searchPane, 10.0);
+		AnchorPane.setRightAnchor(searchPane, 23.0);
 		centerPane.getChildren().addAll(searchResultsPane, searchPane);
 
 		Label progressIndicatorLabel = new Label();
@@ -250,7 +252,10 @@ public class BlackmarketApplication extends Application {
 
 	private void searchSucceeded() {
 		ExileToolsSearchResult result = searchService.getValue();
-		searchResultsPane.setItems(FXCollections.observableList(result.getExileToolHits()));
+		ObservableList<ExileToolsHit> list = FXCollections.observableList(result.getExileToolHits());
+		// add empty row
+		list.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
+		searchResultsPane.setItems(list);
 			controlPane.setSearchHitCount(result.getSearchResult().getTotal(), result.getExileToolHits().size());
 	}
 

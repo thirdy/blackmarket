@@ -2,7 +2,6 @@ package io.jexiletools.es.model.json;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +14,8 @@ import io.jexiletools.es.model.Mod;
 import io.jexiletools.es.model.Price;
 
 public class ExileToolsHit {
+	public static final ExileToolsHit EMPTY = new ExileToolsHit();
+
 	public ExileToolsHit() { }
 	String md5sum; //d5f3025826c8dba4bf8b6e182f5ca1a0
 	String uuid;   //1319466:d5f3025826c8dba4bf8b6e182f5ca1a0

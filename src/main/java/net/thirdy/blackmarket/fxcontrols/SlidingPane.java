@@ -39,14 +39,8 @@ import javafx.util.Duration;
 
     /** creates a sidebar containing a vertical alignment of the given nodes */
     public SlidingPane(final double expandedHeight, final double collapse, Node node) {
-      
+      double minY = expandedHeight - collapse;
       this.setPrefHeight(expandedHeight);
-      this.setMinHeight(0);
-
-      // create a bar to hide and show.
-//      setAlignment(Pos.CENTER);
-//      getChildren().addAll(nodes);
-//      setCenter(node);
       GridPane.setHgrow(node, Priority.ALWAYS);
       GridPane.setVgrow(node, Priority.ALWAYS);
       add(node, 0, 0);
@@ -65,19 +59,16 @@ import javafx.util.Duration;
               final double curHeight = expandedHeight * (1.0 - frac);
               
               double translateValue = -(-expandedHeight + curHeight);
-              if (translateValue >= (expandedHeight - collapse)) {
-            	  // STOP!
-            	  SlidingPane.this.setTranslateY(expandedHeight - collapse);
-              } else {
-            	  SlidingPane.this.setTranslateY(translateValue);
+              if (translateValue >= minY) {
+            	  translateValue = minY;
               }
+              SlidingPane.this.setTranslateY(translateValue);
               
             }
           };
           hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent actionEvent) {
               expanded.set(false);
-//              controlButton.setText("Show");
               controlButton.getStyleClass().remove("controlPane-min");
               controlButton.getStyleClass().add("controlPane-max");
             }
@@ -85,17 +76,16 @@ import javafx.util.Duration;
   
           // create an animation to show a sidebar.
           final Animation showSidebar = new Transition() {
-            { setCycleDuration(Duration.millis(200)); }
+            { setCycleDuration(Duration.millis(100)); }
             protected void interpolate(double frac) {
-              final double curHeight = expandedHeight * frac;
-              double translateValue = -(-expandedHeight + curHeight + collapse);
-              if(translateValue > 0) SlidingPane.this.setTranslateY(translateValue);
+              final double curHeight = minY * frac;
+              double translateValue = minY - curHeight;
+               SlidingPane.this.setTranslateY(translateValue);
             }
           };
           showSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent actionEvent) {
             	expanded.set(true);
-//              controlButton.setText("Collapse");
               controlButton.getStyleClass().add("controlPane-min");
               controlButton.getStyleClass().remove("controlPane-max");
             }
