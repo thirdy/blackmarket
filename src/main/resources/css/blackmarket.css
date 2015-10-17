@@ -22,6 +22,11 @@
     /*-fx-background: rgb(225, 228, 203);*/
 }
 
+.label {
+	-fx-text-fill: #EEEEEE;
+	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
+}
+
 #root {
     -fx-background-color: #333333;
     -fx-padding: 1px;

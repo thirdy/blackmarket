@@ -54,7 +54,7 @@ public class TwoColumnGridPane extends GridPane {
 		setVgap(5);
 //		setPadding(new Insets(5));
 		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setMinWidth(33);
+		column1.setMinWidth(46);
 		column1.setHalignment(HPos.RIGHT);
 		ColumnConstraints column2 = new ColumnConstraints();
 //		column2.setPercentWidth(50);

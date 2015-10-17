@@ -92,7 +92,7 @@ public class ControlPane extends BorderPane {
 	
 	private ComboBox<String> cmbxLeague;
 
-	private ItemTypePane itemTypesPane;
+	private ItemTypePanes itemTypesPanes;
 
 	private ComboBox<String> tfName;
 	private Button btnSearch;
@@ -166,22 +166,22 @@ public class ControlPane extends BorderPane {
 	    cmbxLeague.setPrefWidth(220);
 	    
 	    modsSelectionPane = new ModsSelectionPane();
-	    itemTypesPane = new ItemTypePane(modsSelectionPane);
+	    itemTypesPanes = new ItemTypePanes(modsSelectionPane);
 	    
 	    simpleSearchGridPane = new GridPane();
 	    simpleSearchGridPane.setGridLinesVisible(Main.DEBUG_MODE);
 	    simpleSearchGridPane.setPadding(new Insets(5));
 	    simpleSearchGridPane.setHgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();
-	    column1.setPercentWidth(26);
+	    column1.setPercentWidth(22);
 	    ColumnConstraints column2 = new ColumnConstraints();
-	    column2.setPercentWidth(13);
+	    column2.setPercentWidth(14);
 	    ColumnConstraints column3 = new ColumnConstraints();
-	    column3.setPercentWidth(13);
+	    column3.setPercentWidth(14);
 	    ColumnConstraints column4 = new ColumnConstraints();
-	    column4.setPercentWidth(13);
+	    column4.setPercentWidth(14);
 	    ColumnConstraints column5 = new ColumnConstraints();
-	    column5.setPercentWidth(35);
+	    column5.setPercentWidth(36);
 	    
 	    simpleSearchGridPane.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
 
@@ -189,7 +189,9 @@ public class ControlPane extends BorderPane {
 	    simpleSearchGridPane.add(new TwoColumnGridPane(
 	    		"League:", cmbxLeague,
 	    		"Name:"  , tfName,
-	    		"Type:"  , itemTypesPane), 0, 0);
+	    		"Armour:"  , itemTypesPanes.getItemTypePane1(),
+	    		"Weapn:"  , itemTypesPanes.getItemTypePane3(),
+	    		"Misc:"  , itemTypesPanes.getItemTypePane2()), 0, 0);
 	    
 	    // Column 2
 		TwoColumnGridPane col2Pane = new TwoColumnGridPane(
@@ -387,8 +389,8 @@ public class ControlPane extends BorderPane {
 
 
 	private Optional<FilterBuilder> qualityFilter(RangeOptional t) {
-		if(!itemTypesPane.getSelected().isEmpty()) {
-			List<FilterBuilder> qualityFilters = itemTypesPane.getSelected().stream()
+		if(!itemTypesPanes.getSelected().isEmpty()) {
+			List<FilterBuilder> qualityFilters = itemTypesPanes.getSelected().stream()
 				.map(it -> format("properties.%s.Quality", it.itemType()))
 				.map(name -> t.rangeFilter(name))
 				.collect(Collectors.toList());
@@ -398,8 +400,8 @@ public class ControlPane extends BorderPane {
 	}
 	
 	private Optional<OrFilterBuilder> itemTypesFilter() {
-		if (!itemTypesPane.getSelected().isEmpty()) {
-			List<FilterBuilder> itemTypeFilters = itemTypesPane.getSelected()
+		if (!itemTypesPanes.getSelected().isEmpty()) {
+			List<FilterBuilder> itemTypeFilters = itemTypesPanes.getSelected()
 					.stream()
 					.map(it -> {
 						FilterBuilder itFilter = termFilter("attributes.itemType", it.itemType());
