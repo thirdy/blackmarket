@@ -213,7 +213,7 @@
 							<classPath>
 								<mainClass>${mainClass}</mainClass>
 							</classPath>
-							<dontWrapJar>true</dontWrapJar>
+							<dontWrapJar>false</dontWrapJar>
 							<icon>black-market-small.ico</icon>
 							<jre>
 								<path>jre1.8.0_60</path>
