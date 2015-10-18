@@ -27,6 +27,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class ExileToolsSearchClientTest {
 	 * As per ES documentation/tome, the best way to do our search is via Filters
 	 */
 	@Test
+	@Ignore
 	public void testExecuteMjolnerUsingFilters() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		List<FilterBuilder> filters = new LinkedList<>();
@@ -84,6 +86,7 @@ public class ExileToolsSearchClientTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testDistinctCurrencyIconValues() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.aggregation(AggregationBuilders.terms("rarities").field("shop.verified")
@@ -99,6 +102,7 @@ public class ExileToolsSearchClientTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testDistinctItemTypeValues() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.filtered(null, FilterBuilders.boolFilter()
@@ -116,6 +120,7 @@ public class ExileToolsSearchClientTest {
 	}
 
 	@Test
+	@Ignore
 	public void testExecuteMjolner() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		 searchSourceBuilder.query(QueryBuilders.matchQuery("info.name", "Mjolner"));
@@ -129,6 +134,7 @@ public class ExileToolsSearchClientTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testExecuteTabula() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.matchQuery("info.name", "Tabula Rasa"));
@@ -142,6 +148,7 @@ public class ExileToolsSearchClientTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testShops() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.boolQuery()
@@ -158,6 +165,7 @@ public class ExileToolsSearchClientTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetLeagues() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.aggregation(AggregationBuilders

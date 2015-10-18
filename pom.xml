@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<blackmarket.version>0.5</blackmarket.version>
+		<blackmarket.version>0.5.1</blackmarket.version>
 		<mainClass>net.thirdy.blackmarket.Main</mainClass>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -223,13 +223,13 @@
 								<jdkPreference>jreOnly</jdkPreference>
 							</jre>
 							<versionInfo>
-								<fileVersion>${blackmarket.version}.0.0</fileVersion>
-								<txtFileVersion>${blackmarket.version}</txtFileVersion>
+								<fileVersion>1.0.0.0</fileVersion>
+								<txtFileVersion>1.0</txtFileVersion>
 								<fileDescription>Blackmarket is an open source fan-made tool for
 									Path of Exile for searching items.</fileDescription>
 								<copyright>Copyright (C) 2015 Vicente de Rivera III</copyright>
-								<productVersion>${blackmarket.version}.0.0</productVersion>
-								<txtProductVersion>${blackmarket.version}</txtProductVersion>
+								<productVersion>1.0.0.0</productVersion>
+								<txtProductVersion>1.0</txtProductVersion>
 								<productName>Blackmarket</productName>
 								<internalName>blackmarket-${blackmarket.version}</internalName>
 								<originalFilename>blackmarket.exe</originalFilename>

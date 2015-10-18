@@ -90,7 +90,7 @@ public class BlackmarketApplication extends Application {
 	
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
-	public static final String VERSION = "Version: 0.5";
+	public static final String VERSION = "Version: 0.5.1";
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
