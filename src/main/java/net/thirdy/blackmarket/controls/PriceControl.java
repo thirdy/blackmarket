@@ -56,8 +56,8 @@ import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
  *
  */
 public class PriceControl extends HBox {
-	ToggleButton btnBuyoutOnly = new ToggleButton("B/o Only");
-	CheckBox anyPriceChckbx = new CheckBox("Any price");
+	ToggleButton btnBuyoutOnly = new ToggleButton("B/o only");
+	CheckBox anyPriceChckbx = new CheckBox("Any b/o");
 	ComboBox<Currencies> currenCmbx = new ComboBox<>(FXCollections.observableArrayList(
 			chaos,
 			ex,
@@ -104,8 +104,8 @@ public class PriceControl extends HBox {
 		});
 		currenCmbx.getSelectionModel().selectFirst();
 		btnBuyoutOnly.setSelected(true);
-		btnBuyoutOnly.setPrefWidth(70);
-		currenCmbx.setPrefWidth(200);
+		btnBuyoutOnly.setPrefWidth(80);
+		currenCmbx.setPrefWidth(180);
 		priceMinMax.setPrefWidth(100);
 		priceMinMax.getMin().setText("1");
 		priceMinMax.getMax().setText("15");
