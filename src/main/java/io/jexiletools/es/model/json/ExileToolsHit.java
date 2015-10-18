@@ -2,6 +2,8 @@ package io.jexiletools.es.model.json;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,11 +14,26 @@ import org.elasticsearch.common.lang3.StringUtils;
 import io.jexiletools.es.model.BaseItemType;
 import io.jexiletools.es.model.Mod;
 import io.jexiletools.es.model.Price;
+import net.thirdy.blackmarket.service.LadderHit;
 
 public class ExileToolsHit {
 	public static final ExileToolsHit EMPTY = new ExileToolsHit();
-
 	public ExileToolsHit() { }
+	
+	// Ladder Data
+	List<LadderHit> ladderHits = Collections.emptyList();
+	public boolean isOnline() {
+		return ladderHits.parallelStream().anyMatch(lh -> lh.online());
+	}
+	public Optional<Date> lastOnline() {
+		return ladderHits.parallelStream()
+				.sorted((c1, c2) -> c1.lastOnline().compareTo(c2.lastOnline()))
+				.findFirst()
+				.map(lh -> lh.lastOnline());
+	}
+	// Ladder Data End
+	
+	
 	String md5sum; //d5f3025826c8dba4bf8b6e182f5ca1a0
 	String uuid;   //1319466:d5f3025826c8dba4bf8b6e182f5ca1a0
 	
@@ -33,28 +50,40 @@ public class ExileToolsHit {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ExileToolsHit [");
-		builder.append(System.lineSeparator());
-		builder.append("md5sum=");
+		builder.append("ExileToolsHit [ladderHits=");
+		builder.append(ladderHits);
+		builder.append(", md5sum=");
 		builder.append(md5sum);
-		builder.append(System.lineSeparator());
-		builder.append("uuid=");
+		builder.append(", uuid=");
 		builder.append(uuid);
-		builder.append(System.lineSeparator());
-		builder.append("info=");
+		builder.append(", info=");
 		builder.append(info);
-		builder.append(System.lineSeparator());
-		builder.append("shop=");
+		builder.append(", shop=");
 		builder.append(shop);
-		builder.append(System.lineSeparator());
-		builder.append("attributes=");
+		builder.append(", attributes=");
 		builder.append(attributes);
-		builder.append(System.lineSeparator());
-		builder.append("sockets=");
+		builder.append(", sockets=");
 		builder.append(sockets);
-		builder.append(System.lineSeparator());
+		builder.append(", requirements=");
+		builder.append(requirements);
+		builder.append(", properties=");
+		builder.append(properties);
+		builder.append(", mods=");
+		builder.append(mods);
+		builder.append(", modsTotal=");
+		builder.append(modsTotal);
+		builder.append(", modsPseudo=");
+		builder.append(modsPseudo);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public List<LadderHit> getLadderHits() {
+		return ladderHits;
+	}
+
+	public void setLadderHits(List<LadderHit> ladderHits) {
+		this.ladderHits = ladderHits;
 	}
 
 	public String getMd5sum() {

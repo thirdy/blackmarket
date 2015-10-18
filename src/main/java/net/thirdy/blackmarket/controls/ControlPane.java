@@ -21,7 +21,6 @@ import static com.google.common.collect.Iterables.toArray;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static javafx.collections.FXCollections.observableList;
-import static net.thirdy.blackmarket.util.LangContants.STRING_EMPTY;
 import static org.elasticsearch.common.lang3.StringUtils.trimToEmpty;
 import static org.elasticsearch.common.lang3.StringUtils.trimToNull;
 import static org.elasticsearch.index.query.FilterBuilders.andFilter;
@@ -31,15 +30,11 @@ import static org.elasticsearch.index.query.FilterBuilders.orFilter;
 import static org.elasticsearch.index.query.FilterBuilders.rangeFilter;
 import static org.elasticsearch.index.query.FilterBuilders.termFilter;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.controlsfx.control.textfield.TextFields;
-import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.elasticsearch.common.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -49,14 +44,11 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import impl.org.controlsfx.autocompletion.SuggestionProvider;
 import io.jexiletools.es.model.Currencies;
 import io.jexiletools.es.model.League;
 import io.jexiletools.es.model.Rarity;
 import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -67,14 +59,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.util.Callback;
 import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.controls.ModsSelectionPane.Mod;
 import net.thirdy.blackmarket.domain.RangeOptional;
@@ -87,9 +77,7 @@ import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox.State;
 import net.thirdy.blackmarket.fxcontrols.TwoColumnGridPane;
-import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketSuggestionProvider;
 import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketTextField;
-import net.thirdy.blackmarket.util.LangContants;
 
 /**
  * @author thirdy
@@ -142,7 +130,9 @@ public class ControlPane extends BorderPane {
 	private FourColorIntegerTextField tfSockColors = new FourColorIntegerTextField();
 	private FourColorIntegerTextField tfLinks = new FourColorIntegerTextField();
 	
-	private ToggleButton btnSortByShopUpdate = new ToggleButton("Sort by shop update");
+	private ToggleButton btnSortByShopUpdate = new ToggleButton("Sort by Last Shop Updated");
+	private ToggleButton btnOnlineOnly = new ToggleButton("Online Only");
+	
 	private PriceControl priceControl = new PriceControl();
 
 	private ModsSelectionPane modsSelectionPane;
@@ -150,6 +140,7 @@ public class ControlPane extends BorderPane {
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		setId("controlPane");
 		btnAbout.setOnAction(e -> Dialogs.showAbout());
+		btnOnlineOnly.setSelected(true);
 		toggleAdvanceMode.setOnAction(e -> {
 			if(toggleAdvanceMode.isSelected()) {
 				txtAreaJson.setText(buildSimpleSearch());
@@ -167,7 +158,7 @@ public class ControlPane extends BorderPane {
 	    tfName.setPrefWidth(220);
 		
 	    cmbxLeague = new ComboBox<>(observableList(League.names()));
-	    cmbxLeague.setEditable(true);
+	    cmbxLeague.setEditable(false);
 	    cmbxLeague.getSelectionModel().selectFirst();
 	    cmbxLeague.setPrefWidth(220);
 	    
@@ -220,8 +211,7 @@ public class ControlPane extends BorderPane {
 	    		"Blk:"  , tfBlock,
 	    		"Sock:" , tfSockets,
 	    		"Link:" , tfLink,
-	    		"Rarity", cmbxRarity,
-	    		"Player", btnSortByShopUpdate
+	    		"Rarity", cmbxRarity
 	    		), 2, 0);
 		
 		// Column 4
@@ -239,13 +229,17 @@ public class ControlPane extends BorderPane {
 		// Column 5
 		simpleSearchGridPane.add(modsSelectionPane , 4, 0);
 		modsSelectionPane.add(priceControl);
+		modsSelectionPane.add(new HBox(btnOnlineOnly, btnSortByShopUpdate));
 		
 		btnSearch = new Button("Search");
-		btnSearch.setOnAction(e -> searchEventHandler.search(
-				toggleAdvanceMode.isSelected() ?
-						buildAdvanceSearch()
-						: buildSimpleSearch()
-				));
+		btnSearch.setOnAction(e -> {
+			String json = toggleAdvanceMode.isSelected() ?
+					buildAdvanceSearch()
+					: buildSimpleSearch();
+			String league = cmbxLeague.getSelectionModel().getSelectedItem();
+			boolean onlineOnly = btnOnlineOnly.isSelected();
+			searchEventHandler.search(json, league, onlineOnly);
+		});
 		btnSearch.setPrefWidth(400);
 		btnDurianMode.setOnAction(e -> Dialogs.showInfo("Durian mode will be implemented next. In Durian mode, your searches will be ran in intervals and notify you if items are found. Stay tuned!", "Durian mode coming soon!"));
 		
@@ -342,7 +336,7 @@ public class ControlPane extends BorderPane {
 //        sortJson.put("age", sortDateJson);
 //        sortDateJson.put("order", "asc");
 		
-		searchSourceBuilder.size(150);
+		searchSourceBuilder.size(999);
 		json = searchSourceBuilder.toString();
 
 		return json;

@@ -92,7 +92,10 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 				new Mod(explicits, "7 Explicit Modifier"),
 				new Mod(explicits, "8 Explicit Modifier"),
 				new Mod(explicits, "9 Explicit Modifier"),
-				new Mod(explicits, "10 Explicit Modifier")
+				new Mod(explicits, "10 Explicit Modifier"),
+				new Mod(explicits, "11 Explicit Modifier"),
+				new Mod(explicits, "12 Explicit Modifier"),
+				new Mod(explicits, "13 Explicit Modifier")
 				);
 		explicitMods.forEach(m -> add(m));
 	}

@@ -4,12 +4,9 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -118,7 +115,12 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	}
 	
 	private void wtbHandler() {
-		StringSelection stringSelection = new StringSelection(getItem().toWTB());
+		String wtb = getItem().toWTB();
+		copyToClipboard(wtb);
+	}
+
+	private void copyToClipboard(String s) {
+		StringSelection stringSelection = new StringSelection(s);
 			Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
 			clpbrd.setContents(stringSelection, null);
 	}
@@ -299,7 +301,14 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			ign = truncateIgn(ign);
 			Hyperlink link = new Hyperlink(ign);
 			link.setTextFill(Color.WHITE);
-			link.setOnAction(e -> openLink(shopUrl));
+			if (item.isOnline()) {
+				link.getStyleClass().add("ign-online");
+			}
+			if (!item.getLadderHits().isEmpty()) {
+				link.setOnAction(e -> Dialogs.showInfo(item.getLadderHits().toString()));
+			} else {
+				link.setOnAction(e -> copyToClipboard(shopUrl));
+			}
 			playerInfo.getChildren().addAll(
 					ignText, link);
 		} else if (sellerAccount.isPresent()) {
@@ -307,25 +316,19 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			sellerAccountText.setFill(Color.WHITE);
 			Hyperlink link = new Hyperlink(sellerAccount.get());
 			link.setTextFill(Color.WHITE);
-			link.setOnAction(e -> openLink(shopUrl));
+			link.setOnAction(e -> copyToClipboard(shopUrl));
 			playerInfo.getChildren().addAll(
 					sellerAccountText, link);
-		} else {
-			Text shopText = new Text("Shop:");
-			shopText.setFill(Color.WHITE);
-			Hyperlink link = new Hyperlink(item.getShop().getThreadid());
-			link.setTextFill(Color.WHITE);
-			link.setOnAction(e -> openLink(shopUrl));
-			playerInfo.getChildren().addAll(
-					shopText, link);
 		}
 		
-		Date date = new Date(item.getShop().getUpdated());
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d h:mm a z");
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Label shopUpdate = new Label(" " + sdf.format(date));
-		shopUpdate.getStyleClass().add("shop-update");
-		playerInfo.getChildren().add(shopUpdate);
+//		if (item.lastOnline().isPresent()) {
+//			Date date = item.lastOnline().get();
+//			SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d h:mm a z");
+//			sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+//			Label lastOnline = new Label(" " + sdf.format(date));
+//			lastOnline.getStyleClass().add("last-online");
+//			playerInfo.getChildren().add(lastOnline);
+//		}
 	}
 
 	private String truncateIgn(String ign) {

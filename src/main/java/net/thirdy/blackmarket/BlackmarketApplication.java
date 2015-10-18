@@ -19,6 +19,7 @@ package net.thirdy.blackmarket;
 
 import java.util.regex.Pattern;
 
+import org.apache.http.nio.reactor.ssl.SSLBuffer;
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
 import net.thirdy.blackmarket.service.ExileToolsLastIndexUpdateService;
-import net.thirdy.blackmarket.service.ExileToolsSearchService;
+import net.thirdy.blackmarket.service.ExileToolsService;
 import net.thirdy.blackmarket.util.ImageCache;
 
 /**
@@ -110,7 +111,7 @@ public class BlackmarketApplication extends Application {
 		return exileToolsESClient;
 	}
 
-	private final ExileToolsSearchService searchService = new ExileToolsSearchService();
+	private final ExileToolsService searchService = new ExileToolsService();
 	private final ExileToolsLastIndexUpdateService lastIndexUpdateService = new ExileToolsLastIndexUpdateService();
 
 	private GridView<ExileToolsHit> searchResultsPane;
@@ -173,7 +174,7 @@ public class BlackmarketApplication extends Application {
 
 		this.root.setTop(toolBar);
 
-		controlPane = new ControlPane(e -> searchHandler(e));
+		controlPane = new ControlPane(this::searchHandler);
 		searchPane = new SlidingPane(640, 18, controlPane);
 		collapseButton = searchPane.getControlButton();
 
@@ -261,12 +262,10 @@ public class BlackmarketApplication extends Application {
 		// add empty row
 		list.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
 		searchResultsPane.setItems(list);
-			controlPane.setSearchHitCount(result.getSearchResult().getTotal(),
-					// Remove 3 empty hits
-					result.getExileToolHits().size() - 3);
-//			Platform.runLater(() -> collapseButton.fire());
-			Platform.runLater(() -> searchPane.toggleSlide());
-//			searchPane.toggleSlide();
+		// Remove 3 empty hits
+		controlPane.setSearchHitCount(result.getSearchResult().getTotal(),
+				result.getExileToolHits().size() - 3);
+		Platform.runLater(() -> searchPane.toggleSlide());
 	}
 
 	private void setupToolbar(final Stage stage) {
@@ -345,7 +344,7 @@ public class BlackmarketApplication extends Application {
 		});
 	}
 
-	private void searchHandler(String json) {
+	private void searchHandler(String json, String league, boolean onlineOnly) {
 		logger.debug("Search: " + json);
 		if (json.isEmpty()) {
 			return;
@@ -364,6 +363,8 @@ public class BlackmarketApplication extends Application {
 			}
 		} else {
 			searchService.setJson(json);
+			searchService.setLeague(league);
+			searchService.setOnlineOnly(onlineOnly);
 			searchService.restart();
 		} 
 	}

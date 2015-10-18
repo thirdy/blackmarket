@@ -19,23 +19,17 @@ package net.thirdy.blackmarket.controls;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Random;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.BlackmarketApplication;
@@ -159,8 +153,8 @@ public class Dialogs {
 				new ImageView(new Image("/images/blackmarket-logo.png")),
 				new Label("Blackmarket is fan-made software for Path of Exile but is not affiliated with Grinding Gear Games in any way."),
 				new Label("A few tips:"),
-				new Label("CTRL - hot key to slide the search control pane"),
-				new Label("SHIFT + Enter - hot key to run the search"),
+				new Label("CTRL + Space - hot key to slide the search control pane"),
+				new Label("CTRL + Enter - hot key to run the search"),
 				new Label("Advance mode grants you power overwhelming of Elastic Search"),
 				new Label("For more information and updates,"),
 				website,

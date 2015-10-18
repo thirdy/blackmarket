@@ -79,6 +79,7 @@ public class ExileToolsSearchClient {
 	public static class ExileToolsSearchResult {
 		private List<ExileToolsHit> exileToolHits;
 		private SearchResult searchResult;
+		
 		public ExileToolsSearchResult(SearchResult searchResult) {
 			this.searchResult = searchResult;
 			exileToolHits = searchResult.getHits(ExileToolsHit.class)
@@ -91,6 +92,9 @@ public class ExileToolsSearchClient {
 		}
 		public SearchResult getSearchResult() {
 			return searchResult;
+		}
+		public void setExileToolHits(List<ExileToolsHit> exileToolHits) {
+			this.exileToolHits = exileToolHits;
 		}
 	}
 	
