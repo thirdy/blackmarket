@@ -185,7 +185,7 @@ public class ControlPane extends BorderPane {
 	    simpleSearchGridPane.setPadding(new Insets(5));
 	    simpleSearchGridPane.setHgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();
-	    column1.setPercentWidth(22);
+	    column1.setPercentWidth(23);
 	    ColumnConstraints column2 = new ColumnConstraints();
 	    column2.setPercentWidth(14);
 	    ColumnConstraints column3 = new ColumnConstraints();
@@ -193,7 +193,7 @@ public class ControlPane extends BorderPane {
 	    ColumnConstraints column4 = new ColumnConstraints();
 	    column4.setPercentWidth(14);
 	    ColumnConstraints column5 = new ColumnConstraints();
-	    column5.setPercentWidth(36);
+	    column5.setPercentWidth(35);
 	    
 	    simpleSearchGridPane.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
 

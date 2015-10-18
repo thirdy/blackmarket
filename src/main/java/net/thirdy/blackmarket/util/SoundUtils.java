@@ -112,6 +112,7 @@ public class SoundUtils {
   }
 
   public static void main(String[] args) throws Exception {
+	  SoundUtils.tone(2000,100);
 //    SoundUtils.laser(5);
 //    Thread.sleep(1000);
 //    SoundUtils.warp(10);

@@ -312,7 +312,7 @@ public class BlackmarketApplication extends Application {
 		
 		if (controlPane.getBtnDurianMode().isSelected() && hitsToShow > 0) {
 			try {
-				SoundUtils.tone(5000,100);
+				SoundUtils.tone(2000,100);
 			} catch (LineUnavailableException e) {
 				e.printStackTrace();
 				Toolkit.getDefaultToolkit().beep();
