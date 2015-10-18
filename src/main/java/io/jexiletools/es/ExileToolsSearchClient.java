@@ -18,9 +18,7 @@
 package io.jexiletools.es;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -37,22 +35,22 @@ import io.searchbox.core.SearchResult;
  * @author thirdy
  *
  */
-public class ExileToolsESClient {
+public class ExileToolsSearchClient {
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 	
 	private final JestHttpClient client;
 	private final String apiKey;
 	
-	public ExileToolsESClient() {
+	public ExileToolsSearchClient() {
 		this("http://api.exiletools.com/index", "DEVELOPMENT-Indexer");
 	}
 	
-	public ExileToolsESClient(String apiKey) {
+	public ExileToolsSearchClient(String apiKey) {
 		this("http://api.exiletools.com/index", apiKey);
 	}
 
-	public ExileToolsESClient(String url, String apiKey) {
+	public ExileToolsSearchClient(String url, String apiKey) {
 		this.apiKey = apiKey;
 		// Construct a new Jest client according to configuration via factory
 		JestClientFactory factory = new JestClientFactory();
@@ -61,16 +59,21 @@ public class ExileToolsESClient {
 		logger.debug("~~~~~~~~~~~~~~~~~~ Successfully started ExileToolsESClient ~~~~~~~~~~~~~~~~~~~~");
 	}
 	
-	public ExileToolsSearchResult execute(String json) throws IOException {
+	public ExileToolsSearchResult execute(String json) throws ExileToolsSearchException {
 		 logger.debug("~~~~ Executing search: {}{}", System.lineSeparator(), json);
 
 		 Builder builder = new ExileToolsSearchAction.Builder(json)
 		                                 .setHeader("Authorization", apiKey);
 		 ExileToolsSearchAction search = builder.build();
 		 
-		 SearchResult result = client.execute(search);
+		 SearchResult result;
+		try {
+			result = client.execute(search);
 //		 logger.debug(result.getJsonString());
-		return new ExileToolsSearchResult(result);
+			return new ExileToolsSearchResult(result);
+		} catch (IOException e) {
+			throw new ExileToolsSearchException("Error while executing search for json: " + json, e);
+		}
 	}
 	
 	public static class ExileToolsSearchResult {

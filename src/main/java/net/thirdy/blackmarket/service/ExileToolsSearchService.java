@@ -1,9 +1,9 @@
 package net.thirdy.blackmarket.service;
 
-import java.io.IOException;
 import java.util.List;
 
-import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
+import io.jexiletools.es.ExileToolsSearchClient.ExileToolsSearchResult;
+import io.jexiletools.es.ExileToolsSearchException;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -41,10 +41,9 @@ public class ExileToolsSearchService extends Service<ExileToolsSearchResult> {
 					}
         			
         			return result;
-        		} catch (IOException e) {
-        			String msg = "Error while running search to the backend. "
-        					+ e.getMessage() +
-        					". Json query is: " + json;
+        		} catch (ExileToolsSearchException e) {
+        			String msg = "Error while running search to Exile Tools ES API: "
+        					+ e.getMessage();
         			updateMessage(msg);
 					throw new BlackmarketException(msg, e);
         		}

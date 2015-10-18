@@ -61,7 +61,7 @@ public class Dialogs {
 //				+ comics[RandomUtils.nextInt(0, 3)] +
 //				".png")));
 		alert.setGraphic(new ImageView(ImageCache.getInstance().get("/images/gallio/gallio-sad.png")));
-		alert.setContentText("Error: " + throwable.getMessage());
+		alert.setContentText("Error Message: " + throwable.getMessage());
 
 		// Create expandable Exception.
 		StringWriter sw = new StringWriter();
@@ -73,20 +73,20 @@ public class Dialogs {
 
 		TextArea textArea = new TextArea(exceptionText);
 		textArea.setEditable(false);
-		textArea.setWrapText(true);
+		textArea.setWrapText(false);
 
 		textArea.setMaxWidth(Double.MAX_VALUE);
-		textArea.setMaxHeight(Double.MAX_VALUE);
-		GridPane.setVgrow(textArea, Priority.ALWAYS);
-		GridPane.setHgrow(textArea, Priority.ALWAYS);
+		textArea.setMaxHeight(150);
+//		GridPane.setVgrow(textArea, Priority.ALWAYS);
+//		GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-		GridPane expContent = new GridPane();
-		expContent.setMaxWidth(Double.MAX_VALUE);
-		expContent.add(label, 0, 0);
-		expContent.add(textArea, 0, 1);
+//		GridPane expContent = new GridPane();
+//		expContent.setMaxWidth(Double.MAX_VALUE);
+//		expContent.add(label, 0, 0);
+//		expContent.add(textArea, 0, 1);
 
 		// Set expandable Exception into the dialog pane.
-		alert.getDialogPane().setExpandableContent(expContent);
+		alert.getDialogPane().setExpandableContent(new VBox(label, textArea));
 		alert.getDialogPane().setExpanded(true);
 
 		alert.showAndWait();

@@ -24,8 +24,8 @@ import org.controlsfx.control.GridView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.jexiletools.es.ExileToolsESClient;
-import io.jexiletools.es.ExileToolsESClient.ExileToolsSearchResult;
+import io.jexiletools.es.ExileToolsSearchClient;
+import io.jexiletools.es.ExileToolsSearchClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -85,7 +85,7 @@ public class BlackmarketApplication extends Application {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	private static BlackmarketApplication blackmarketApplication;
-	private static ExileToolsESClient exileToolsESClient;
+	private static ExileToolsSearchClient exileToolsESClient;
 
 	private Scene scene;
 	private BorderPane root;
@@ -103,7 +103,7 @@ public class BlackmarketApplication extends Application {
 		return blackmarketApplication;
 	}
 
-	public static ExileToolsESClient getExileToolsESClient() {
+	public static ExileToolsSearchClient getExileToolsESClient() {
 		return exileToolsESClient;
 	}
 
@@ -126,7 +126,7 @@ public class BlackmarketApplication extends Application {
 	@Override
 	public void start(final Stage stage) {
 		blackmarketApplication = this;
-		exileToolsESClient = new ExileToolsESClient(BLACK_MARKET_API_KEY);
+		exileToolsESClient = new ExileToolsSearchClient(BLACK_MARKET_API_KEY);
 		stage.setTitle("Blackmarket");
 		stage.getIcons().add(ImageCache.getInstance().get("/black-market.png"));
 

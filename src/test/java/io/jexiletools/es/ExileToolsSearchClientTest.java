@@ -39,16 +39,16 @@ import io.searchbox.core.SearchResult.Hit;
  * @author thirdy
  *
  */
-public class ExileToolsESClientTest {
+public class ExileToolsSearchClientTest {
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	static ExileToolsESClient client;
+	static ExileToolsSearchClient client;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		client = new ExileToolsESClient("http://api.exiletools.com/index", BLACK_MARKET_API_KEY);
+		client = new ExileToolsSearchClient("http://api.exiletools.com/index", BLACK_MARKET_API_KEY);
 	}
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
