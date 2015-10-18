@@ -31,15 +31,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import net.thirdy.blackmarket.Main;
-import net.thirdy.blackmarket.fxcontrols.AutoCompleteComboBoxListener;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
+import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketTextField;
 
 /**
  * @author thirdy
@@ -89,7 +88,11 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 				new Mod(explicits, "3 Explicit Modifier"),
 				new Mod(explicits, "4 Explicit Modifier"),
 				new Mod(explicits, "5 Explicit Modifier"),
-				new Mod(explicits, "6 Explicit Modifier")
+				new Mod(explicits, "6 Explicit Modifier"),
+				new Mod(explicits, "7 Explicit Modifier"),
+				new Mod(explicits, "8 Explicit Modifier"),
+				new Mod(explicits, "9 Explicit Modifier"),
+				new Mod(explicits, "10 Explicit Modifier")
 				);
 		explicitMods.forEach(m -> add(m));
 	}
@@ -114,7 +117,7 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 	}
 	
 	public Optional<Mod> implicit() {
-		if (implicitMod.tfMod.getSelectionModel().isEmpty()) {
+		if (implicitMod.tfMod.getText().isEmpty()) {
 			return Optional.empty();
 		}
 		return Optional.of(implicitMod);
@@ -122,7 +125,7 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 	
 	public Optional<List<Mod>> explicitMods() {
 		List<Mod> exMods = explicitMods.stream()
-		.filter(m -> !m.tfMod.getSelectionModel().isEmpty())
+		.filter(m -> !m.tfMod.getText().isEmpty())
 		.collect(Collectors.toList());
 		
 		if (exMods.isEmpty()) {
@@ -132,14 +135,15 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 	}
 	
 	public static class Mod extends HBox {
-		public ComboBox<ModMapping> tfMod;
+		public BlackmarketTextField<ModMapping> tfMod;
 		public RangeDoubleTextField rangeDoubleTf = new RangeDoubleTextField();
-		public TriStateCheckBox logic = new TriStateCheckBox("⊃");
+//		public TriStateCheckBox logic = new TriStateCheckBox("⊃");
+		public TriStateCheckBox logic = new TriStateCheckBox();
 		
 	    public Mod(ObservableList<ModMapping> list, String prompt) {
-	    	tfMod = new ComboBox<>(list);
+	    	tfMod = new BlackmarketTextField<ModMapping>(list);
 	    	tfMod.setPromptText(prompt);
-	    	new AutoCompleteComboBoxListener<ModMapping>(tfMod);
+	    	logic.setSelected(true);
 		}
 	}
 	

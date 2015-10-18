@@ -148,11 +148,8 @@ public class ControlPane extends BorderPane {
 	private ModsSelectionPane modsSelectionPane;
 	
 	public ControlPane(SearchEventHandler searchEventHandler) {
-		// Do not propagate the CTRL key since it will trigger slide of control pane
-//		txtAreaJson.setOnKeyPressed(e -> {consumeControlKey(e);});
-		
+		setId("controlPane");
 		btnAbout.setOnAction(e -> Dialogs.showAbout());
-		
 		toggleAdvanceMode.setOnAction(e -> {
 			if(toggleAdvanceMode.isSelected()) {
 				txtAreaJson.setText(buildSimpleSearch());
@@ -165,7 +162,7 @@ public class ControlPane extends BorderPane {
 		top.getChildren().addAll(lblHitCount, newSpacer());
 		setTop(top);
 		
-	    tfName = new BlackmarketTextField();
+	    tfName = new BlackmarketTextField<String>(Unique.names);
 
 	    tfName.setPrefWidth(220);
 		
@@ -357,7 +354,7 @@ public class ControlPane extends BorderPane {
 		mod.stream()
 			.forEach(m -> {
 				FilterBuilder fb = null;
-				ModMapping selectedMod = m.tfMod.getSelectionModel().getSelectedItem();  
+				ModMapping selectedMod = m.tfMod.item();  
 				if (m.rangeDoubleTf.val().isPresent()) {
 					fb = m.rangeDoubleTf.val().get().rangeFilter(selectedMod.getKey());
 				} else {
@@ -381,7 +378,7 @@ public class ControlPane extends BorderPane {
 	private FilterBuilder implicitModFilter(Mod mod) {
 		BoolFilterBuilder impFil = boolFilter();
 		FilterBuilder fb = null;
-		ModMapping selectedMod = mod.tfMod.getSelectionModel().getSelectedItem(); 
+		ModMapping selectedMod = mod.tfMod.item(); 
 		if (mod.rangeDoubleTf.val().isPresent()) {
 			fb = mod.rangeDoubleTf.val().get().rangeFilter(selectedMod.getKey());
 		} else {
@@ -430,7 +427,7 @@ public class ControlPane extends BorderPane {
 		return Optional.empty();
 	}
 
-	public void installShowCollapseButton(Button showCollapseButton) {
+	public void installCollapseButton(Button showCollapseButton) {
 		top.getChildren().add(showCollapseButton);
 	}
 	public void fireSearchEvent() {

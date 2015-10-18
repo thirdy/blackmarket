@@ -33,6 +33,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.io.Files;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -66,10 +67,7 @@ public class ImageCache {
 		if (StringUtils.isNotBlank(key)) {
 			try {
 				image = imageCache.get(key);
-				
-//				image = new WritableImage(image.getPixelReader(), 0, 0, 50, 50);
-				
-			} catch (ExecutionException e) {
+			} catch (UncheckedExecutionException | ExecutionException e) {
 				logger.warn("Exception in loading image: " + key + ". Returning default image.",  e);
 			}
 		} else {

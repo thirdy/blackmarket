@@ -22,8 +22,8 @@
     /*-fx-background: rgb(225, 228, 203);*/
 }
 
-.label {
-	-fx-text-fill: #EEEEEE;
+#controlPane .label {
+	-fx-text-fill: #FFFFFF;
 	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
 }
 
@@ -39,7 +39,9 @@
 	-fx-border-width: 1px;
 	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
 }
-
+#playerInfo {
+	-fx-font-size: 9pt;
+}
 #ModalDimmer {
     -fx-background-color: rgb(0,0,0,0.5);
 }
@@ -99,7 +101,7 @@
 }
 .item-name {
 	-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.4) , 10, 0.5 , 0.4 , 0 );
-	-fx-font-style: italic; -fx-font-weight: bold; -fx-padding: 0 0 5 0; -fx-font-size: 9pt;
+	-fx-font-style: italic; -fx-font-weight: bold; -fx-padding: 0 0 5 0; -fx-font-size: 10.5pt;
 }
 
 #newButton {
@@ -270,7 +272,7 @@
     -fx-effect: dropshadow( three-pass-box , -fx-focus-color , 5, 0.7 , 0 , 0 );
 }
 .itemGridCellStackPane {
-	-fx-background-color: rgba(30, 30, 30, 0.5); -fx-background-radius: 5; -fx-font-size: 8pt;
+	-fx-background-color: rgba(30, 30, 30, 0.5); -fx-background-radius: 5; -fx-font-size: 10pt;
 }
 #btnScLeague {
     -fx-graphic: url("/images/leagues/sc.png");

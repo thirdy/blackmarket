@@ -37,9 +37,13 @@ import javafx.util.Duration;
     
     private final AtomicBoolean expanded = new AtomicBoolean(true);
 
+	private double minY;
+	private double expandedHeight;
+
     /** creates a sidebar containing a vertical alignment of the given nodes */
     public SlidingPane(final double expandedHeight, final double collapse, Node node) {
-      double minY = expandedHeight - collapse;
+      this.expandedHeight = expandedHeight;
+      minY = expandedHeight - collapse;
       this.setPrefHeight(expandedHeight);
       GridPane.setHgrow(node, Priority.ALWAYS);
       GridPane.setVgrow(node, Priority.ALWAYS);
@@ -52,55 +56,59 @@ import javafx.util.Duration;
       // apply the animations when the button is pressed.
       controlButton.setOnAction(new EventHandler<ActionEvent>() {
         @Override public void handle(ActionEvent actionEvent) {
-          // create an animation to hide sidebar.
-          final Animation hideSidebar = new Transition() {
-            { setCycleDuration(Duration.millis(100)); }
-            protected void interpolate(double frac) {
-              final double curHeight = expandedHeight * (1.0 - frac);
-              
-              double translateValue = -(-expandedHeight + curHeight);
-              if (translateValue >= minY) {
-            	  translateValue = minY;
-              }
-              SlidingPane.this.setTranslateY(translateValue);
-              
-            }
-          };
-          hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent actionEvent) {
-              expanded.set(false);
-              controlButton.getStyleClass().remove("controlPane-min");
-              controlButton.getStyleClass().add("controlPane-max");
-            }
-          });
-  
-          // create an animation to show a sidebar.
-          final Animation showSidebar = new Transition() {
-            { setCycleDuration(Duration.millis(100)); }
-            protected void interpolate(double frac) {
-              final double curHeight = minY * frac;
-              double translateValue = minY - curHeight;
-               SlidingPane.this.setTranslateY(translateValue);
-            }
-          };
-          showSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent actionEvent) {
-            	expanded.set(true);
-              controlButton.getStyleClass().add("controlPane-min");
-              controlButton.getStyleClass().remove("controlPane-max");
-            }
-          });
-  
-          if (showSidebar.statusProperty().get() == Animation.Status.STOPPED && hideSidebar.statusProperty().get() == Animation.Status.STOPPED) {
-            if (expanded.get()) {
-              hideSidebar.play();
-            } else {
-              expanded.set(true);
-              showSidebar.play();
-            }
-          }
+          toggleSlide();
         }
       });
+    }
+    
+    public void toggleSlide() {
+    	// create an animation to hide sidebar.
+        final Animation hideSidebar = new Transition() {
+          { setCycleDuration(Duration.millis(100)); }
+          protected void interpolate(double frac) {
+            final double curHeight = expandedHeight * (1.0 - frac);
+            
+            double translateValue = -(-expandedHeight + curHeight);
+            if (translateValue >= minY) {
+          	  translateValue = minY;
+            }
+            SlidingPane.this.setTranslateY(translateValue);
+            
+          }
+        };
+        hideSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+          @Override public void handle(ActionEvent actionEvent) {
+            expanded.set(false);
+            controlButton.getStyleClass().remove("controlPane-min");
+            controlButton.getStyleClass().add("controlPane-max");
+          }
+        });
+
+        // create an animation to show a sidebar.
+        final Animation showSidebar = new Transition() {
+          { setCycleDuration(Duration.millis(100)); }
+          protected void interpolate(double frac) {
+            final double curHeight = minY * frac;
+            double translateValue = minY - curHeight;
+             SlidingPane.this.setTranslateY(translateValue);
+          }
+        };
+        showSidebar.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+          @Override public void handle(ActionEvent actionEvent) {
+          	expanded.set(true);
+            controlButton.getStyleClass().add("controlPane-min");
+            controlButton.getStyleClass().remove("controlPane-max");
+          }
+        });
+
+        if (showSidebar.statusProperty().get() == Animation.Status.STOPPED && hideSidebar.statusProperty().get() == Animation.Status.STOPPED) {
+          if (expanded.get()) {
+            hideSidebar.play();
+          } else {
+            expanded.set(true);
+            showSidebar.play();
+          }
+        }
     }
  
     public boolean isExpanded() {

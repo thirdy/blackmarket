@@ -42,6 +42,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 import net.thirdy.blackmarket.util.ImageCache;
@@ -76,6 +77,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		getStyleClass().add("image-grid-cell"); //$NON-NLS-1$
 		stackPane.getStyleClass().add("itemGridCellStackPane");
 		propertiesGridPane.setId("propertiesGridPane");
+		playerInfo.setId("playerInfo");
+		propertiesGridPane.setVgap(0.1);
 		explicitModsLbls = Arrays.asList(
 				new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(),
 				new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label()
@@ -93,16 +96,19 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		itemName.setContentDisplay(ContentDisplay.LEFT);
 		priceLbl.setTextFill(Color.WHITE);
 		priceLbl.setContentDisplay(ContentDisplay.RIGHT);
+		priceLbl.minWidth(40);
+		HBox.setHgrow(priceLbl, Priority.ALWAYS);
 
 		wtbBtn.setOnAction(e -> wtbHandler());
-		wtbBtn.setStyle("-fx-font-size: 8pt;");
+		wtbBtn.setStyle("-fx-font-size: 9pt;");
 		
 		Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox.setHgrow(spacer, Priority.SOMETIMES);
         
 		bottomPane.getChildren().addAll(priceLbl, playerInfo, spacer, wtbBtn);
 		borderPane.setBottom(bottomPane);
 		GridPane gridCenterPane = setupCenterGridPane();
+		gridCenterPane.setGridLinesVisible(Main.DEBUG_MODE);
 		GridPane.setHalignment(modsPane, HPos.LEFT);
 		gridCenterPane.add(modsPane, 0, 0);
 		GridPane.setHalignment(propertiesGridPane, HPos.RIGHT);
@@ -123,9 +129,9 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 //		gridpane.setPadding(new Insets(5));
 		gridpane.setHgap(2);
 		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setPercentWidth(77);
+		column1.setPercentWidth(80);
 		ColumnConstraints column2 = new ColumnConstraints();
-		column2.setPercentWidth(23);
+		column2.setPercentWidth(20);
 		column1.setHgrow(Priority.ALWAYS);
 		column2.setHgrow(Priority.ALWAYS);
 		gridpane.getColumnConstraints().addAll(column1, column2);
@@ -201,11 +207,12 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	}
 
 	private void setupModsPseudo(ExileToolsHit item) {
-		String resTxt = String.format("[pseudo res] %d %d %d %d",
+		String resTxt = String.format("[pseudo res] %d %d %d %d %d",
 				item.getPseudoEleRes().orElse(0),
 				item.getPseudoFire().orElse(0),
 				item.getPseudoCold().orElse(0),
-				item.getPseudoLightning().orElse(0)
+				item.getPseudoLightning().orElse(0),
+				item.getPseudoChaos().orElse(0)
 				);
 		
 		String attrTxt = String.format("[pseudo attr] %d %d %d %d",
@@ -219,7 +226,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 				item.getPseudoAttr().orElse(0)
 				);
 		
-		if (resTxt.length() > 20) {
+		if (resTxt.length() > 22) {
 			Label resLabel = new Label(resTxt); 
 			resLabel.getStyleClass().add("pseudo-mod");
 			modsPane.getChildren().add(resLabel);
@@ -286,7 +293,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		String shopUrl = "https://www.pathofexile.com/forum/view-thread/" + item.getShop().getThreadid();
 		
 		if (sellerIGN.isPresent()) {
-			Text ignText = new Text("IGN: ");
+			Text ignText = new Text("IGN:");
 			ignText.setFill(Color.WHITE);
 			String ign = sellerIGN.get();
 			ign = truncateIgn(ign);
@@ -296,7 +303,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			playerInfo.getChildren().addAll(
 					ignText, link);
 		} else if (sellerAccount.isPresent()) {
-			Text sellerAccountText = new Text("Account: ");
+			Text sellerAccountText = new Text("Acct:");
 			sellerAccountText.setFill(Color.WHITE);
 			Hyperlink link = new Hyperlink(sellerAccount.get());
 			link.setTextFill(Color.WHITE);
@@ -304,7 +311,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			playerInfo.getChildren().addAll(
 					sellerAccountText, link);
 		} else {
-			Text shopText = new Text("Shop: ");
+			Text shopText = new Text("Shop:");
 			shopText.setFill(Color.WHITE);
 			Hyperlink link = new Hyperlink(item.getShop().getThreadid());
 			link.setTextFill(Color.WHITE);

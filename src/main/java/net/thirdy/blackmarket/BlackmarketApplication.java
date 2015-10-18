@@ -28,6 +28,9 @@ import io.jexiletools.es.ExileToolsSearchClient;
 import io.jexiletools.es.ExileToolsSearchClient.ExileToolsSearchResult;
 import io.jexiletools.es.model.json.ExileToolsHit;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -72,8 +75,8 @@ import net.thirdy.blackmarket.util.ImageCache;
  */
 public class BlackmarketApplication extends Application {
 
-	private static final int ITEM_GRID_CELL_WIDTH = 380;
-	private static final int ITEM_GRID_CELL_HEIGHT = 210;
+	public static final int ITEM_GRID_CELL_WIDTH = 380;
+	public static final int ITEM_GRID_CELL_HEIGHT = 250;
 
 	private static final int WINDOW_HEIGHT = 738;
 	private static final int WINDOW_WIDTH = 1366;
@@ -116,6 +119,8 @@ public class BlackmarketApplication extends Application {
 	private Label indexerLastUpdateText;
 
 	private ControlPane controlPane;
+	private Button collapseButton;
+	private SlidingPane searchPane;
 
 	@Override
 	public void stop() throws Exception {
@@ -169,8 +174,8 @@ public class BlackmarketApplication extends Application {
 		this.root.setTop(toolBar);
 
 		controlPane = new ControlPane(e -> searchHandler(e));
-		SlidingPane searchPane = new SlidingPane(640, 18, controlPane);
-		Button showCollapseButton = searchPane.getControlButton();
+		searchPane = new SlidingPane(640, 18, controlPane);
+		collapseButton = searchPane.getControlButton();
 
 		scene.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
 //			if ((keyEvent.isControlDown() || keyEvent.isAltDown())
@@ -178,7 +183,7 @@ public class BlackmarketApplication extends Application {
 //				showCollapseButton.fire();
 //			}
 			if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.SPACE) {
-				showCollapseButton.fire();
+				collapseButton.fire();
 			}
 
 			if (keyEvent.getCode() == KeyCode.ENTER
@@ -189,7 +194,7 @@ public class BlackmarketApplication extends Application {
 			}
 		});
 
-		controlPane.installShowCollapseButton(showCollapseButton);
+		controlPane.installCollapseButton(collapseButton);
 		searchPane.setId("searchPane");
 
 		AnchorPane centerPane = new AnchorPane();
@@ -201,10 +206,10 @@ public class BlackmarketApplication extends Application {
 		searchResultsPane.setVerticalCellSpacing(5);
 		// searchResultsPane.setB
 		// searchResultsPane.setCellHeight(300);
-		searchResultsPane.setCellWidth(ITEM_GRID_CELL_WIDTH);
-//		DoubleBinding oneThirdWidthBinding = Bindings.createDoubleBinding(
-//				() -> (centerPane.getWidth() / 3.4), centerPane.widthProperty());
-//		 searchResultsPane.cellWidthProperty().bind(oneThirdWidthBinding);
+//		searchResultsPane.setCellWidth(ITEM_GRID_CELL_WIDTH);
+		DoubleBinding oneThirdWidthBinding = Bindings.createDoubleBinding(
+				() -> (centerPane.getWidth() / 3) - 25, centerPane.widthProperty());
+		searchResultsPane.cellWidthProperty().bind(oneThirdWidthBinding);
 		searchResultsPane.setCellHeight(ITEM_GRID_CELL_HEIGHT);
 		searchResultsPane.setCellFactory(new Callback<GridView<ExileToolsHit>, GridCell<ExileToolsHit>>() {
 			public GridCell<ExileToolsHit> call(GridView<ExileToolsHit> gridView) {
@@ -259,6 +264,9 @@ public class BlackmarketApplication extends Application {
 			controlPane.setSearchHitCount(result.getSearchResult().getTotal(),
 					// Remove 3 empty hits
 					result.getExileToolHits().size() - 3);
+//			Platform.runLater(() -> collapseButton.fire());
+			Platform.runLater(() -> searchPane.toggleSlide());
+//			searchPane.toggleSlide();
 	}
 
 	private void setupToolbar(final Stage stage) {
@@ -304,7 +312,7 @@ public class BlackmarketApplication extends Application {
 		lastIndexUpdateService.setOnFailed	 (e -> lastIndexUpdateService.restart());
 		VBox vBox = new VBox(versionText, indexerLastUpdateText, indexerLastUpdateValueText);
 		vBox.setAlignment(Pos.TOP_RIGHT);
-		vBox.setPadding(new Insets(5));
+		vBox.setPadding(new Insets(1, 5, 1, 5));
 		toolBar.getItems().add(vBox);
 		toolBar.getItems().add(windowButtons);
 		

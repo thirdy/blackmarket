@@ -24,6 +24,9 @@ import javafx.scene.control.CheckBox;
  *
  */
 public class TriStateCheckBox extends CheckBox {
+	public TriStateCheckBox() {
+		this("");
+	}
 	public TriStateCheckBox(String label) {
 		super(label);
 		setAllowIndeterminate(true);
