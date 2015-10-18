@@ -381,4 +381,13 @@ public class ExileToolsHit {
 				);
 	}
 
+	// UI variable
+	private int wtbCtr = 0;
+	public int wtbCtr() {
+		return wtbCtr;
+	}
+	public void incrWtbCtr() {
+		this.wtbCtr++;
+	}
+	
 }

@@ -17,7 +17,10 @@
  */
 package net.thirdy.blackmarket;
 
+import java.awt.Toolkit;
 import java.util.regex.Pattern;
+
+import javax.sound.sampled.LineUnavailableException;
 
 import org.apache.http.nio.reactor.ssl.SSLBuffer;
 import org.controlsfx.control.GridCell;
@@ -34,6 +37,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -42,6 +47,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -69,6 +75,7 @@ import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
 import net.thirdy.blackmarket.service.ExileToolsLastIndexUpdateService;
 import net.thirdy.blackmarket.service.ExileToolsService;
 import net.thirdy.blackmarket.util.ImageCache;
+import net.thirdy.blackmarket.util.SoundUtils;
 
 /**
  * @author thirdy
@@ -84,7 +91,7 @@ public class BlackmarketApplication extends Application {
 	
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
-	public static final String VERSION = "Version: 0.4";
+	public static final String VERSION = "Version: 0.5";
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -196,6 +203,7 @@ public class BlackmarketApplication extends Application {
 		});
 
 		controlPane.installCollapseButton(collapseButton);
+		controlPane.getBtnDurianMode().setOnAction(e -> toggleDurianService());
 		searchPane.setId("searchPane");
 
 		AnchorPane centerPane = new AnchorPane();
@@ -252,8 +260,43 @@ public class BlackmarketApplication extends Application {
 		// show stage
 		stage.setScene(scene);
 		stage.show();
-		
+		durianTimer.setOnSucceeded(e -> durianTimerSucceeded());
 		lastIndexUpdateService.restart();
+	}
+
+	ScheduledService<Void> durianTimer = new ScheduledService<Void>() {
+		@Override
+		protected Task<Void> createTask() {
+			return new Task<Void>() {
+				@Override
+				protected Void call() throws Exception {
+					int secs = 60 * 10;
+//					int secs = 15;
+					for (int i = 0; i < secs; i++) {
+						updateMessage("Durian: " + (secs - i));
+						Thread.sleep(1000);
+					}
+					return null;
+				}
+			};
+		}
+	};
+	private void toggleDurianService() {
+		ToggleButton btnDurianMode = controlPane.getBtnDurianMode();
+		if (btnDurianMode.isSelected()) {
+			btnDurianMode.textProperty().bind(durianTimer.messageProperty());
+			durianTimer.restart();
+		} else {
+			btnDurianMode.textProperty().unbind();
+			btnDurianMode.textProperty().set("Durian Notifier");
+			durianTimer.cancel();
+		}
+	}
+	private void durianTimerSucceeded() {
+		if (!searchService.isRunning()) {
+			controlPane.fireSearchEvent();
+			durianTimer.restart();
+		}
 	}
 
 	private void searchSucceeded() {
@@ -263,9 +306,19 @@ public class BlackmarketApplication extends Application {
 		list.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
 		searchResultsPane.setItems(list);
 		// Remove 3 empty hits
+		int hitsToShow = result.getExileToolHits().size() - 3;
 		controlPane.setSearchHitCount(result.getSearchResult().getTotal(),
-				result.getExileToolHits().size() - 3);
+				hitsToShow);
 		Platform.runLater(() -> searchPane.toggleSlide());
+		
+		if (controlPane.getBtnDurianMode().isSelected() && hitsToShow > 0) {
+			try {
+				SoundUtils.tone(5000,100);
+			} catch (LineUnavailableException e) {
+				e.printStackTrace();
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
 	}
 
 	private void setupToolbar(final Stage stage) {

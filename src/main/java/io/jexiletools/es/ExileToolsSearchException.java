@@ -15,18 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package io.jexiletools.es;
 
-
-import javafx.application.Application;
-
-
-public class Main {
-	
-	public static final boolean DEBUG_MODE = false;
-
-	public static void main(String[] args) {
-        Application.launch(BlackmarketApplication.class, args);
-    }
-
+/**
+ * @author thirdy
+ *
+ */
+public class ExileToolsSearchException extends Exception {
+	public ExileToolsSearchException(String msg, Throwable t) {
+		super(msg, t);
+	}
 }

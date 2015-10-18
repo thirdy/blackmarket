@@ -37,10 +37,18 @@ public class RangeOptional {
 	}
 
 	public FilterBuilder rangeFilter(String name) {
-		RangeFilterBuilder rangeFilter = FilterBuilders.rangeFilter(name);
-		min.ifPresent(m -> rangeFilter.from(m));
-		max.ifPresent(m -> rangeFilter.to(m));
-		return rangeFilter;
+		FilterBuilder filter = null;
+		
+		if(max.isPresent() && max.get() == 0) {
+			filter = FilterBuilders.notFilter(FilterBuilders.existsFilter(name));
+		} else {
+			RangeFilterBuilder rfilter = FilterBuilders.rangeFilter(name);
+			min.ifPresent(m -> rfilter.from(m));
+			max.ifPresent(m -> rfilter.to(m));
+			filter = rfilter;
+		}
+		
+		return filter;
 	}
 	
 	

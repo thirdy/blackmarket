@@ -94,7 +94,7 @@ public class ControlPane extends BorderPane {
 
 	private TextField tfName;
 	private Button btnSearch;
-	private Button btnDurianMode = new Button("Durian Mode");
+	private ToggleButton btnDurianMode = new ToggleButton("Durian Notifier");
 	
 	private Label lblHitCount = new Label();
 	private Button btnAbout = new Button("About");
@@ -265,8 +265,7 @@ public class ControlPane extends BorderPane {
 			boolean onlineOnly = btnOnlineOnly.isSelected();
 			searchEventHandler.search(json, league, onlineOnly);
 		});
-		btnSearch.setPrefWidth(400);
-		btnDurianMode.setOnAction(e -> Dialogs.showInfo("Durian mode will be implemented next. In Durian mode, your searches will be ran in intervals and notify you if items are found. Stay tuned!", "Durian mode coming soon!"));
+		btnSearch.setPrefWidth(800);
 		
 //		HBox.setHalignment(btnSearch, HPos.CENTER);
 		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnDurianMode, btnAbout);
@@ -276,6 +275,10 @@ public class ControlPane extends BorderPane {
 	    
 		setCenter(simpleSearchGridPane);
 		setBottom(bottomPane);
+	}
+	
+	public ToggleButton getBtnDurianMode() {
+		return btnDurianMode;
 	}
 
 	private Region newSpacer() {

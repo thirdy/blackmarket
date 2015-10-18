@@ -26,6 +26,8 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -43,6 +45,7 @@ import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 import net.thirdy.blackmarket.util.ImageCache;
+import net.thirdy.blackmarket.util.LangContants;
 import net.thirdy.blackmarket.util.SwingUtil;
 
 public class ItemGridCell extends GridCell<ExileToolsHit> {
@@ -115,8 +118,11 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	}
 	
 	private void wtbHandler() {
+		getItem().incrWtbCtr();
 		String wtb = getItem().toWTB();
 		copyToClipboard(wtb);
+		setupEffects(getItem());
+		setupWtbLabel(getItem());
 	}
 
 	private void copyToClipboard(String s) {
@@ -183,7 +189,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		}
 		
 		// Setup labels
-		wtbBtn.setText(StringUtils.trimToNull(item.getShop().getSellerIGN()) != null ? "Want to buy" : "Copy shop url");
+		setupWtbLabel(item);
 		clearModLabels();
 		setupPrice(item);
 		setupItemName(item);
@@ -204,8 +210,30 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 				explicitModsLbls.stream().filter(l -> StringUtils.isNotBlank(l.getText())).collect(Collectors.toList()));
 		
 		setupModsPseudo(item);
-		
+		setupEffects(item);
 		stackPane.getChildren().addAll(imageView, borderPane);
+	}
+
+	private void setupEffects(ExileToolsHit item) {
+		stackPane.setEffect(null);
+		if (item.wtbCtr() > 0) {
+			int depth = 20; // Setting the uniform variable for the glow width and height
+			DropShadow borderGlow = new DropShadow();
+			borderGlow.setOffsetY(0f);
+			borderGlow.setOffsetX(0f);
+			borderGlow.setColor(Color.AZURE);
+			borderGlow.setWidth(depth);
+			borderGlow.setHeight(depth);
+			stackPane.setEffect(borderGlow);
+		}
+	}
+
+	private void setupWtbLabel(ExileToolsHit item) {
+		String ctrStr = item.wtbCtr() > 0 ?  " (" + item.wtbCtr() + ")" : LangContants.STRING_EMPTY;
+		String str = StringUtils.trimToNull(item.getShop().getSellerIGN()) != null ? 
+				"Want to buy" + ctrStr : 
+				"Copy shop url";
+		wtbBtn.setText(str);
 	}
 
 	private void setupModsPseudo(ExileToolsHit item) {
