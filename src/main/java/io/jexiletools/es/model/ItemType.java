@@ -35,7 +35,7 @@ public enum ItemType {
 	Quiver("Quiver", null, "/images/itemtypes/16px-Conductive_Quiver.png"),
 	Sceptre("Sceptre", null, "/images/itemtypes/16px-Quartz_Sceptre.png"),
 	Staff("Staff", null, "/images/itemtypes/16px-Primitive_Staff.png"),
-	Wand("Wand", null, "/images/itemtypes/16px-Driftwood_Wand.png");
+	Wand("Wand", null, "/images/itemtypes/16px-driftwood_wand.png");
 	
 	
 	
