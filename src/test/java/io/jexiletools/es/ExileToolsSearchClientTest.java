@@ -86,7 +86,7 @@ public class ExileToolsSearchClientTest {
 	@Test
 	public void testDistinctCurrencyIconValues() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.aggregation(AggregationBuilders.terms("rarities").field("info.icon")
+		searchSourceBuilder.aggregation(AggregationBuilders.terms("rarities").field("shop.verified")
 				.size(0));
 		SearchResult result = client.execute(searchSourceBuilder.toString()).getSearchResult();
 		logger.info(result.getJsonString());

@@ -142,6 +142,7 @@ public class ControlPane extends BorderPane {
 	private FourColorIntegerTextField tfLinks = new FourColorIntegerTextField();
 	
 	private ToggleButton btnSortByShopUpdate = new ToggleButton("Sort by Last Shop Updated");
+	private ToggleButton btnVerified = new ToggleButton("Verified");
 	private ToggleButton btnOnlineOnly = new ToggleButton("Online Only");
 	
 	private PriceControl priceControl = new PriceControl();
@@ -254,7 +255,9 @@ public class ControlPane extends BorderPane {
 		// Column 5
 		simpleSearchGridPane.add(modsSelectionPane , 4, 0);
 		modsSelectionPane.add(priceControl);
-		modsSelectionPane.add(new HBox(btnOnlineOnly, btnSortByShopUpdate));
+		modsSelectionPane.add(new HBox(btnOnlineOnly, btnSortByShopUpdate, btnVerified));
+		
+		btnVerified.setSelected(true);
 		
 		btnSearch = new Button("Search");
 		btnSearch.setOnAction(e -> {
@@ -297,7 +300,13 @@ public class ControlPane extends BorderPane {
 		
 		// Col 1
 //		ofNullable(tfName.getSelectionModel().getSelectedItem()).map(s -> filters.add(termFilter("info.name", s)));
-		ofNullable(tfName.getText()).map(s -> trimToNull(s)).map(s -> filters.add(termFilter("info.name", s)));
+		ofNullable(tfName.getText()).map(s -> trimToNull(s)).map(s ->
+					filters.add(orFilter(
+							termFilter("info.name", s),
+							termFilter("info.fullName", s),
+							termFilter("info.typeLine", s)
+							))
+				);
 		filters.add(termFilter("attributes.league", cmbxLeague.getSelectionModel().getSelectedItem()));
 		itemTypesFilter().ifPresent(t -> filters.add(t));
 		
@@ -355,8 +364,11 @@ public class ControlPane extends BorderPane {
 			priceControl.val().ifPresent(price -> filters.add(price.rangeFilter("shop.chaosEquiv")));
 		}
 		
+		if(btnVerified.isSelected())
+			filters.add(termFilter("shop.verified", "yes"));
+		
 		// Final Build
-		FilterBuilder filter = FilterBuilders.andFilter(toArray(filters, FilterBuilder.class));
+		FilterBuilder filter = andFilter(toArray(filters, FilterBuilder.class));
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
 		searchSourceBuilder.sort("shop.chaosEquiv", SortOrder.ASC);
