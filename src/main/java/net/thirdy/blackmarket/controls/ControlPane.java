@@ -349,7 +349,11 @@ public class ControlPane extends BorderPane {
 		// Col 5
 		modsSelectionPane.implicit().ifPresent(mod -> filters.add(implicitModFilter(mod)));
 		modsSelectionPane.explicitMods().ifPresent(mod -> filters.add(explicitModFilter(mod)));
-		priceControl.val().ifPresent(price -> filters.add(price.rangeFilter("shop.chaosEquiv")));
+		if (priceControl.anyPrice()) {
+			filters.add(FilterBuilders.existsFilter("shop.chaosEquiv"));
+		} else {
+			priceControl.val().ifPresent(price -> filters.add(price.rangeFilter("shop.chaosEquiv")));
+		}
 		
 		// Final Build
 		FilterBuilder filter = FilterBuilders.andFilter(toArray(filters, FilterBuilder.class));

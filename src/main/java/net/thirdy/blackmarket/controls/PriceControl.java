@@ -39,6 +39,7 @@ import java.util.Optional;
 
 import io.jexiletools.es.model.Currencies;
 import javafx.collections.FXCollections;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
@@ -56,6 +57,7 @@ import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
  */
 public class PriceControl extends HBox {
 	ToggleButton btnBuyoutOnly = new ToggleButton("B/o Only");
+	CheckBox anyPriceChckbx = new CheckBox("Any price");
 	ComboBox<Currencies> currenCmbx = new ComboBox<>(FXCollections.observableArrayList(
 			chaos,
 			ex,
@@ -109,7 +111,7 @@ public class PriceControl extends HBox {
 		priceMinMax.getMax().setText("15");
 		currenCmbx.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
 		priceMinMax.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
-		getChildren().addAll(btnBuyoutOnly, currenCmbx, priceMinMax);
+		getChildren().addAll(btnBuyoutOnly, currenCmbx, priceMinMax, anyPriceChckbx);
 	}
 	public Optional<RangeOptional> val() {
 		return !btnBuyoutOnly.isSelected() ?
@@ -123,5 +125,8 @@ public class PriceControl extends HBox {
 		Optional<Double> max = p.max.map(m -> curren.cevOf(m));
 		RangeOptional ro = new RangeOptional(min, max);
 		return ro;
+	}
+	public boolean anyPrice() {
+		return anyPriceChckbx.isSelected();
 	}
 }

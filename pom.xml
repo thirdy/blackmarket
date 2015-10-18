@@ -8,11 +8,11 @@
 
 	<packaging>jar</packaging>
 
-	<name>blackmarket-ui</name>
+	<name>blackmarket</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<blackmarket.version>v0.4</blackmarket.version>
+		<blackmarket.version>0.5</blackmarket.version>
 		<mainClass>net.thirdy.blackmarket.Main</mainClass>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -200,20 +200,20 @@
 				<executions>
 					<execution>
 						<id>l4j-gui</id>
-						<phase>deploy</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>launch4j</goal>
 						</goals>
 						<configuration>
 							<headerType>gui</headerType>
 							<outfile>target/blackmarket.exe</outfile>
-							<jar>target/blackmarket-v0.4.jar</jar>
+							<jar>target/blackmarket-${blackmarket.version}.jar</jar>
 							<errTitle>blackmarket</errTitle>
 							<supportUrl>http://thirdy.github.io/blackmarket/</supportUrl>
 							<classPath>
 								<mainClass>${mainClass}</mainClass>
 							</classPath>
-							<dontWrapJar>false</dontWrapJar>
+							<dontWrapJar>true</dontWrapJar>
 							<icon>black-market-small.ico</icon>
 							<jre>
 								<path>jre1.8.0_60</path>
@@ -223,15 +223,15 @@
 								<jdkPreference>jreOnly</jdkPreference>
 							</jre>
 							<versionInfo>
-								<fileVersion>0.4.0.0</fileVersion>
-								<txtFileVersion>0.4</txtFileVersion>
+								<fileVersion>${blackmarket.version}.0.0</fileVersion>
+								<txtFileVersion>${blackmarket.version}</txtFileVersion>
 								<fileDescription>Blackmarket is an open source fan-made tool for
 									Path of Exile for searching items.</fileDescription>
 								<copyright>Copyright (C) 2015 Vicente de Rivera III</copyright>
-								<productVersion>0.4.0.0</productVersion>
-								<txtProductVersion>0.4</txtProductVersion>
+								<productVersion>${blackmarket.version}.0.0</productVersion>
+								<txtProductVersion>${blackmarket.version}</txtProductVersion>
 								<productName>Blackmarket</productName>
-								<internalName>blackmarket-v0.4</internalName>
+								<internalName>blackmarket-${blackmarket.version}</internalName>
 								<originalFilename>blackmarket.exe</originalFilename>
 							</versionInfo>
 						</configuration>

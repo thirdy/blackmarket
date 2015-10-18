@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 
 import javax.sound.sampled.LineUnavailableException;
 
-import org.apache.http.nio.reactor.ssl.SSLBuffer;
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
 import org.slf4j.Logger;
@@ -273,7 +272,7 @@ public class BlackmarketApplication extends Application {
 					int secs = 60 * 10;
 //					int secs = 15;
 					for (int i = 0; i < secs; i++) {
-						updateMessage("Durian: " + (secs - i));
+						updateMessage("Durian: " + (secs - i) + " sec");
 						Thread.sleep(1000);
 					}
 					return null;
