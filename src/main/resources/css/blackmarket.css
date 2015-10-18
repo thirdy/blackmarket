@@ -37,6 +37,7 @@
 .ign-online {
 	-fx-background-color: green;
 	-fx-border-color: black;
+	/*-fx-effect: dropshadow( three-pass-box , rgba(0, 0, 0, 0.9) , 10, 0.5 , 3.0 , 0 );*/
 }
 .separator *.line { 
 	-fx-border-style: solid;
@@ -95,10 +96,10 @@
 	-fx-underline : true;
 }
 .explcit-mod-fireres {
-	-fx-text-fill: #AA1111;
+	-fx-text-fill: #FF7777;
 }
 .explcit-mod-coldres {
-	-fx-text-fill: #5555CC;
+	-fx-text-fill: #8888FF;
 }
 .explcit-mod-lightningres {
 	-fx-text-fill: #FFFF11;

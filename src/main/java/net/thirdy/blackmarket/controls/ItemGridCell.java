@@ -221,7 +221,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			DropShadow borderGlow = new DropShadow();
 			borderGlow.setOffsetY(0f);
 			borderGlow.setOffsetX(0f);
-			borderGlow.setColor(Color.AZURE);
+			borderGlow.setColor(Color.GREY);
 			borderGlow.setWidth(depth);
 			borderGlow.setHeight(depth);
 			stackPane.setEffect(borderGlow);
