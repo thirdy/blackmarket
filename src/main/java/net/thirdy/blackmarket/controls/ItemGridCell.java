@@ -74,7 +74,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 
 	public ItemGridCell() {
 		getStyleClass().add("image-grid-cell"); //$NON-NLS-1$
-		stackPane.getStyleClass().add("itemGridCellStackPaneEmpty");
+		stackPane.getStyleClass().add("itemGridCellStackPane");
 		propertiesGridPane.setId("propertiesGridPane");
 		explicitModsLbls = Arrays.asList(
 				new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(),

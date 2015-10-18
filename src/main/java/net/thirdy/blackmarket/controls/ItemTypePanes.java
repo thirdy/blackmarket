@@ -51,7 +51,7 @@ public class ItemTypePanes  {
     private ItemTypePane itemTypePane3;
     
     public ItemTypePanes(Consumer<List<ItemType>> onChangeConsumer) {
-    	
+    	this.onChangeConsumer = onChangeConsumer;
 		itemTypesChkbxs = Arrays.asList(ItemType.values())
 				.stream()
 				.map(it -> {

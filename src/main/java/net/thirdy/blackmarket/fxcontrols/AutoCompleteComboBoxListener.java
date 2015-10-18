@@ -39,8 +39,8 @@ public class AutoCompleteComboBoxListener<T> {
     private int lastLength;
 
     public AutoCompleteComboBoxListener(ComboBox<T> comboBox) {
-    	comboBox.setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
-    	comboBox.getEditor().setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+//    	comboBox.setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+//    	comboBox.getEditor().setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
         this.comboBox = comboBox;
         sb = new StringBuilder();
 

@@ -177,12 +177,12 @@ public class BlackmarketApplication extends Application {
 //					&& (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.DOWN)) {
 //				showCollapseButton.fire();
 //			}
-			if (keyEvent.getCode() == KeyCode.CONTROL) {
+			if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.SPACE) {
 				showCollapseButton.fire();
 			}
 
 			if (keyEvent.getCode() == KeyCode.ENTER
-					&& keyEvent.isShiftDown()
+					&& keyEvent.isControlDown()
 					&& !progressIndicator.isVisible() 
 					&& searchPane.isExpanded()) {
 				controlPane.fireSearchEvent();
@@ -256,7 +256,9 @@ public class BlackmarketApplication extends Application {
 		// add empty row
 		list.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
 		searchResultsPane.setItems(list);
-			controlPane.setSearchHitCount(result.getSearchResult().getTotal(), result.getExileToolHits().size());
+			controlPane.setSearchHitCount(result.getSearchResult().getTotal(),
+					// Remove 3 empty hits
+					result.getExileToolHits().size() - 3);
 	}
 
 	private void setupToolbar(final Stage stage) {

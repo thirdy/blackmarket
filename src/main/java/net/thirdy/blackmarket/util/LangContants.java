@@ -24,5 +24,6 @@ package net.thirdy.blackmarket.util;
 public class LangContants {
 
 	public static final Double DOUBLE_ZERO = Double.valueOf(0);
+	public static final String STRING_EMPTY = "";
 
 }

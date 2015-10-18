@@ -31,7 +31,7 @@ import javafx.util.converter.IntegerStringConverter;
 public class IntegerTextField extends TextField {
 	IntegerStringConverter valueConverter = new IntegerStringConverter();
 	public IntegerTextField(String promptText) {
-		setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+//		setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
 		setTextFormatter(new TextFormatter<>(valueConverter));
 	    setPromptText(promptText);
 	}

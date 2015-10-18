@@ -31,7 +31,7 @@ import javafx.util.converter.DoubleStringConverter;
 public class DoubleTextField extends TextField {
 	DoubleStringConverter valueConverter = new DoubleStringConverter();
 	public DoubleTextField(String promptText) {
-		setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+//		setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
 		setTextFormatter(new TextFormatter<>(valueConverter));
 	    setPromptText(promptText);
 	}

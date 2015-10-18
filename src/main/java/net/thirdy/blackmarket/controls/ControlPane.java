@@ -20,21 +20,26 @@ package net.thirdy.blackmarket.controls;
 import static com.google.common.collect.Iterables.toArray;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
-import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.observableList;
+import static net.thirdy.blackmarket.util.LangContants.STRING_EMPTY;
 import static org.elasticsearch.common.lang3.StringUtils.trimToEmpty;
+import static org.elasticsearch.common.lang3.StringUtils.trimToNull;
 import static org.elasticsearch.index.query.FilterBuilders.andFilter;
 import static org.elasticsearch.index.query.FilterBuilders.boolFilter;
 import static org.elasticsearch.index.query.FilterBuilders.existsFilter;
 import static org.elasticsearch.index.query.FilterBuilders.orFilter;
-import static org.elasticsearch.index.query.FilterBuilders.termFilter;
 import static org.elasticsearch.index.query.FilterBuilders.rangeFilter;
+import static org.elasticsearch.index.query.FilterBuilders.termFilter;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.controlsfx.control.textfield.TextFields;
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 import org.elasticsearch.common.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -42,38 +47,39 @@ import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.OrFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import impl.org.controlsfx.autocompletion.SuggestionProvider;
 import io.jexiletools.es.model.Currencies;
 import io.jexiletools.es.model.League;
 import io.jexiletools.es.model.Rarity;
 import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.util.Callback;
 import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.controls.ModsSelectionPane.Mod;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
 import net.thirdy.blackmarket.domain.Unique;
-import net.thirdy.blackmarket.fxcontrols.AutoCompleteComboBoxListener;
 import net.thirdy.blackmarket.fxcontrols.FourColorIntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeIntegerTextField;
@@ -81,6 +87,9 @@ import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox.State;
 import net.thirdy.blackmarket.fxcontrols.TwoColumnGridPane;
+import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketSuggestionProvider;
+import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketTextField;
+import net.thirdy.blackmarket.util.LangContants;
 
 /**
  * @author thirdy
@@ -94,7 +103,7 @@ public class ControlPane extends BorderPane {
 
 	private ItemTypePanes itemTypesPanes;
 
-	private ComboBox<String> tfName;
+	private TextField tfName;
 	private Button btnSearch;
 	private Button btnDurianMode = new Button("Durian Mode");
 	
@@ -140,7 +149,7 @@ public class ControlPane extends BorderPane {
 	
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		// Do not propagate the CTRL key since it will trigger slide of control pane
-		txtAreaJson.setOnKeyPressed(e -> {if(e.getCode()==KeyCode.CONTROL) e.consume();});
+//		txtAreaJson.setOnKeyPressed(e -> {consumeControlKey(e);});
 		
 		btnAbout.setOnAction(e -> Dialogs.showAbout());
 		
@@ -156,8 +165,8 @@ public class ControlPane extends BorderPane {
 		top.getChildren().addAll(lblHitCount, newSpacer());
 		setTop(top);
 		
-	    tfName = new ComboBox<>(observableArrayList(Unique.names));
-	    new AutoCompleteComboBoxListener<String>(tfName);
+	    tfName = new BlackmarketTextField();
+
 	    tfName.setPrefWidth(220);
 		
 	    cmbxLeague = new ComboBox<>(observableList(League.names()));
@@ -205,7 +214,7 @@ public class ControlPane extends BorderPane {
 	    		new SmallCurrencyIcon(Currencies.fuse) , btn3Crafted
 	    		);
 		simpleSearchGridPane.add(col2Pane, 1, 0);
-		cmbxRarity.getItems().add(Rarity.blank);
+
 	    // Column 3
 		simpleSearchGridPane.add(new TwoColumnGridPane(
 	    		"Ar:"	, tfArmour,
@@ -253,6 +262,10 @@ public class ControlPane extends BorderPane {
 		setBottom(bottomPane);
 	}
 
+	private void consumeControlKey(KeyEvent e) {
+		if(e.getCode()==KeyCode.CONTROL) e.consume();
+	}
+
 	private Region newSpacer() {
 		Region spacer = new Region();
 		HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -268,7 +281,8 @@ public class ControlPane extends BorderPane {
 		String json = null;
 		
 		// Col 1
-		ofNullable(tfName.getSelectionModel().getSelectedItem()).map(s -> filters.add(termFilter("info.name", s)));
+//		ofNullable(tfName.getSelectionModel().getSelectedItem()).map(s -> filters.add(termFilter("info.name", s)));
+		ofNullable(tfName.getText()).map(s -> trimToNull(s)).map(s -> filters.add(termFilter("info.name", s)));
 		filters.add(termFilter("attributes.league", cmbxLeague.getSelectionModel().getSelectedItem()));
 		itemTypesFilter().ifPresent(t -> filters.add(t));
 		
