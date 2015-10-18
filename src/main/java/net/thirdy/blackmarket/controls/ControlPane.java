@@ -30,6 +30,8 @@ import static org.elasticsearch.index.query.FilterBuilders.orFilter;
 import static org.elasticsearch.index.query.FilterBuilders.rangeFilter;
 import static org.elasticsearch.index.query.FilterBuilders.termFilter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -57,8 +59,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -67,6 +67,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.controls.ModsSelectionPane.Mod;
+import net.thirdy.blackmarket.domain.DivinationCard;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
 import net.thirdy.blackmarket.domain.Unique;
@@ -111,7 +112,17 @@ public class ControlPane extends BorderPane {
 	private TriStateCheckBox btn3Corrupt = new TriStateCheckBox		("Corrupted      ");
 	private TriStateCheckBox btn3Identified = new TriStateCheckBox	("Identified       ");
 	private TriStateCheckBox btn3Crafted = new TriStateCheckBox		("Bench Crafted");
+	private RangeIntegerTextField tfAttrStr = new RangeIntegerTextField();
+	private RangeIntegerTextField tfAttrDex = new RangeIntegerTextField();
+	private RangeIntegerTextField tfAttrInt = new RangeIntegerTextField();
+	private RangeIntegerTextField tfAttrTotal = new RangeIntegerTextField();
 	
+	private RangeIntegerTextField tfLife = new RangeIntegerTextField();
+	private RangeIntegerTextField tfColdRes = new RangeIntegerTextField();
+	private RangeIntegerTextField tfFireRes = new RangeIntegerTextField();
+	private RangeIntegerTextField tfLightningRes = new RangeIntegerTextField();
+	private RangeIntegerTextField tfChaosRes = new RangeIntegerTextField();
+	private RangeIntegerTextField tfTotalEleRes = new RangeIntegerTextField();
 	private RangeIntegerTextField tfArmour = new RangeIntegerTextField();
 	private RangeIntegerTextField tfEvasion = new RangeIntegerTextField();
 	private RangeIntegerTextField tfEnergyShield = new RangeIntegerTextField();
@@ -153,7 +164,11 @@ public class ControlPane extends BorderPane {
 		top.getChildren().addAll(lblHitCount, newSpacer());
 		setTop(top);
 		
-	    tfName = new BlackmarketTextField<String>(Unique.names);
+	    List<String> namesList = new ArrayList<>();
+	    namesList.addAll(Arrays.asList(Unique.names));
+	    namesList.addAll(Arrays.asList(DivinationCard.names));
+	    namesList.addAll(Currencies.validDisplayNames());
+		tfName = new BlackmarketTextField<String>(namesList );
 
 	    tfName.setPrefWidth(220);
 		
@@ -199,12 +214,22 @@ public class ControlPane extends BorderPane {
 	    		"CrtC:"  , tfCritChance,
 	    		new SmallCurrencyIcon(Currencies.vaal) , btn3Corrupt,
 	    		new SmallCurrencyIcon(Currencies.id) , btn3Identified,
-	    		new SmallCurrencyIcon(Currencies.fuse) , btn3Crafted
+	    		new SmallCurrencyIcon(Currencies.fuse) , btn3Crafted,
+	    		"Str:"	, tfAttrStr,
+	    		"Dex:"	, tfAttrDex,
+	    		"Int:"	, tfAttrInt,
+	    		"Attr:"	, tfAttrTotal
 	    		);
 		simpleSearchGridPane.add(col2Pane, 1, 0);
 
 	    // Column 3
 		simpleSearchGridPane.add(new TwoColumnGridPane(
+				"Life:"	, tfLife,
+				"Cold:"	, tfColdRes,
+				"Fire:"	, tfFireRes,
+				"Lgtng:", tfLightningRes,
+				"Chaos:", tfChaosRes,
+				"EleRs:", tfTotalEleRes,
 	    		"Ar:"	, tfArmour,
 	    		"Ev:"   , tfEvasion,
 	    		"ES:"   , tfEnergyShield,
@@ -253,10 +278,6 @@ public class ControlPane extends BorderPane {
 		setBottom(bottomPane);
 	}
 
-	private void consumeControlKey(KeyEvent e) {
-		if(e.getCode()==KeyCode.CONTROL) e.consume();
-	}
-
 	private Region newSpacer() {
 		Region spacer = new Region();
 		HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -288,9 +309,19 @@ public class ControlPane extends BorderPane {
 		if(btn3Crafted.state() != State.unchecked) filters.add(
 				btn3Crafted.state() == State.checked ? rangeFilter("attributes.craftedModCount").gt(0)
 						: rangeFilter("attributes.craftedModCount").from(null)
-		); 
+		);
+		tfAttrStr.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatSumStr")));
+		tfAttrDex.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatSumDex")));
+		tfAttrInt.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatSumInt")));
+		tfAttrTotal.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatAttributesTotal")));
 		
 		// Col 3
+		tfLife.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.maxLife")));
+		tfColdRes.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.eleResistSumCold")));
+		tfFireRes.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.eleResistSumFire")));
+		tfLightningRes.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.eleResistSumLightning")));
+		tfChaosRes.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.eleResistSumChaos")));
+		tfTotalEleRes.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.eleResistTotal")));
 		tfArmour.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Armour.Armour")));
 		tfEvasion.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Armour.Evasion Rating")));
 		tfEnergyShield.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Armour.Energy Shield")));

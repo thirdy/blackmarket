@@ -88,13 +88,10 @@ public class ExileToolsService extends Service<ExileToolsSearchResult> {
 					
 					mapLadderHitsToSearchHits(result.getExileToolHits(), accountLadderMap);
 					if (getOnlineOnly()) {
-						System.out.println("REMOVING OFFLINE");
-						System.out.println(result.getExileToolHits());
 						List<ExileToolsHit> collect = result.getExileToolHits().parallelStream()
 							.filter(e -> e.isOnline())
 							.collect(Collectors.toList());
 						result.setExileToolHits(collect);
-						System.out.println(result.getExileToolHits());
 					}
 					
         			return result;

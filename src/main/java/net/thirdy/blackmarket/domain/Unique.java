@@ -22,7 +22,6 @@ package net.thirdy.blackmarket.domain;
  *
  */
 public class Unique {
-	
 	public static String[] names = new String[] {
 			"Abberath's Horn",
 			"Abyssus",

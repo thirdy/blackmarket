@@ -52,7 +52,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	private final List<Label> explicitModsLbls; 
 	private final VBox modsPane = new VBox();
 	private final ItemGridCellPropertiesPane propertiesGridPane = new ItemGridCellPropertiesPane();
-	private final Label itemName = new Label("Item Name Here");
+	private final Hyperlink itemName = new Hyperlink("Item Name Here");
 	private final HBox itemNameGraphics = new HBox(1);
 	private final Label implicitMod = new Label("Implicit Mod Here");
 	private final Separator implicitModSeparator = new Separator(Orientation.HORIZONTAL);
@@ -255,6 +255,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		if(socks.isPresent()) propertiesGridPane.add(socks.get());
 		else propertiesGridPane.add("", "");
 		
+		item.getStackSize().ifPresent(d -> propertiesGridPane.add("Stack:", d));
 		item.getQuality().ifPresent(d -> propertiesGridPane.add("Q:", d));
 		item.getTotalDPS().ifPresent(d -> propertiesGridPane.add("DPS:", d));
 		item.getPhysicalDPS().ifPresent(d -> propertiesGridPane.add("pDPS:", d));
@@ -278,12 +279,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		Optional<Price> price = item.getShop().getPrice();
 		price.ifPresent(p -> {
 			String amt = new DecimalFormat("#.##").format(p.getAmount());
-			Image img = ImageCache.getInstance().get(p.getCurrency().icon().orElse(null));
 			priceLbl.setText(amt + "x");
-			ImageView curImgView = new ImageView(img);
-			curImgView.setPreserveRatio(true);
-			curImgView.setFitHeight(21);
-			priceLbl.setGraphic(curImgView);
+			priceLbl.setGraphic(new SmallCurrencyIcon(p.getCurrency()));
 		});
 	}
 
@@ -350,6 +347,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	}
 
 	private void setupItemName(ExileToolsHit item) {
+		String shopUrl = "https://www.pathofexile.com/forum/view-thread/" + item.getShop().getThreadid();
+		itemName.setOnAction(e -> openLink(shopUrl));
 		itemName.setText(item.getInfo().getFullName());
 		itemName.setTextFill(Color.web(item.getAttributes().getRarityAsEnum().webColor()));
 		itemNameGraphics.getChildren().clear();

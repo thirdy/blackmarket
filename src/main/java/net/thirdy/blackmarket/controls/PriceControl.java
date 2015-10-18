@@ -40,10 +40,15 @@ import java.util.Optional;
 import io.jexiletools.es.model.Currencies;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
+import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 
 /**
  * @author thirdy
@@ -73,10 +78,32 @@ public class PriceControl extends HBox {
 	RangeDoubleTextField priceMinMax = new RangeDoubleTextField();
 	public PriceControl() {
 		super(1);
+		currenCmbx.setCellFactory(new Callback<ListView<Currencies>, ListCell<Currencies>>() {
+			
+			@Override
+			public ListCell<Currencies> call(ListView<Currencies> param) {
+				return new ListCell<Currencies>() {
+					 {
+						 setContentDisplay(ContentDisplay.LEFT);
+					 }
+					 @Override protected void updateItem(Currencies item, boolean empty) {
+	                        super.updateItem(item, empty);
+	                        
+	                        if (item == null || empty) {
+	                            setGraphic(null);
+	                            setText(null);
+	                        } else {
+	                        	setText(item.displayName());
+								setGraphic(new SmallCurrencyIcon(item));
+	                        }
+	                   }
+				};
+			}
+		});
 		currenCmbx.getSelectionModel().selectFirst();
 		btnBuyoutOnly.setSelected(true);
 		btnBuyoutOnly.setPrefWidth(70);
-		currenCmbx.setPrefWidth(140);
+		currenCmbx.setPrefWidth(200);
 		priceMinMax.setPrefWidth(100);
 		priceMinMax.getMin().setText("1");
 		priceMinMax.getMax().setText("15");

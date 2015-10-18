@@ -144,7 +144,7 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 		public TriStateCheckBox logic = new TriStateCheckBox();
 		
 	    public Mod(ObservableList<ModMapping> list, String prompt) {
-	    	tfMod = new BlackmarketTextField<ModMapping>(list);
+	    	tfMod = new BlackmarketTextField<ModMapping>(list, 15);
 	    	tfMod.setPromptText(prompt);
 	    	logic.setSelected(true);
 		}

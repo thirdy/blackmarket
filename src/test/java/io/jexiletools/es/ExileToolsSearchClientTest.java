@@ -101,7 +101,10 @@ public class ExileToolsSearchClientTest {
 	@Test
 	public void testDistinctItemTypeValues() throws Exception {
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.aggregation(AggregationBuilders.terms("rarities").field("shop.currency")
+		searchSourceBuilder.query(QueryBuilders.filtered(null, FilterBuilders.boolFilter()
+				.must(FilterBuilders.termFilter("attributes.itemType", "Card"))
+				));
+		searchSourceBuilder.aggregation(AggregationBuilders.terms("rarities").field("info.name")
 				.size(0));
 		SearchResult result = client.execute(searchSourceBuilder.toString()).getSearchResult();
 		logger.info(result.getJsonString());

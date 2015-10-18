@@ -282,6 +282,10 @@ public class ExileToolsHit {
 		return getRangeFromProperties("Elemental Damage");
 	}
 	
+	public Optional<Double> getStackSize() {
+		return getDoubleFromProperties("Stack Size");
+	}
+	
 	public Optional<Integer> getRLvl() {
 		return Optional.ofNullable(getRequirements()).map(r -> r.getLevel());
 	}

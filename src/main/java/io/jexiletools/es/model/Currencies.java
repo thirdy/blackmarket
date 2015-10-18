@@ -3,7 +3,10 @@ package io.jexiletools.es.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public enum Currencies {
 	
@@ -99,5 +102,12 @@ public enum Currencies {
 			.filter(e -> e.displayName.equalsIgnoreCase(displayName))
 			.findFirst()
 			.orElseGet(() -> Currencies.unknown);
+	}
+
+	public static List<String> validDisplayNames() {
+		return Arrays.asList(values()).stream()
+				.filter(c -> c != none && c != unknown)
+				.map(c -> c.displayName())
+				.collect(Collectors.toList());
 	}
 }
