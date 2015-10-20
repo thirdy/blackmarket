@@ -108,7 +108,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		bottomPane.getChildren().addAll(priceLbl, playerInfo, spacer, wtbBtn);
 		borderPane.setBottom(bottomPane);
 		GridPane gridCenterPane = setupCenterGridPane();
-		gridCenterPane.setGridLinesVisible(Main.DEBUG_MODE);
+		gridCenterPane.setGridLinesVisible(Main.DEVELOPMENT_MODE);
 		GridPane.setHalignment(modsPane, HPos.LEFT);
 		gridCenterPane.add(modsPane, 0, 0);
 		GridPane.setHalignment(propertiesGridPane, HPos.RIGHT);

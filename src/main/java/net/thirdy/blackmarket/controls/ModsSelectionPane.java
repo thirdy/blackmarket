@@ -59,7 +59,7 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 	private List<Mod> explicitMods;
 	
 	public ModsSelectionPane() {
-		setGridLinesVisible(Main.DEBUG_MODE);
+		setGridLinesVisible(Main.DEVELOPMENT_MODE);
 		setHgap(8);
 		setVgap(5);
 		ColumnConstraints column1 = new ColumnConstraints();

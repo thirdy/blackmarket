@@ -53,7 +53,7 @@ public class TwoColumnGridPane extends GridPane {
 	}
 	
 	public TwoColumnGridPane(Double col1Min) {
-		setGridLinesVisible(Main.DEBUG_MODE);
+		setGridLinesVisible(Main.DEVELOPMENT_MODE);
 		setHgap(8);
 		setVgap(5);
 //		setPadding(new Insets(5));

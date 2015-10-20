@@ -20,6 +20,7 @@ package net.thirdy.blackmarket.util;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
@@ -38,6 +39,7 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import net.thirdy.blackmarket.Main;
 
 /**
  * @author thirdy
@@ -93,6 +95,8 @@ public class ImageCache {
 			// handle classpath
 			if (key.startsWith("/")) {
 				image = new Image(key, false);
+			} else if (Main.DEVELOPMENT_MODE) {
+				image = new Image("/images/debugmode/TwoHandAxe_spare.png", false);
 			} else {
 				URL url = new URL(key);
 				fileName = url.toURI().getRawPath();
@@ -104,18 +108,22 @@ public class ImageCache {
 				} else {
 					// Load from url and save to disk
 					image = new Image(key);
-					Files.createParentDirs(imageFile);
-					BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					ImageIO.write( bufferedImage, StringUtils.substringAfterLast(fileName, "."), baos );
-					baos.flush();
-					byte[] imageInByte = baos.toByteArray();
-					baos.close();
-					Files.write(imageInByte, imageFile);
+					saveToDisk(fileName, image, imageFile);
 				}
 			}
 
 			return image;
+		}
+
+		private void saveToDisk(String fileName, Image image, File imageFile) throws IOException {
+			Files.createParentDirs(imageFile);
+			BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write( bufferedImage, StringUtils.substringAfterLast(fileName, "."), baos );
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+			Files.write(imageInByte, imageFile);
 		}
 
 	}

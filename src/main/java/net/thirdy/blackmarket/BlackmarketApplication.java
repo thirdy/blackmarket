@@ -74,6 +74,7 @@ import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
 import net.thirdy.blackmarket.service.ExileToolsLastIndexUpdateService;
 import net.thirdy.blackmarket.service.ExileToolsService;
 import net.thirdy.blackmarket.util.ImageCache;
+import net.thirdy.blackmarket.util.LangContants;
 import net.thirdy.blackmarket.util.SoundUtils;
 
 /**
@@ -90,7 +91,7 @@ public class BlackmarketApplication extends Application {
 	
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
-	public static final String VERSION = "Version: 0.5.1";
+	public static final String VERSION = "Version: 0.5.1" + (Main.DEVELOPMENT_MODE ? " [DEVELOPMENT MODE]" : LangContants.STRING_EMPTY);
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 

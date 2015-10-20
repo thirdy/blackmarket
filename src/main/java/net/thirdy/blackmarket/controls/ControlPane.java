@@ -182,7 +182,7 @@ public class ControlPane extends BorderPane {
 	    itemTypesPanes = new ItemTypePanes(modsSelectionPane);
 	    
 	    simpleSearchGridPane = new GridPane();
-	    simpleSearchGridPane.setGridLinesVisible(Main.DEBUG_MODE);
+	    simpleSearchGridPane.setGridLinesVisible(Main.DEVELOPMENT_MODE);
 	    simpleSearchGridPane.setPadding(new Insets(5));
 	    simpleSearchGridPane.setHgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();

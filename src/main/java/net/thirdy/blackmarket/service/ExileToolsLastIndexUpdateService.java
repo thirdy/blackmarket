@@ -27,7 +27,7 @@ public class ExileToolsLastIndexUpdateService extends Service<Void> {
         	
             @Override protected Void call() throws Exception {
 				String lastUpdate = retrieveIndexerLastUpdate();
-				if (!Main.DEBUG_MODE) {
+				if (!Main.DEVELOPMENT_MODE) {
 					// annoying, disable if on development
 					logger.debug("Last Indexer Update Value: " + lastUpdate);
 				}
