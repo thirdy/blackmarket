@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.thirdy</groupId>
 	<artifactId>blackmarket</artifactId>
-	<version>${blackmarket.version}</version>
+	<version>0.5.1</version>
 
 	<packaging>jar</packaging>
 
@@ -156,6 +156,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -167,32 +168,52 @@
 		</resources>
 
 		<plugins>
+		  <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <outputDirectory>${project.build.directory}/lib</outputDirectory>
+        </configuration>
+      </plugin>
+<!-- 			<plugin> -->
+<!-- 				<artifactId>maven-assembly-plugin</artifactId> -->
+<!-- 				<version>2.5.5</version> -->
+<!-- 				<configuration> -->
+<!-- 					<descriptorRefs> -->
+<!-- 						<descriptorRef>jar-with-dependencies</descriptorRef> -->
+<!-- 					</descriptorRefs> -->
+<!-- 					<archive> -->
+<!-- 						<manifest> -->
+<!-- 							<mainClass>${mainClass}</mainClass> -->
+<!-- 						</manifest> -->
+<!-- 					</archive> -->
+<!-- 					<finalName>blackmarket-${blackmarket.version}</finalName> -->
+<!-- 					<appendAssemblyId>false</appendAssemblyId> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>make-assembly</id> this is used for inheritance merges -->
+<!-- 						<phase>package</phase> bind to the packaging phase -->
+<!-- 						<goals> -->
+<!-- 							<goal>single</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>${mainClass}</mainClass>
-						</manifest>
-					</archive>
-					<finalName>blackmarket-${blackmarket.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>install</phase>
+                <goals>
+                  <goal>copy-dependencies</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
@@ -207,13 +228,15 @@
 						<configuration>
 							<headerType>gui</headerType>
 							<outfile>target/blackmarket.exe</outfile>
-							<jar>target/blackmarket-${blackmarket.version}.jar</jar>
+							<jar>lib/blackmarket.jar</jar>
 							<errTitle>blackmarket</errTitle>
 							<supportUrl>http://thirdy.github.io/blackmarket/</supportUrl>
 							<classPath>
 								<mainClass>${mainClass}</mainClass>
+								<addDependencies>true</addDependencies>
+								<jarLocation>lib/</jarLocation>
 							</classPath>
-							<dontWrapJar>false</dontWrapJar>
+							<dontWrapJar>true</dontWrapJar>
 							<icon>black-market-small.ico</icon>
 							<jre>
 								<path>jre1.8.0_60</path>
@@ -231,7 +254,7 @@
 								<productVersion>1.0.0.0</productVersion>
 								<txtProductVersion>1.0</txtProductVersion>
 								<productName>Blackmarket</productName>
-								<internalName>blackmarket-${blackmarket.version}</internalName>
+								<internalName>blackmarket</internalName>
 								<originalFilename>blackmarket.exe</originalFilename>
 							</versionInfo>
 						</configuration>
@@ -258,10 +281,5 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>clojars.org</id>
-			<url>http://clojars.org/repo</url>
-		</repository>
-
 	</repositories>
 </project>
