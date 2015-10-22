@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.thirdy</groupId>
 	<artifactId>blackmarket</artifactId>
-	<version>0.5.1</version>
+	<version>0.6.0</version>
 
 	<packaging>jar</packaging>
 
@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<blackmarket.version>0.5.1</blackmarket.version>
+		<blackmarket.version>0.6.0</blackmarket.version>
 		<mainClass>net.thirdy.blackmarket.Main</mainClass>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -227,17 +227,17 @@
 						</goals>
 						<configuration>
 							<headerType>gui</headerType>
-							<outfile>target/lib/blackmarket.exe</outfile>
-							<jar>jars/blackmarket.jar</jar>
+							<outfile>target/blackmarket.exe</outfile>
+							<jar>lib/jars/blackmarket.jar</jar>
 							<errTitle>blackmarket</errTitle>
 							<supportUrl>http://thirdy.github.io/blackmarket/</supportUrl>
 							<classPath>
 								<mainClass>${mainClass}</mainClass>
 								<addDependencies>true</addDependencies>
-								<jarLocation>jars</jarLocation>
+								<jarLocation>lib/jars</jarLocation>
 							</classPath>
 							<dontWrapJar>true</dontWrapJar>
-							<icon>black-market-small.ico</icon>
+							<icon>logos/Blackmarket-logo.ico</icon>
 							<jre>
 								<path>jre1.8.0_60</path>
 								<bundledJreAsFallback>true</bundledJreAsFallback>

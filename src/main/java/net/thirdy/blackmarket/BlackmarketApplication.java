@@ -91,7 +91,7 @@ public class BlackmarketApplication extends Application {
 	
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
-	public static final String VERSION = "Version: 0.5.1" + (Main.DEVELOPMENT_MODE ? " [DEVELOPMENT MODE]" : LangContants.STRING_EMPTY);
+	public static final String VERSION = "Version: 0.6.0" + (Main.DEVELOPMENT_MODE ? " [DEVELOPMENT MODE]" : LangContants.STRING_EMPTY);
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -141,7 +141,7 @@ public class BlackmarketApplication extends Application {
 		blackmarketApplication = this;
 		exileToolsESClient = new ExileToolsSearchClient(BLACK_MARKET_API_KEY);
 		stage.setTitle("Blackmarket");
-		stage.getIcons().add(ImageCache.getInstance().get("/black-market.png"));
+		stage.getIcons().add(ImageCache.getInstance().get("/Blackmarket-logo.png"));
 
 		// create root stack pane that we use to be able to overlay proxy dialog
 		StackPane layerPane = new StackPane();
