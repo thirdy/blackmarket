@@ -59,7 +59,6 @@ public class LadderHit {
 	public String toString() {
 		String json = new GsonBuilder().setPrettyPrinting().create()
 				.toJson(jsonElement);
-		System.out.println(json);
 		return json;
 	}
 	

@@ -26,8 +26,8 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -42,11 +42,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import net.thirdy.blackmarket.Main;
-import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
 import net.thirdy.blackmarket.util.ImageCache;
 import net.thirdy.blackmarket.util.LangContants;
-import net.thirdy.blackmarket.util.SwingUtil;
 
 public class ItemGridCell extends GridCell<ExileToolsHit> {
 	
@@ -330,7 +328,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 				link.getStyleClass().add("ign-online");
 			}
 			if (!item.getLadderHits().isEmpty()) {
-				link.setOnAction(e -> Dialogs.showInfo(item.getLadderHits().toString()));
+				link.setOnAction(e -> LadderHitsDialog.show(item));
+				item.lastOnline().ifPresent(d -> link.setTooltip(new Tooltip("Last Online: " + d.toString())));
 			} else {
 				link.setOnAction(e -> copyToClipboard(shopUrl));
 			}
@@ -366,17 +365,9 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		return ign;
 	}
 
-	private void openLink(String shopUrl) {
-		try {
-			SwingUtil.openUrlViaBrowser(shopUrl);
-		} catch (BlackmarketException e) {
-			Dialogs.showExceptionDialog(e);
-		}
-	}
 
 	private void setupItemName(ExileToolsHit item) {
-		String shopUrl = "https://www.pathofexile.com/forum/view-thread/" + item.getShop().getThreadid();
-		itemName.setOnAction(e -> openLink(shopUrl));
+		itemName.setOnAction(e -> ItemDialog.show(item));
 		itemName.setText(item.getInfo().getFullName());
 		itemName.setTextFill(Color.web(item.getAttributes().getRarityAsEnum().webColor()));
 		itemNameGraphics.getChildren().clear();

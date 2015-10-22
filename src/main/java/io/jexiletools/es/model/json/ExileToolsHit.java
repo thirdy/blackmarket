@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import org.elasticsearch.common.lang3.StringUtils;
 
+import com.google.gson.JsonObject;
+
 import io.jexiletools.es.model.BaseItemType;
 import io.jexiletools.es.model.Mod;
 import io.jexiletools.es.model.Price;
@@ -18,6 +20,9 @@ import net.thirdy.blackmarket.service.LadderHit;
 
 public class ExileToolsHit {
 	public static final ExileToolsHit EMPTY = new ExileToolsHit();
+	
+	private JsonObject hitJsonObject;
+	
 	public ExileToolsHit() { }
 	
 	// Ladder Data
@@ -173,7 +178,14 @@ public class ExileToolsHit {
 	public void setModsPseudo(Map<String, String> modsPseudo) {
 		this.modsPseudo = modsPseudo;
 	}
-
+	
+	public JsonObject getHitJsonObject() {
+		return hitJsonObject;
+	}
+	public void setHitJsonObject(JsonObject hitJsonObject) {
+		this.hitJsonObject = hitJsonObject;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Mod> getExplicitOrCraftedMods() {
 		List<Mod> result = new ArrayList<>();

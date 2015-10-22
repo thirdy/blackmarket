@@ -56,6 +56,31 @@ public class ExileToolsSearchClientTest {
 		client.shutdown();
 	}
 	
+	// TODO: we've excluded most of ES's transitve deps, however this breaks these tests when running with mvn test
+	
+	@Test
+	@Ignore
+	public void testQuery() throws Exception {
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+	    FilterBuilder filter = FilterBuilders.boolFilter()
+	            .must(FilterBuilders.termFilter("attributes.league", "Flashback Event HC (IC002)"))
+	            .must(FilterBuilders.termFilter("attributes.equipType", "Jewel"))
+	            .must(FilterBuilders.rangeFilter("modsTotal.#% increased maximum Life").gt(4))
+	            .must(FilterBuilders.termFilter("shop.verified", "yes"))
+	           // .must(FilterBuilders.termFilter("attributes.rarity", "Magic"))
+	            ;
+
+	    searchSourceBuilder
+	            .query(QueryBuilders.filteredQuery(QueryBuilders.boolQuery().minimumNumberShouldMatch(2)
+	                    .should(QueryBuilders.rangeQuery("modsTotal.#% increased Area Damage"))
+	                    .should(QueryBuilders.rangeQuery("modsTotal.#% increased Projectile Damage"))
+	                    .should(QueryBuilders.rangeQuery("modsTotal.#% increased Chaos Damage")), filter))
+	            .sort("_score");
+	    SearchResult result = client.execute(searchSourceBuilder.toString()).getSearchResult();
+		List<Hit<ExileToolsHit, Void>> hits = result.getHits(ExileToolsHit.class);
+		hits.stream().map(hit -> hit.source).forEach(System.out::println);
+	}
+	
 	/**
 	 * As per ES documentation/tome, the best way to do our search is via Filters
 	 */

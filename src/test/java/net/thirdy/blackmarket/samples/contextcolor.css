@@ -1,0 +1,12 @@
+/** contextcolor.css
+ *   place in same folder as PopupButton.java
+ *   ensure your build system copies this file to the PopupButton.class output directory on build
+ */
+.menu-item:focused {
+  -fx-accent: transparent; 
+  -fx-selection-bar: transparent;
+}
+
+.menu-item:focused .label {
+  -fx-text-fill: -fx-text-base-color;
+}
