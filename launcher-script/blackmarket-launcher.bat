@@ -1,2 +1,2 @@
 start /D . /WAIT blackmarket-up.exe
-start /D lib lib\blackmarket.exe
+start /D . blackmarket.exe
