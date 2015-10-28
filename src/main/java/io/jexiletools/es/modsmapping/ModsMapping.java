@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 
 import io.jexiletools.es.model.ItemType;
@@ -41,29 +44,35 @@ public final class ModsMapping {
 		Gson gson = new Gson();
 		Map<String, Object> m = null;
 		try(InputStreamReader isr 
-				= new InputStreamReader(ModsMapping.class.getResourceAsStream("/mods.json"))) {
-			m = gson.fromJson(isr, Map.class);
+				= new InputStreamReader(ModsMapping.class.getResourceAsStream("/mods.json")) {}) {
+			String s = CharStreams.toString(isr);
+			s = s.replace("\\", "\\\\");
+			m = gson.fromJson(s, Map.class);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		m = (Map<String, Object>) m.get("poe");
 		m = (Map<String, Object>) m.get("mappings");
 		m = (Map<String, Object>) m.get("item");
-
 		modMappings = m.entrySet().stream().map(e -> toMapping(e))
 			.collect(Collectors.toList());
 		
+		// the json mod mapping represents ranged mods as two, one for min and one for max
+		// we only one of the two, so let's clean
+		modMappings = modMappings.stream().filter(mm -> mm.type != Type.DOUBLE_MAX).collect(Collectors.toList());
+		modMappings.stream().filter(mm -> mm.type == Type.DOUBLE_MIN).forEach(mm -> mm.type = Type.DOUBLE_MIN_MAX);
+		
 		// also add pseudo mods
-		modMappings.add(new ModMapping("eleResistSumChaos", "modsPseudo.eleResistSumChaos", "[pseudo] eleResistSumChaos", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistSumCold", "modsPseudo.eleResistSumCold", "[pseudo] eleResistSumCold", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistSumFire", "modsPseudo.eleResistSumFire", "[pseudo] eleResistSumFire", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistSumLightning", "modsPseudo.eleResistSumLightning", "[pseudo] eleResistSumLightning", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistTotal", "modsPseudo.eleResistTotal", "[pseudo] eleResistTotal", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatAttributesTotal", "modsPseudo.flatAttributesTotal", "[pseudo] flatAttributesTotal", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatSumDex", "modsPseudo.flatSumDex", "[pseudo] flatSumDex", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatSumInt", "modsPseudo.flatSumInt", "[pseudo] flatSumInt", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatSumStr", "modsPseudo.flatSumStr", "[pseudo] flatSumStr", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("maxLife", "modsPseudo.maxLife", "[pseudo] maxLife", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("eleResistSumChaos", "modsPseudo.eleResistSumChaos", "+#% to Lightning Chaos", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("eleResistSumCold", "modsPseudo.eleResistSumCold", "+#% to Cold Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("eleResistSumFire", "modsPseudo.eleResistSumFire", "+#% to Fire Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("eleResistSumLightning", "modsPseudo.eleResistSumLightning", "+#% to Lightning Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("eleResistTotal", "modsPseudo.eleResistTotal", "+#% total Elemental Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("flatAttributesTotal", "modsPseudo.flatAttributesTotal", "+# to all Attributes", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("flatSumDex", "modsPseudo.flatSumDex", "+# to Dexterity", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("flatSumInt", "modsPseudo.flatSumInt", "+# to Intelligence", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("flatSumStr", "modsPseudo.flatSumStr", "+# to Strength", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("maxLife", "modsPseudo.maxLife", "+# to Maximum Life", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
  
 	}
 	public List<ModMapping> getModMappings() {
@@ -74,6 +83,7 @@ public final class ModsMapping {
 		ModMapping mapping = new ModMapping();
 		
 		Map<String, Object> itemMap = (Map<String, Object>) e.getValue();
+		
 		Map<String, Object> mappingMap = (Map<String, Object>) itemMap.get("mapping");
 
 		// Note that key is equal to fullName
@@ -87,11 +97,11 @@ public final class ModsMapping {
 	}
 	
 	public enum Type {
-		DOUBLE, BOOLEAN, DOUBLE_MIN, DOUBLE_MAX;
+		DOUBLE, BOOLEAN, DOUBLE_MIN, DOUBLE_MAX, DOUBLE_MIN_MAX;
 	}
 	
 	public enum ModType {
-		IMPLICIT, EXPLICIT, CRAFTED, COSMETIC, PSEUDO;
+		PSEUDO, IMPLICIT, EXPLICIT, CRAFTED, COSMETIC;
 	}
 	
 	public static class ModMapping {
@@ -121,9 +131,7 @@ public final class ModsMapping {
 		
 		@Override
 		public String toString() {
-			return modType == ModType.PSEUDO ?
-					mapping
-					: itemType.displayName() + " " + mapping;
+			return mapping;
 		}
 		
 		public String getKey() {
@@ -156,7 +164,11 @@ public final class ModsMapping {
 	}
 	
 	public static void main(String[] args) {
-		ModsMapping.getInstance();
+		List<ModMapping> mms = ModsMapping.getInstance().getModMappings();
+//		mms.forEach(mm -> {
+//			System.out.println(String.format("%s\t%s\t%s\t%s\t%s\t%s", 
+//					mm.itemType, mm.modType, mm.type, mm.mapping, mm.fullName, mm.key));
+//		});
 	}
 	
 	public List<ModMapping> listByModType(ModType modType) {

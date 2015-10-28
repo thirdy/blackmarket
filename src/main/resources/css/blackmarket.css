@@ -22,15 +22,36 @@
     /*-fx-background: rgb(225, 228, 203);*/
 }
 
-#controlPane .label {
-	-fx-text-fill: #FFFFFF;
-	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
-}
 
 #root {
     -fx-background-color: #333333;
     -fx-padding: 1px;
 }
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.scroll-pane {
+   -fx-background-color: transparent;
+   -fx-box-border: transparent;
+}
+
+#controlPane .label {
+	-fx-text-fill: #FFFFFF;
+	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
+}
+
+/* When the TableView is _not_ focused, we show alternate selection colors */
+.table-row-cell:filled:selected:focused, 
+.table-row-cell:filled:selected,
+.tree-table-row-cell:filled:selected:focused, 
+.tree-table-row-cell:filled:selected {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}
+
+
 .last-online {
 	-fx-font-size: 8pt;
 }

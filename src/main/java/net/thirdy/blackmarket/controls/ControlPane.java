@@ -53,9 +53,12 @@ import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
 import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -65,6 +68,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.controls.ModsSelectionPane.Mod;
 import net.thirdy.blackmarket.domain.DivinationCard;
@@ -147,7 +151,8 @@ public class ControlPane extends BorderPane {
 	
 	private PriceControl priceControl = new PriceControl();
 
-	private ModsSelectionPane modsSelectionPane;
+//	private ModsSelectionPane modsSelectionPane;
+	private ModSelectionPane modSelectionPane;
 	
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		setId("controlPane");
@@ -169,7 +174,8 @@ public class ControlPane extends BorderPane {
 	    namesList.addAll(Arrays.asList(Unique.names));
 	    namesList.addAll(Arrays.asList(DivinationCard.names));
 	    namesList.addAll(Currencies.validDisplayNames());
-		tfName = new BlackmarketTextField<String>(namesList );
+//		tfName = new AutoCompleteTextField<String>(namesList, 300);
+		tfName = new BlackmarketTextField<String>(namesList);
 
 	    tfName.setPrefWidth(220);
 		
@@ -178,12 +184,14 @@ public class ControlPane extends BorderPane {
 	    cmbxLeague.getSelectionModel().selectFirst();
 	    cmbxLeague.setPrefWidth(220);
 	    
-	    modsSelectionPane = new ModsSelectionPane();
-	    itemTypesPanes = new ItemTypePanes(modsSelectionPane);
+//	    modsSelectionPane = new ModsSelectionPane();
+//	    itemTypesPanes = new ItemTypePanes(modsSelectionPane);
+	    modSelectionPane = new ModSelectionPane();
+	    itemTypesPanes = new ItemTypePanes(modSelectionPane);
 	    
 	    simpleSearchGridPane = new GridPane();
 	    simpleSearchGridPane.setGridLinesVisible(Main.DEVELOPMENT_MODE);
-	    simpleSearchGridPane.setPadding(new Insets(5));
+	    simpleSearchGridPane.setPadding(new Insets(0));
 	    simpleSearchGridPane.setHgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();
 	    column1.setPercentWidth(23);
@@ -253,9 +261,13 @@ public class ControlPane extends BorderPane {
 				), 3, 0);
 		
 		// Column 5
-		simpleSearchGridPane.add(modsSelectionPane , 4, 0);
-		modsSelectionPane.add(priceControl);
-		modsSelectionPane.add(new HBox(btnOnlineOnly, btnSortByShopUpdate, btnVerified));
+		simpleSearchGridPane.add(new VBox(
+				priceControl,
+				btnOnlineOnly, btnSortByShopUpdate, btnVerified
+				) , 4, 0);
+//		simpleSearchGridPane.add(modsSelectionPane , 4, 0);
+//		modsSelectionPane.add(priceControl);
+//		modsSelectionPane.add(new HBox(btnOnlineOnly, btnSortByShopUpdate, btnVerified));
 		
 		btnVerified.setSelected(true);
 		
@@ -276,7 +288,12 @@ public class ControlPane extends BorderPane {
 		GridPane.setHalignment(bottomPane, HPos.CENTER);
 //		gridpane.add(btnSearch, 0, 4, 3, 1); // col, row, colspan, rowspan
 	    
-		setCenter(simpleSearchGridPane);
+		simpleSearchGridPane.setPrefSize(1260, 260);
+		VBox contentVBox = new VBox(10.0, simpleSearchGridPane, modSelectionPane);
+		ScrollPane scrollPane = new ScrollPane(contentVBox);
+		scrollPane.getStyleClass().add("edge-to-edge");
+		
+		setCenter(scrollPane);
 		setBottom(bottomPane);
 	}
 	
@@ -356,8 +373,8 @@ public class ControlPane extends BorderPane {
 		tfSockColors.val().ifPresent(s -> filters.add(termFilter("sockets.allSocketsSorted", s)));
 		
 		// Col 5
-		modsSelectionPane.implicit().ifPresent(mod -> filters.add(implicitModFilter(mod)));
-		modsSelectionPane.explicitMods().ifPresent(mod -> filters.add(explicitModFilter(mod)));
+//		modsSelectionPane.implicit().ifPresent(mod -> filters.add(implicitModFilter(mod)));
+//		modsSelectionPane.explicitMods().ifPresent(mod -> filters.add(explicitModFilter(mod)));
 		if (priceControl.anyPrice()) {
 			filters.add(FilterBuilders.existsFilter("shop.chaosEquiv"));
 		} else {
