@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public enum Currencies {
+import net.thirdy.blackmarket.fxcontrols.LabelAndImageDisplayable;
+
+public enum Currencies implements LabelAndImageDisplayable {
 	
 	// TODO ask Pete if there is a need to dynamically grab CEV from http://exiletools.com/rates
 	

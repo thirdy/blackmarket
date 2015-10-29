@@ -18,12 +18,15 @@
 package io.jexiletools.es.model;
 
 import java.util.Arrays;
+import java.util.Optional;
+
+import net.thirdy.blackmarket.fxcontrols.LabelAndImageDisplayable;
 
 /**
  * @author thirdy
  *
  */
-public enum Rarity {
+public enum Rarity implements LabelAndImageDisplayable {
 
 	blank("", ""),
 	Unique("Unique", "#af6025"),
@@ -46,6 +49,10 @@ public enum Rarity {
 
 	public String displayName() {
 		return displayName;
+	}
+	
+	public Optional<String> icon() {
+		return Optional.empty();
 	}
 	
 	public String webColor() {

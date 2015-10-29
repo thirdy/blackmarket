@@ -17,18 +17,13 @@
  */
 package net.thirdy.blackmarket.fxcontrols;
 
-import io.jexiletools.es.model.Currencies;
-import javafx.scene.image.ImageView;
-import net.thirdy.blackmarket.util.ImageCache;
+import java.util.Optional;
 
 /**
  * @author thirdy
  *
  */
-public class SmallCurrencyIcon extends ImageView {
-public SmallCurrencyIcon(Currencies currencies) {
-	super(ImageCache.getInstance().get(currencies.icon().orElse(null)));
-	setPreserveRatio(true);
-	setFitHeight(21);
-}
+public interface LabelAndImageDisplayable {
+	String displayName();
+	Optional<String> icon();
 }

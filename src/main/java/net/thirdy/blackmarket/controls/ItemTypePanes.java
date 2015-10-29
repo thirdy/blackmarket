@@ -30,7 +30,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
-import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
+import net.thirdy.blackmarket.fxcontrols.SmallIcon;
 import net.thirdy.blackmarket.util.ImageCache;
 
 /**

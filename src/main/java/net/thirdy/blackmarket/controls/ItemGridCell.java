@@ -42,7 +42,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import net.thirdy.blackmarket.Main;
-import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
+import net.thirdy.blackmarket.fxcontrols.SmallIcon;
 import net.thirdy.blackmarket.util.ImageCache;
 import net.thirdy.blackmarket.util.LangContants;
 
@@ -306,7 +306,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		price.ifPresent(p -> {
 			String amt = new DecimalFormat("#.##").format(p.getAmount());
 			priceLbl.setText(amt + "x");
-			priceLbl.setGraphic(new SmallCurrencyIcon(p.getCurrency()));
+			priceLbl.setGraphic(new SmallIcon(p.getCurrency()));
 		});
 	}
 
@@ -372,10 +372,10 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		itemName.setTextFill(Color.web(item.getAttributes().getRarityAsEnum().webColor()));
 		itemNameGraphics.getChildren().clear();
 		if (item.getAttributes().getCorrupted()) {
-			itemNameGraphics.getChildren().add(new SmallCurrencyIcon(Currencies.vaal));
+			itemNameGraphics.getChildren().add(new SmallIcon(Currencies.vaal));
 		}
 		if (item.getAttributes().getMirrored()) {
-			itemNameGraphics.getChildren().add(new SmallCurrencyIcon(Currencies.mirror));
+			itemNameGraphics.getChildren().add(new SmallIcon(Currencies.mirror));
 		}
 	}
 

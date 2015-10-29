@@ -49,7 +49,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
-import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
+import net.thirdy.blackmarket.fxcontrols.SmallIcon;
 
 /**
  * @author thirdy
@@ -96,7 +96,7 @@ public class PriceControl extends HBox {
 	                            setText(null);
 	                        } else {
 	                        	setText(item.displayName());
-								setGraphic(new SmallCurrencyIcon(item));
+								setGraphic(new SmallIcon(item));
 	                        }
 	                   }
 				};

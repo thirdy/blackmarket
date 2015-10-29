@@ -19,6 +19,7 @@ package net.thirdy.blackmarket.controls;
 
 import static com.google.common.collect.Iterables.toArray;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static javafx.collections.FXCollections.observableList;
 import static org.elasticsearch.common.lang3.StringUtils.trimToEmpty;
@@ -43,6 +44,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.OrFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermFilterBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -50,15 +52,12 @@ import io.jexiletools.es.model.Currencies;
 import io.jexiletools.es.model.League;
 import io.jexiletools.es.model.Rarity;
 import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
-import javafx.collections.FXCollections;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
@@ -78,7 +77,8 @@ import net.thirdy.blackmarket.domain.Unique;
 import net.thirdy.blackmarket.fxcontrols.FourColorIntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeIntegerTextField;
-import net.thirdy.blackmarket.fxcontrols.SmallCurrencyIcon;
+import net.thirdy.blackmarket.fxcontrols.SmallIcon;
+import net.thirdy.blackmarket.fxcontrols.ToggleButtonToolBar;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
 import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox.State;
 import net.thirdy.blackmarket.fxcontrols.TwoColumnGridPane;
@@ -131,7 +131,8 @@ public class ControlPane extends BorderPane {
 	private RangeIntegerTextField tfEvasion = new RangeIntegerTextField();
 	private RangeIntegerTextField tfEnergyShield = new RangeIntegerTextField();
 	private RangeIntegerTextField tfBlock = new RangeIntegerTextField();
-	private ComboBox<Rarity> cmbxRarity = new ComboBox<>(FXCollections.observableArrayList(Rarity.values()));
+//	private ComboBox<Rarity> cmbxRarity = new ComboBox<>(FXCollections.observableArrayList(Rarity.values()));
+	private ToggleButtonToolBar<Rarity> toggleTbRarity = new ToggleButtonToolBar<Rarity>(true, asList(Rarity.values()));
 	
 	private RangeIntegerTextField tfLvlReq = new RangeIntegerTextField();
 	private RangeIntegerTextField tfStrReq = new RangeIntegerTextField();
@@ -221,9 +222,9 @@ public class ControlPane extends BorderPane {
 	    		"eDPS:"  , tfeDPS,
 	    		"APS:"  ,  tfAPS,
 	    		"CrtC:"  , tfCritChance,
-	    		new SmallCurrencyIcon(Currencies.vaal) , btn3Corrupt,
-	    		new SmallCurrencyIcon(Currencies.id) , btn3Identified,
-	    		new SmallCurrencyIcon(Currencies.fuse) , btn3Crafted,
+	    		new SmallIcon(Currencies.vaal) , btn3Corrupt,
+	    		new SmallIcon(Currencies.id) , btn3Identified,
+	    		new SmallIcon(Currencies.fuse) , btn3Crafted,
 	    		"Str:"	, tfAttrStr,
 	    		"Dex:"	, tfAttrDex,
 	    		"Int:"	, tfAttrInt,
@@ -244,8 +245,7 @@ public class ControlPane extends BorderPane {
 	    		"ES:"   , tfEnergyShield,
 	    		"Blk:"  , tfBlock,
 	    		"Sock:" , tfSockets,
-	    		"Link:" , tfLink,
-	    		"Rarity", cmbxRarity
+	    		"Link:" , tfLink
 	    		), 2, 0);
 		
 		// Column 4
@@ -263,7 +263,8 @@ public class ControlPane extends BorderPane {
 		// Column 5
 		simpleSearchGridPane.add(new VBox(
 				priceControl,
-				btnOnlineOnly, btnSortByShopUpdate, btnVerified
+				btnOnlineOnly, btnSortByShopUpdate, btnVerified,
+				toggleTbRarity
 				) , 4, 0);
 //		simpleSearchGridPane.add(modsSelectionPane , 4, 0);
 //		modsSelectionPane.add(priceControl);
@@ -357,12 +358,8 @@ public class ControlPane extends BorderPane {
 		tfBlock.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Armour.Chance to Block")));
 		tfSockets.val().ifPresent(t -> filters.add(t.rangeFilter("sockets.socketCount")));
 		tfLink.val().ifPresent(t -> filters.add(t.rangeFilter("sockets.largestLinkGroup")));
-		Optional.ofNullable(cmbxRarity.getSelectionModel().getSelectedItem()).ifPresent(r -> 
-		{
-			if(StringUtils.trimToNull(r.displayName()) != null) 
-				filters.add(termFilter("attributes.rarity", r.displayName()));
-		}
-		);
+		
+		toggleTbRarity.val().ifPresent(list -> filters.add(rarityOrFilter(list)));
 		
 		// Col 4
 		tfLvlReq.val().ifPresent(t -> filters.add(t.rangeFilter("requirements.Level")));
@@ -409,6 +406,13 @@ public class ControlPane extends BorderPane {
 		return json;
 	}
 
+
+	private FilterBuilder rarityOrFilter(List<Rarity> list) {
+		TermFilterBuilder[] array = (TermFilterBuilder[]) list.stream()
+			.map(l -> termFilter("attributes.rarity", l.displayName()))
+			.collect(Collectors.toList()).toArray();
+		return orFilter(array);
+	}
 
 	private FilterBuilder explicitModFilter(List<Mod> mod) {
 		BoolFilterBuilder exFilter = boolFilter();

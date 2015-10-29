@@ -17,28 +17,36 @@
  */
 package net.thirdy.blackmarket.fxcontrols;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 
 /**
  * @author thirdy
  *
  */
-public class ButtonToolBar extends ToolBar {
+public class ToggleButtonToolBar<T extends LabelAndImageDisplayable> extends ToolBar {
 
-	public ButtonToolBar(boolean isVeritcal, ButtonBase... nodes) {
+	private List<ToggleButton> buttons;
+
+	public ToggleButtonToolBar(boolean isVeritcal, List<T> list) {
 		this.setOrientation(Orientation.VERTICAL);
-        Pane buttonBar = isVeritcal ? new VBox() : new HBox();
+//        Pane buttonBar = isVeritcal ? new VBox() : new HBox();
         
-		for (ButtonBase node : nodes) {
+		buttons = list.stream()
+				.map(l -> {
+					ToggleButton tb = new ToggleButton(l.displayName(), new SmallIcon(l));
+					tb.setUserData(l);
+					return tb;
+				})
+				.collect(Collectors.toList());
+		
+		for (ButtonBase node : buttons) {
 			node.setMaxWidth(Double.MAX_VALUE);
 		}
         
@@ -53,20 +61,19 @@ public class ButtonToolBar extends ToolBar {
 //				HBox.setHgrow(node, Priority.ALWAYS);
 //			}
 //		}
-        
-//        buttonBar.getStyleClass().setAll("button-tool-bar");
-////        ToggleButton sampleButton = new ToggleButton("Tasks");
-//        nodes[0].getStyleClass().addAll("first");
-////        ToggleButton sampleButton2 = new ToggleButton("Administrator");
-////        ToggleButton sampleButton3 = new ToggleButton("Search");
-////        Button sampleButton4 = new Button("Line");
-////        Button sampleButton5 = new Button("Process");
-//        nodes[nodes.length-1].getStyleClass().addAll("last", "capsule");
-        buttonBar.getChildren().addAll(nodes);
-        this.getItems().addAll(nodes);
+        this.getItems().addAll(buttons);
 	}
-
-	public ButtonToolBar(boolean isVeritcal, ToggleButtonGroup leagueToggleGroup) {
-		this(isVeritcal, leagueToggleGroup.getToggleButtons());
+	
+	@SuppressWarnings("unchecked")
+	public List<T> selected() {
+		return (List<T>) buttons.stream()
+				.filter(b -> b.isSelected())
+				.map(b -> b.getUserData())
+				.collect(Collectors.toList());
+	}
+	
+	public Optional<List<T>> val() {
+		List<T> selected = selected();
+		return selected.isEmpty() ? Optional.empty() : Optional.of(selected);
 	}
 }
