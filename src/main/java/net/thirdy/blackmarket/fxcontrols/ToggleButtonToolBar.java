@@ -21,26 +21,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javafx.geometry.Orientation;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToolBar;
+import javafx.scene.layout.VBox;
 
 /**
  * @author thirdy
  *
  */
-public class ToggleButtonToolBar<T extends LabelAndImageDisplayable> extends ToolBar {
+public class ToggleButtonToolBar<T extends LabelAndImageDisplayable> extends VBox {
 
 	private List<ToggleButton> buttons;
 
 	public ToggleButtonToolBar(boolean isVeritcal, List<T> list) {
-		this.setOrientation(Orientation.VERTICAL);
-//        Pane buttonBar = isVeritcal ? new VBox() : new HBox();
         
 		buttons = list.stream()
 				.map(l -> {
-					ToggleButton tb = new ToggleButton(l.displayName(), new SmallIcon(l));
+					ToggleButton tb = 
+							l.icon().isPresent() ?
+									new ToggleButton(l.displayName(), new SmallIcon(l)) :
+										new ToggleButton(l.displayName());
 					tb.setUserData(l);
 					return tb;
 				})
@@ -50,18 +50,7 @@ public class ToggleButtonToolBar<T extends LabelAndImageDisplayable> extends Too
 			node.setMaxWidth(Double.MAX_VALUE);
 		}
         
-//        if (isVeritcal) {
-//			((VBox) buttonBar).setFillWidth(true);
-//			for (Node node : nodes) {
-//				VBox.setVgrow(node, Priority.ALWAYS);
-//			}
-//		} else {
-//			((HBox) buttonBar).setFillHeight(true);
-//			for (Node node : nodes) {
-//				HBox.setHgrow(node, Priority.ALWAYS);
-//			}
-//		}
-        this.getItems().addAll(buttons);
+        this.getChildren().addAll(buttons);
 	}
 	
 	@SuppressWarnings("unchecked")

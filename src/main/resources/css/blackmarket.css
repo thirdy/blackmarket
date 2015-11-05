@@ -37,9 +37,25 @@
    -fx-box-border: transparent;
 }
 
+#modsListView .list-cell:odd {
+    -fx-background-color: #555555;
+}
+#modsListView .list-cell:even {
+	-fx-background-color: derive(#555555,-5%);
+}
+
+/* #modsListView .list-cell:filled:selected:focused, #modsListView .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);
+    -fx-text-fill: white;
+}*/
+
 #controlPane .label {
 	-fx-text-fill: #FFFFFF;
 	-fx-effect: dropshadow(one-pass-box, black, 2, 0.3, 1, 1);
+}
+
+#modMappingTable .label {
+    -fx-alignment: CENTER_LEFT;
 }
 
 /* When the TableView is _not_ focused, we show alternate selection colors */

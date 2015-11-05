@@ -36,7 +36,11 @@ public class TwoColumnGridPane extends GridPane {
 	private int row = 0;
 	
 	public TwoColumnGridPane(Object ... labelsAndNodes) {
-		this();
+		this(96.0, labelsAndNodes);
+	}
+	
+	public TwoColumnGridPane(Double col1Min, Object ... labelsAndNodes) {
+		this(col1Min);
 		for (int i = 0; i < labelsAndNodes.length; i++) {
 			// TODO, refactor this by instantiating a Label here
 			if (labelsAndNodes[i] instanceof Node) {
@@ -47,11 +51,7 @@ public class TwoColumnGridPane extends GridPane {
 			
 		}
 	}
-	
-	public TwoColumnGridPane() {
-		this(46.0);
-	}
-	
+
 	public TwoColumnGridPane(Double col1Min) {
 		setGridLinesVisible(Main.DEVELOPMENT_MODE);
 		setHgap(8);

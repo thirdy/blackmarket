@@ -45,7 +45,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
@@ -55,7 +55,7 @@ import net.thirdy.blackmarket.fxcontrols.SmallIcon;
  * @author thirdy
  *
  */
-public class PriceControl extends HBox {
+public class PriceControl extends VBox {
 	ToggleButton btnBuyoutOnly = new ToggleButton("B/o only");
 	CheckBox anyPriceChckbx = new CheckBox("Any b/o");
 	ComboBox<Currencies> currenCmbx = new ComboBox<>(FXCollections.observableArrayList(
@@ -109,9 +109,12 @@ public class PriceControl extends HBox {
 		priceMinMax.setPrefWidth(100);
 		priceMinMax.getMin().setText("1");
 		priceMinMax.getMax().setText("15");
-		currenCmbx.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
-		priceMinMax.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
-		getChildren().addAll(btnBuyoutOnly, currenCmbx, priceMinMax, anyPriceChckbx);
+		
+		currenCmbx.disableProperty().bind(btnBuyoutOnly.selectedProperty().not().or(anyPriceChckbx.selectedProperty()));
+		priceMinMax.disableProperty().bind(btnBuyoutOnly.selectedProperty().not().or(anyPriceChckbx.selectedProperty()));
+		anyPriceChckbx.disableProperty().bind(btnBuyoutOnly.selectedProperty().not());
+		
+		getChildren().addAll(btnBuyoutOnly, anyPriceChckbx, currenCmbx, priceMinMax);
 	}
 	public Optional<RangeOptional> val() {
 		return !btnBuyoutOnly.isSelected() ?

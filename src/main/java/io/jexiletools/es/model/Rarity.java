@@ -28,7 +28,7 @@ import net.thirdy.blackmarket.fxcontrols.LabelAndImageDisplayable;
  */
 public enum Rarity implements LabelAndImageDisplayable {
 
-	blank("", ""),
+//	blank("", ""),
 	Unique("Unique", "#af6025"),
 	Rare("Rare", "#ffff77"),
 	Magic("Magic", "#8888ff"),

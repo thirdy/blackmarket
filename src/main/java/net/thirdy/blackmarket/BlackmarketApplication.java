@@ -87,7 +87,7 @@ public class BlackmarketApplication extends Application {
 	public static final int ITEM_GRID_CELL_HEIGHT = 250;
 
 	private static final int WINDOW_HEIGHT = 738;
-	private static final int WINDOW_WIDTH = 1366;
+	private static final int WINDOW_WIDTH = 1166;
 	
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";

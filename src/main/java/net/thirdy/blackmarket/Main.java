@@ -23,7 +23,7 @@ import javafx.application.Application;
 
 public class Main {
 	
-	public static final boolean DEVELOPMENT_MODE = false;
+	public static final boolean DEVELOPMENT_MODE = true;
 
 	public static void main(String[] args) {
         Application.launch(BlackmarketApplication.class, args);

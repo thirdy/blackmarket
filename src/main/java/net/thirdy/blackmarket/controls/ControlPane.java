@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.common.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -54,6 +53,8 @@ import io.jexiletools.es.model.Rarity;
 import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -67,6 +68,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.controls.ModsSelectionPane.Mod;
@@ -154,6 +156,8 @@ public class ControlPane extends BorderPane {
 
 //	private ModsSelectionPane modsSelectionPane;
 	private ModSelectionPane modSelectionPane;
+
+	private ScrollPane simpleSearchScrollPane;
 	
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		setId("controlPane");
@@ -164,7 +168,7 @@ public class ControlPane extends BorderPane {
 				txtAreaJson.setText(buildSimpleSearch());
 				setCenter(txtAreaJson);
 			}
-			else setCenter(simpleSearchGridPane);
+			else setCenter(simpleSearchScrollPane);
 		});
 		
 		top = new HBox(5);
@@ -183,7 +187,7 @@ public class ControlPane extends BorderPane {
 	    cmbxLeague = new ComboBox<>(observableList(League.names()));
 	    cmbxLeague.setEditable(false);
 	    cmbxLeague.getSelectionModel().selectFirst();
-	    cmbxLeague.setPrefWidth(220);
+	    cmbxLeague.setMinWidth(220);
 	    
 //	    modsSelectionPane = new ModsSelectionPane();
 //	    itemTypesPanes = new ItemTypePanes(modsSelectionPane);
@@ -195,24 +199,26 @@ public class ControlPane extends BorderPane {
 	    simpleSearchGridPane.setPadding(new Insets(0));
 	    simpleSearchGridPane.setHgap(5);
 	    ColumnConstraints column1 = new ColumnConstraints();
-	    column1.setPercentWidth(23);
+	    column1.setHgrow(Priority.ALWAYS);
+	    column1.setPercentWidth(28);
 	    ColumnConstraints column2 = new ColumnConstraints();
-	    column2.setPercentWidth(14);
+	    column2.setHgrow(Priority.ALWAYS);
+	    column2.setPercentWidth(24);
 	    ColumnConstraints column3 = new ColumnConstraints();
-	    column3.setPercentWidth(14);
+	    column3.setHgrow(Priority.ALWAYS);
+	    column3.setPercentWidth(24);
 	    ColumnConstraints column4 = new ColumnConstraints();
-	    column4.setPercentWidth(14);
-	    ColumnConstraints column5 = new ColumnConstraints();
-	    column5.setPercentWidth(35);
+	    column4.setHgrow(Priority.ALWAYS);
+	    column4.setPercentWidth(24);
 	    
-	    simpleSearchGridPane.getColumnConstraints().addAll(column1, column2, column3, column4, column5);
+	    simpleSearchGridPane.getColumnConstraints().addAll(column1, column2, column3, column4);
 
 	    // Column 1
-	    simpleSearchGridPane.add(new TwoColumnGridPane(
+	    simpleSearchGridPane.add(new TwoColumnGridPane(56.0,
 	    		"League:", cmbxLeague,
 	    		"Name:"  , tfName,
 	    		"Armour:"  , itemTypesPanes.getItemTypePane1(),
-	    		"Weapn:"  , itemTypesPanes.getItemTypePane3(),
+	    		"Weapon:"  , itemTypesPanes.getItemTypePane3(),
 	    		"Misc:"  , itemTypesPanes.getItemTypePane2()), 0, 0);
 	    
 	    // Column 2
@@ -221,54 +227,47 @@ public class ControlPane extends BorderPane {
 	    		"pDPS:"  , tfpDPS,
 	    		"eDPS:"  , tfeDPS,
 	    		"APS:"  ,  tfAPS,
-	    		"CrtC:"  , tfCritChance,
+	    		"Crit Chance:"  , tfCritChance,
 	    		new SmallIcon(Currencies.vaal) , btn3Corrupt,
 	    		new SmallIcon(Currencies.id) , btn3Identified,
 	    		new SmallIcon(Currencies.fuse) , btn3Crafted,
-	    		"Str:"	, tfAttrStr,
-	    		"Dex:"	, tfAttrDex,
-	    		"Int:"	, tfAttrInt,
-	    		"Attr:"	, tfAttrTotal
+	    		"Strength:"	, tfAttrStr,
+	    		"Dexterity:"	, tfAttrDex,
+	    		"Intelligence:"	, tfAttrInt,
+	    		"Attributes:"	, tfAttrTotal,
+	    		"Buyout:", priceControl
 	    		);
 		simpleSearchGridPane.add(col2Pane, 1, 0);
 
 	    // Column 3
 		simpleSearchGridPane.add(new TwoColumnGridPane(
 				"Life:"	, tfLife,
-				"Cold:"	, tfColdRes,
-				"Fire:"	, tfFireRes,
-				"Lgtng:", tfLightningRes,
-				"Chaos:", tfChaosRes,
-				"EleRs:", tfTotalEleRes,
-	    		"Ar:"	, tfArmour,
-	    		"Ev:"   , tfEvasion,
-	    		"ES:"   , tfEnergyShield,
-	    		"Blk:"  , tfBlock,
-	    		"Sock:" , tfSockets,
-	    		"Link:" , tfLink
+				"Cold Res:"	, tfColdRes,
+				"Fire Res:"	, tfFireRes,
+				"Lightning Res:", tfLightningRes,
+				"Chaos Res:", tfChaosRes,
+				"Elemental Res:", tfTotalEleRes,
+	    		"Armour:"	, tfArmour,
+	    		"Evasion:"   , tfEvasion,
+	    		"Energy Shield:"   , tfEnergyShield,
+	    		"Block:"  , tfBlock,
+	    		"# Sockets:" , tfSockets,
+	    		"# Links:" , tfLink
 	    		), 2, 0);
 		
 		// Column 4
 		tfLinks.setDisable(true); // TODO
 		simpleSearchGridPane.add(new TwoColumnGridPane(
-				"RLvl:"	, tfLvlReq,
-				"RStr:"   , tfStrReq,
-				"RDex:"   , tfDexReq,
-				"RInt:"  , tfIntReq,
-				"Q%:"	 , tfQuality,
-				"Chrm:" , tfSockColors,
-	    		"Lnks:" , tfLinks
+				"Required Lvl:"	, tfLvlReq,
+				"Required Str:"   , tfStrReq,
+				"Required Dex:"   , tfDexReq,
+				"Required Int:"  , tfIntReq,
+				"Quality %:"	 , tfQuality,
+				"Socket Colors:" , tfSockColors,
+	    		"Link Setup:" , tfLinks,
+				"Rarity:", toggleTbRarity,
+	    		"Verified:",  btnVerified
 				), 3, 0);
-		
-		// Column 5
-		simpleSearchGridPane.add(new VBox(
-				priceControl,
-				btnOnlineOnly, btnSortByShopUpdate, btnVerified,
-				toggleTbRarity
-				) , 4, 0);
-//		simpleSearchGridPane.add(modsSelectionPane , 4, 0);
-//		modsSelectionPane.add(priceControl);
-//		modsSelectionPane.add(new HBox(btnOnlineOnly, btnSortByShopUpdate, btnVerified));
 		
 		btnVerified.setSelected(true);
 		
@@ -281,20 +280,23 @@ public class ControlPane extends BorderPane {
 			boolean onlineOnly = btnOnlineOnly.isSelected();
 			searchEventHandler.search(json, league, onlineOnly);
 		});
-		btnSearch.setPrefWidth(800);
+		btnSearch.setPrefWidth(500);
 		
-//		HBox.setHalignment(btnSearch, HPos.CENTER);
-		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnDurianMode, btnAbout);
+		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnOnlineOnly, btnDurianMode, btnAbout);
 		
 		GridPane.setHalignment(bottomPane, HPos.CENTER);
-//		gridpane.add(btnSearch, 0, 4, 3, 1); // col, row, colspan, rowspan
-	    
-		simpleSearchGridPane.setPrefSize(1260, 260);
-		VBox contentVBox = new VBox(10.0, simpleSearchGridPane, modSelectionPane);
-		ScrollPane scrollPane = new ScrollPane(contentVBox);
-		scrollPane.getStyleClass().add("edge-to-edge");
+		simpleSearchGridPane.setAlignment(Pos.CENTER);
+		simpleSearchGridPane.setMaxSize(1060, 260);
 		
-		setCenter(scrollPane);
+	    
+		VBox contentVBox = new VBox(10.0, simpleSearchGridPane, modSelectionPane);
+		contentVBox.setMaxWidth(Double.MAX_VALUE);
+		contentVBox.setAlignment(Pos.CENTER);
+		simpleSearchScrollPane = new ScrollPane(new StackPane(contentVBox));
+		simpleSearchScrollPane.setFitToWidth(true);
+		simpleSearchScrollPane.getStyleClass().add("edge-to-edge");
+		
+		setCenter(simpleSearchScrollPane);
 		setBottom(bottomPane);
 	}
 	
