@@ -73,6 +73,7 @@ import net.thirdy.blackmarket.controls.ItemGridCell;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
+import net.thirdy.blackmarket.service.ExileToolsLadderService;
 import net.thirdy.blackmarket.service.ExileToolsLastIndexUpdateService;
 import net.thirdy.blackmarket.service.ExileToolsService;
 import net.thirdy.blackmarket.util.ImageCache;
@@ -119,7 +120,8 @@ public class BlackmarketApplication extends Application {
 	public static ExileToolsSearchClient getExileToolsESClient() {
 		return exileToolsESClient;
 	}
-
+	
+	private final ExileToolsLadderService exileToolsLadderService = new ExileToolsLadderService();
 	private final ExileToolsService searchService = new ExileToolsService();
 	private final ExileToolsLastIndexUpdateService lastIndexUpdateService = new ExileToolsLastIndexUpdateService();
 
@@ -213,6 +215,9 @@ public class BlackmarketApplication extends Application {
 
 		controlPane.installCollapseButton(collapseButton);
 		controlPane.getBtnDurianMode().setOnAction(e -> toggleDurianService());
+		controlPane.getBtnDurianMode().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
+		controlPane.getBtnSearch().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
+		controlPane.getLblLadderServiceStatus().textProperty().bind(exileToolsLadderService.messageProperty());
 		searchPane.setId("searchPane");
 
 		AnchorPane centerPane = new AnchorPane();
@@ -271,6 +276,7 @@ public class BlackmarketApplication extends Application {
 		stage.show();
 		durianTimer.setOnSucceeded(e -> durianTimerSucceeded());
 		lastIndexUpdateService.restart();
+		exileToolsLadderService.restart();
 	}
 
 	ScheduledService<Void> durianTimer = new ScheduledService<Void>() {

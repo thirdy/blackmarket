@@ -103,6 +103,7 @@ public class ControlPane extends BorderPane {
 	private ToggleButton btnDurianMode = new ToggleButton("Durian Notifier");
 	
 	private Label lblHitCount = new Label();
+	private Label lblLadderServiceStatus = new Label();
 	private Button btnAbout = new Button("About");
 	private ToggleButton toggleAdvanceMode = new ToggleButton("Advance Mode");
 	
@@ -172,7 +173,7 @@ public class ControlPane extends BorderPane {
 		});
 		
 		top = new HBox(5);
-		top.getChildren().addAll(lblHitCount, newSpacer());
+		top.getChildren().addAll(lblHitCount, newSpacer(), lblLadderServiceStatus);
 		setTop(top);
 		
 	    List<String> namesList = new ArrayList<>();
@@ -302,6 +303,14 @@ public class ControlPane extends BorderPane {
 	
 	public ToggleButton getBtnDurianMode() {
 		return btnDurianMode;
+	}
+	
+	public Button getBtnSearch() {
+		return btnSearch;
+	}
+	
+	public Label getLblLadderServiceStatus() {
+		return lblLadderServiceStatus;
 	}
 
 	private Region newSpacer() {
