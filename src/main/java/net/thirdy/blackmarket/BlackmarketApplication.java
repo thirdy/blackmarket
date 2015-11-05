@@ -41,6 +41,7 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.DepthTest;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -62,6 +63,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
@@ -86,8 +88,8 @@ public class BlackmarketApplication extends Application {
 	public static final int ITEM_GRID_CELL_WIDTH = 380;
 	public static final int ITEM_GRID_CELL_HEIGHT = 250;
 
-	private static final int WINDOW_HEIGHT = 738;
-	private static final int WINDOW_WIDTH = 1166;
+//	private static final int WINDOW_HEIGHT = 738;
+//	private static final int WINDOW_WIDTH = 1166;
 	
 	
 	private static final String BLACK_MARKET_API_KEY = "4b1ccf2fce44441365118e9cd7023c38";
@@ -155,7 +157,7 @@ public class BlackmarketApplication extends Application {
 
 		stage.initStyle(StageStyle.UNDECORATED);
 		// create window resize button
-		windowResizeButton = new WindowResizeButton(stage, WINDOW_WIDTH, WINDOW_HEIGHT);
+		windowResizeButton = new WindowResizeButton(stage, 200, 200);
 		// create root
 		root = new BorderPane() {
 			@Override
@@ -171,8 +173,14 @@ public class BlackmarketApplication extends Application {
 		layerPane.setDepthTest(DepthTest.DISABLE);
 		layerPane.getChildren().add(root);
 
-		boolean is3dSupported = false;
-		scene = new Scene(layerPane, WINDOW_WIDTH, WINDOW_HEIGHT, is3dSupported);
+		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+//		boolean is3dSupported = false;
+//		, WINDOW_WIDTH, WINDOW_HEIGHT, is3dSupported
+		scene = new Scene(layerPane);
+        double screenWidth = primaryScreenBounds.getWidth();
+        double screenHeight = primaryScreenBounds.getHeight();
+		stage.setWidth(screenWidth - (screenWidth * 0.15));
+		stage.setHeight(screenHeight);
 
 		scene.getStylesheets().add(this.getClass().getResource("/css/blackmarket.css").toExternalForm());
 
@@ -182,7 +190,8 @@ public class BlackmarketApplication extends Application {
 		this.root.setTop(toolBar);
 
 		controlPane = new ControlPane(this::searchHandler);
-		searchPane = new SlidingPane(640, 18, controlPane);
+		searchPane = new SlidingPane(controlPane);
+		searchPane.expandedHeightProperty().bind(scene.heightProperty().subtract(98.0));
 		collapseButton = searchPane.getControlButton();
 
 		scene.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {

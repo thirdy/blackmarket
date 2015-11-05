@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.animation.Animation;
 import javafx.animation.Transition;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -37,14 +39,15 @@ import javafx.util.Duration;
     
     private final AtomicBoolean expanded = new AtomicBoolean(true);
 
-	private double minY;
-	private double expandedHeight;
+	private DoubleProperty minY = new SimpleDoubleProperty();
+	public DoubleProperty minYProperty(){return minY;}
+	private DoubleProperty expandedHeight = new SimpleDoubleProperty();
+	public DoubleProperty expandedHeightProperty(){return expandedHeight;}
 
     /** creates a sidebar containing a vertical alignment of the given nodes */
-    public SlidingPane(final double expandedHeight, final double collapse, Node node) {
-      this.expandedHeight = expandedHeight;
-      minY = expandedHeight - collapse;
-      this.setPrefHeight(expandedHeight);
+    public SlidingPane(Node node) {
+      minY.bind(expandedHeightProperty().subtract(18.0));
+      prefHeightProperty().bind(expandedHeightProperty());
       GridPane.setHgrow(node, Priority.ALWAYS);
       GridPane.setVgrow(node, Priority.ALWAYS);
       add(node, 0, 0);
@@ -66,11 +69,11 @@ import javafx.util.Duration;
         final Animation hideSidebar = new Transition() {
           { setCycleDuration(Duration.millis(100)); }
           protected void interpolate(double frac) {
-            final double curHeight = expandedHeight * (1.0 - frac);
+            final double curHeight = expandedHeight.get() * (1.0 - frac);
             
-            double translateValue = -(-expandedHeight + curHeight);
-            if (translateValue >= minY) {
-          	  translateValue = minY;
+            double translateValue = -(-expandedHeight.get() + curHeight);
+            if (translateValue >= minY.get()) {
+          	  translateValue = minY.get();
             }
             SlidingPane.this.setTranslateY(translateValue);
             
@@ -88,8 +91,8 @@ import javafx.util.Duration;
         final Animation showSidebar = new Transition() {
           { setCycleDuration(Duration.millis(100)); }
           protected void interpolate(double frac) {
-            final double curHeight = minY * frac;
-            double translateValue = minY - curHeight;
+            final double curHeight = minY.get() * frac;
+            double translateValue = minY.get() - curHeight;
              SlidingPane.this.setTranslateY(translateValue);
           }
         };
