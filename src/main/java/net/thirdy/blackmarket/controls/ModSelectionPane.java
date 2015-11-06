@@ -89,6 +89,7 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		Button add = addButton();
 		add.setPrefWidth(150);
 		HBox hBox = new HBox(5, new Label("Filter: "), filterField, add);
+		hBox.setAlignment(Pos.CENTER);
 		
 		VBox.setVgrow(modMappingTable, Priority.ALWAYS);
 		VBox left = new VBox(10, hBox, modMappingTable);

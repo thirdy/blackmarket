@@ -479,7 +479,7 @@ public class ControlPane extends BorderPane {
 			case Or:
 				modQuery.should(queryBuilder);
 				break;
-			case No:
+			case Not:
 				modQuery.mustNot(queryBuilder);
 				break;
 			}
