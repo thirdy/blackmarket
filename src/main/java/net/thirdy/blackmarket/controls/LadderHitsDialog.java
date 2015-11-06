@@ -44,7 +44,7 @@ public class LadderHitsDialog extends Alert {
 		setTitle(title);
 		setHeaderText("");
 		setGraphic(null);
-		String json = item.getLadderHits().toString();
+		String json = item.getLadderHit().toString();
 		
 		TextArea textArea = new TextArea(json);
 		textArea.setEditable(true);

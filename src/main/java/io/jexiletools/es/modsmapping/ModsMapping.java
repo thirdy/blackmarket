@@ -58,21 +58,23 @@ public final class ModsMapping {
 			.collect(Collectors.toList());
 		
 		// the json mod mapping represents ranged mods as two, one for min and one for max
-		// we only one of the two, so let's clean
+		// we only want one of the two, so let's clean
+		// Remove DOUBLE_MAX mods
 		modMappings = modMappings.stream().filter(mm -> mm.type != Type.DOUBLE_MAX).collect(Collectors.toList());
+		// Change DOUBLE_MIN mods to DOUBLE_MIN_MAX
 		modMappings.stream().filter(mm -> mm.type == Type.DOUBLE_MIN).forEach(mm -> mm.type = Type.DOUBLE_MIN_MAX);
 		
 		// also add pseudo mods
-		modMappings.add(new ModMapping("eleResistSumChaos", "modsPseudo.eleResistSumChaos", "+#% to Lightning Chaos", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistSumCold", "modsPseudo.eleResistSumCold", "+#% to Cold Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistSumFire", "modsPseudo.eleResistSumFire", "+#% to Fire Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistSumLightning", "modsPseudo.eleResistSumLightning", "+#% to Lightning Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("eleResistTotal", "modsPseudo.eleResistTotal", "+#% total Elemental Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatAttributesTotal", "modsPseudo.flatAttributesTotal", "+# to all Attributes", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatSumDex", "modsPseudo.flatSumDex", "+# to Dexterity", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatSumInt", "modsPseudo.flatSumInt", "+# to Intelligence", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("flatSumStr", "modsPseudo.flatSumStr", "+# to Strength", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("maxLife", "modsPseudo.maxLife", "+# to Maximum Life", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumChaos", "modsPseudo.eleResistSumChaos", "+#% to Lightning Chaos", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumCold", "modsPseudo.eleResistSumCold", "+#% to Cold Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumFire", "modsPseudo.eleResistSumFire", "+#% to Fire Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumLightning", "modsPseudo.eleResistSumLightning", "+#% to Lightning Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.eleResistTotal", "modsPseudo.eleResistTotal", "+#% total Elemental Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.flatAttributesTotal", "modsPseudo.flatAttributesTotal", "+# to all Attributes", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.flatSumDex", "modsPseudo.flatSumDex", "+# to Dexterity", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.flatSumInt", "modsPseudo.flatSumInt", "+# to Intelligence", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.flatSumStr", "modsPseudo.flatSumStr", "+# to Strength", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.maxLife", "modsPseudo.maxLife", "+# to Maximum Life", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
  
 	}
 	public List<ModMapping> getModMappings() {

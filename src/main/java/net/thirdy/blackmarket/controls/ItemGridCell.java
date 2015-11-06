@@ -324,10 +324,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 			ign = truncateIgn(ign);
 			Hyperlink link = new Hyperlink(ign);
 			link.setTextFill(Color.WHITE);
-			if (item.isOnline()) {
-				link.getStyleClass().add("ign-online");
-			}
-			if (!item.getLadderHits().isEmpty()) {
+			item.isOnline().ifPresent(o -> link.getStyleClass().add("ign-online"));
+			if (item.getLadderHit().isPresent()) {
 				link.setOnAction(e -> LadderHitsDialog.show(item));
 				item.lastOnline().ifPresent(d -> link.setTooltip(new Tooltip("Last Online: " + d.toString())));
 			} else {

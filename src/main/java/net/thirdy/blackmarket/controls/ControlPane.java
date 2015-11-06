@@ -24,12 +24,16 @@ import static java.util.Optional.ofNullable;
 import static javafx.collections.FXCollections.observableList;
 import static org.elasticsearch.common.lang3.StringUtils.trimToEmpty;
 import static org.elasticsearch.common.lang3.StringUtils.trimToNull;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
+import static org.elasticsearch.index.query.QueryBuilders.filteredQuery;
 import static org.elasticsearch.index.query.FilterBuilders.andFilter;
-import static org.elasticsearch.index.query.FilterBuilders.boolFilter;
-import static org.elasticsearch.index.query.FilterBuilders.existsFilter;
 import static org.elasticsearch.index.query.FilterBuilders.orFilter;
 import static org.elasticsearch.index.query.FilterBuilders.rangeFilter;
 import static org.elasticsearch.index.query.FilterBuilders.termFilter;
+import static org.elasticsearch.index.query.FilterBuilders.boolFilter;
+import static org.elasticsearch.index.query.FilterBuilders.existsFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,11 +42,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.lucene.search.FilteredQuery;
 import org.elasticsearch.index.query.BoolFilterBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.OrFilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryFilterBuilder;
 import org.elasticsearch.index.query.TermFilterBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -51,10 +59,10 @@ import io.jexiletools.es.model.Currencies;
 import io.jexiletools.es.model.League;
 import io.jexiletools.es.model.Rarity;
 import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
+import io.jexiletools.es.modsmapping.ModsMapping.Type;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -62,6 +70,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -71,7 +80,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.thirdy.blackmarket.Main;
-import net.thirdy.blackmarket.controls.ModsSelectionPane.Mod;
+import net.thirdy.blackmarket.controls.ModSelectionPane.Mod;
 import net.thirdy.blackmarket.domain.DivinationCard;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
@@ -81,8 +90,8 @@ import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeIntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.SmallIcon;
 import net.thirdy.blackmarket.fxcontrols.ToggleButtonToolBar;
-import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
-import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox.State;
+import net.thirdy.blackmarket.fxcontrols.TriStateButton;
+import net.thirdy.blackmarket.fxcontrols.TriStateButton.State;
 import net.thirdy.blackmarket.fxcontrols.TwoColumnGridPane;
 import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketTextField;
 
@@ -116,9 +125,9 @@ public class ControlPane extends BorderPane {
 	private RangeDoubleTextField tfpDPS = new RangeDoubleTextField();
 	private RangeDoubleTextField tfAPS = new RangeDoubleTextField();
 	private RangeDoubleTextField tfCritChance = new RangeDoubleTextField();
-	private TriStateCheckBox btn3Corrupt = new TriStateCheckBox		("Corrupted      ");
-	private TriStateCheckBox btn3Identified = new TriStateCheckBox	("Identified       ");
-	private TriStateCheckBox btn3Crafted = new TriStateCheckBox		("Bench Crafted");
+	private TriStateButton btn3Corrupt = new TriStateButton(State.Or);
+	private TriStateButton btn3Identified = new TriStateButton(State.Or);
+	private TriStateButton btn3Crafted = new TriStateButton(State.Or);
 	private RangeIntegerTextField tfAttrStr = new RangeIntegerTextField();
 	private RangeIntegerTextField tfAttrDex = new RangeIntegerTextField();
 	private RangeIntegerTextField tfAttrInt = new RangeIntegerTextField();
@@ -171,6 +180,7 @@ public class ControlPane extends BorderPane {
 			}
 			else setCenter(simpleSearchScrollPane);
 		});
+		lblLadderServiceStatus.setTooltip(new Tooltip());
 		
 		top = new HBox(5);
 		top.getChildren().addAll(lblHitCount, newSpacer(), lblLadderServiceStatus);
@@ -229,9 +239,9 @@ public class ControlPane extends BorderPane {
 	    		"eDPS:"  , tfeDPS,
 	    		"APS:"  ,  tfAPS,
 	    		"Crit Chance:"  , tfCritChance,
-	    		new SmallIcon(Currencies.vaal) , btn3Corrupt,
-	    		new SmallIcon(Currencies.id) , btn3Identified,
-	    		new SmallIcon(Currencies.fuse) , btn3Crafted,
+	    		new Label("Corrupted ", new SmallIcon(Currencies.vaal)) , btn3Corrupt,
+	    		new Label("Identified ", new SmallIcon(Currencies.id)) , btn3Identified,
+	    		new Label("Crafted ", new SmallIcon(Currencies.fuse)) , btn3Crafted,
 	    		"Strength:"	, tfAttrStr,
 	    		"Dexterity:"	, tfAttrDex,
 	    		"Intelligence:"	, tfAttrInt,
@@ -345,12 +355,11 @@ public class ControlPane extends BorderPane {
 		tfeDPS.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Elemental DPS")));
 		tfAPS.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Attacks per Second")));
 		tfCritChance.val().ifPresent(t -> filters.add(t.rangeFilter("properties.Weapon.Critical Strike Chance")));
-		if(btn3Corrupt.state() != State.unchecked) filters.add(termFilter("attributes.corrupted", btn3Corrupt.state() == State.checked)); 
-		if(btn3Identified.state() != State.unchecked) filters.add(termFilter("attributes.identified", btn3Identified.state() == State.checked)); 
-		if(btn3Crafted.state() != State.unchecked) filters.add(
-				btn3Crafted.state() == State.checked ? rangeFilter("attributes.craftedModCount").gt(0)
-						: rangeFilter("attributes.craftedModCount").from(null)
-		);
+		if(btn3Corrupt.stateProperty().get() != State.Or) 		filters.add(termFilter("attributes.corrupted", btn3Corrupt.stateProperty().get() == State.And)); 
+		if(btn3Identified.stateProperty().get() != State.Or) 	filters.add(termFilter("attributes.identified", btn3Identified.stateProperty().get() == State.And));
+		if(btn3Crafted.stateProperty().get() != State.Or) 		filters.add(
+				btn3Crafted.stateProperty().get() == State.And ? rangeFilter("attributes.craftedModCount").gt(0)
+						: rangeFilter("attributes.craftedModCount").lte(0));
 		tfAttrStr.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatSumStr")));
 		tfAttrDex.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatSumDex")));
 		tfAttrInt.val().ifPresent(t -> filters.add(t.rangeFilter("modsPseudo.flatSumInt")));
@@ -381,13 +390,15 @@ public class ControlPane extends BorderPane {
 		tfSockColors.val().ifPresent(s -> filters.add(termFilter("sockets.allSocketsSorted", s)));
 		
 		// Col 5
-//		modsSelectionPane.implicit().ifPresent(mod -> filters.add(implicitModFilter(mod)));
-//		modsSelectionPane.explicitMods().ifPresent(mod -> filters.add(explicitModFilter(mod)));
 		if (priceControl.anyPrice()) {
 			filters.add(FilterBuilders.existsFilter("shop.chaosEquiv"));
 		} else {
 			priceControl.val().ifPresent(price -> filters.add(price.rangeFilter("shop.chaosEquiv")));
 		}
+		
+		// Mods
+//		modsSelectionPane.implicit().ifPresent(mod -> filters.add(implicitModFilter(mod)));
+//		modsSelectionPane.explicitMods().ifPresent(mod -> filters.add(explicitModFilter(mod)));
 		
 		if(btnVerified.isSelected())
 			filters.add(termFilter("shop.verified", "yes"));
@@ -395,7 +406,14 @@ public class ControlPane extends BorderPane {
 		// Final Build
 		FilterBuilder filter = andFilter(toArray(filters, FilterBuilder.class));
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.filteredQuery(null, filter));
+		
+		QueryBuilder query = null;
+		if (modSelectionPane.mods().isPresent()) {
+			query = modFilter(modSelectionPane.mods().get());
+		}
+		
+		searchSourceBuilder.query(filteredQuery(query, filter));
+		
 		searchSourceBuilder.sort("shop.chaosEquiv", SortOrder.ASC);
 		if(btnSortByShopUpdate.isSelected())
 			searchSourceBuilder.sort("shop.updated", SortOrder.DESC);
@@ -424,55 +442,101 @@ public class ControlPane extends BorderPane {
 			.collect(Collectors.toList()).toArray();
 		return orFilter(array);
 	}
-
-	private FilterBuilder explicitModFilter(List<Mod> mod) {
-		BoolFilterBuilder exFilter = boolFilter();
-		mod.stream()
-			.forEach(m -> {
-				FilterBuilder fb = null;
-				ModMapping selectedMod = m.tfMod.item();  
-				if (m.rangeDoubleTf.val().isPresent()) {
-					fb = m.rangeDoubleTf.val().get().rangeFilter(selectedMod.getKey());
-				} else {
-					fb = existsFilter(selectedMod.getKey());
-				}
-				switch (m.logic.state()) {
-				case checked:
-					exFilter.must(fb);
-					break;
-				case unchecked:
-					exFilter.should(fb);
-					break;
-				case undefined:
-					exFilter.mustNot(fb);
-					break;
-				}
-			});
-		return exFilter;
+	
+	private QueryBuilder modFilter(List<Mod> mods) {
+		BoolQueryBuilder modQuery = boolQuery(); 
+		
+		mods.stream()
+		.forEach(mod -> {
+			QueryBuilder queryBuilder = null;
+			ModMapping selectedMod = mod.modMapping;  
+			Optional<RangeOptional> lowerRange = mod.lowerRange.get();
+			Optional<RangeOptional> higherRange = mod.higherRange.get();
+			
+			if (selectedMod.getType() == Type.DOUBLE_MIN_MAX) {
+				if (lowerRange.isPresent()) {
+					queryBuilder = lowerRange.get().rangeQuery(selectedMod.getKey() + ".min");
+				}			
+				if (higherRange.isPresent()) {
+					queryBuilder = higherRange.get().rangeQuery(selectedMod.getKey() + ".max");
+				}			
+			}
+			
+			if (selectedMod.getType() == Type.DOUBLE) {
+				if (lowerRange.isPresent()) {
+					queryBuilder = lowerRange.get().rangeQuery(selectedMod.getKey());
+				}			
+			}
+			
+			if (selectedMod.getType() == Type.BOOLEAN) {
+				queryBuilder =  termQuery(selectedMod.getKey(), "true");
+			}
+			
+			switch (mod.logic.get()) {
+			case And:
+				modQuery.must(queryBuilder);
+				break;
+			case Or:
+				modQuery.should(queryBuilder);
+				break;
+			case No:
+				modQuery.mustNot(queryBuilder);
+				break;
+			}
+		});
+		modSelectionPane.mininumShouldMatch().ifPresent(i -> modQuery.minimumNumberShouldMatch(i.intValue()));
+		
+		return modQuery;
 	}
 
-	private FilterBuilder implicitModFilter(Mod mod) {
-		BoolFilterBuilder impFil = boolFilter();
-		FilterBuilder fb = null;
-		ModMapping selectedMod = mod.tfMod.item(); 
-		if (mod.rangeDoubleTf.val().isPresent()) {
-			fb = mod.rangeDoubleTf.val().get().rangeFilter(selectedMod.getKey());
-		} else {
-			fb = existsFilter(selectedMod.getKey());
-		}
-		switch (mod.logic.state()) {
-		case checked:
-			impFil.must(fb);
-			break;
-		case unchecked:
-			impFil.should(fb);
-			break;
-		case undefined:
-			impFil.mustNot(fb);
-			break;
-		}
-		return impFil;
-	}
+//	private FilterBuilder explicitModFilter(List<Mod> mod) {
+//		BoolFilterBuilder exFilter = boolFilter();
+//		mod.stream()
+//			.forEach(m -> {
+//				FilterBuilder fb = null;
+//				ModMapping selectedMod = m.tfMod.item();  
+//				if (m.rangeDoubleTf.val().isPresent()) {
+//					fb = m.rangeDoubleTf.val().get().rangeFilter(selectedMod.getKey());
+//				} else {
+//					fb = existsFilter(selectedMod.getKey());
+//				}
+//				switch (m.logic.state()) {
+//				case checked:
+//					exFilter.must(fb);
+//					break;
+//				case unchecked:
+//					exFilter.should(fb);
+//					break;
+//				case undefined:
+//					exFilter.mustNot(fb);
+//					break;
+//				}
+//			});
+//		return exFilter;
+//	}
+//
+//	private FilterBuilder implicitModFilter(Mod mod) {
+//		BoolFilterBuilder impFil = boolFilter();
+//		FilterBuilder fb = null;
+//		ModMapping selectedMod = mod.tfMod.item(); 
+//		if (mod.rangeDoubleTf.val().isPresent()) {
+//			fb = mod.rangeDoubleTf.val().get().rangeFilter(selectedMod.getKey());
+//		} else {
+//			fb = existsFilter(selectedMod.getKey());
+//		}
+//		switch (mod.logic.state()) {
+//		case checked:
+//			impFil.must(fb);
+//			break;
+//		case unchecked:
+//			impFil.should(fb);
+//			break;
+//		case undefined:
+//			impFil.mustNot(fb);
+//			break;
+//		}
+//		return impFil;
+//	}
 
 
 	private Optional<FilterBuilder> qualityFilter(RangeOptional t) {

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,12 @@ import io.jexiletools.es.model.ItemType;
 import io.jexiletools.es.modsmapping.ModsMapping;
 import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
 import io.jexiletools.es.modsmapping.ModsMapping.ModType;
+import io.jexiletools.es.modsmapping.ModsMapping.Type;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -51,13 +58,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import net.thirdy.blackmarket.domain.RangeOptional;
+import net.thirdy.blackmarket.fxcontrols.DoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.TableViewPlus;
-import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
+import net.thirdy.blackmarket.fxcontrols.TriStateButton;
+import net.thirdy.blackmarket.fxcontrols.TriStateButton.State;
 
 public class ModSelectionPane extends GridPane implements Consumer<List<ItemType>> {
 
 	private TextField filterField;
+	private DoubleTextField tfMinShouldMatch;
 	private TableViewPlus<ModMapping> modMappingTable;
 	private ListView<Mod> modsListView;
 	
@@ -72,6 +83,7 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		accept(Collections.emptyList());
 		setupModMappingTable();
 		setupFilterTextField();
+		tfMinShouldMatch = new DoubleTextField("Minimum number of OR modifiers to match");
 		
 		Button add = addButton();
 		add.setPrefWidth(150);
@@ -81,9 +93,9 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		VBox left = new VBox(10, hBox, modMappingTable);
 		VBox.setVgrow(modsListView, Priority.ALWAYS);
 		Label modifiersLbl = new Label("Modifiers");
-		modifiersLbl.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-		modifiersLbl.setPadding(new Insets(6));
-		VBox right = new VBox(9, new StackPane(modifiersLbl), modsListView);
+		modifiersLbl.setFont(Font.font("Verdana", FontWeight.MEDIUM, 14));
+		modifiersLbl.setPadding(new Insets(4));
+		VBox right = new VBox(3, new StackPane(modifiersLbl), new HBox(3, new Label("MinOrMatch:"), tfMinShouldMatch), modsListView);
 		
 	    setupGridPaneColumns();
 		
@@ -125,6 +137,7 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 
 	private void setupModListView() {
 		modsListView = new ListView<>();
+		modsListView.setEditable(true);
 		modsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		modsListView.setMaxHeight(Double.MAX_VALUE);
 		// remove focus
@@ -185,13 +198,20 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		public Mod(ModMapping modMapping) {
 			this.modMapping = modMapping;
 		}
+		
+		public ObjectProperty<Optional<RangeOptional>> lowerRange = new SimpleObjectProperty();
+		public ObjectProperty<Optional<RangeOptional>> higherRange = new SimpleObjectProperty();
+		
+		public ObjectProperty<State> logic = new SimpleObjectProperty<>();
 	}
 	
 	private static class ModListCell extends ListCell<Mod> {
+		private Label lblMod = new Label();
 		
-		private Label tfMod = new Label();
-		public RangeDoubleTextField rangeDoubleTf = new RangeDoubleTextField();
-		public TriStateCheckBox logic = new TriStateCheckBox();
+		public RangeDoubleTextField lowerRangeDoubleTf = new RangeDoubleTextField();
+		public RangeDoubleTextField higherRangeDoubleTf = new RangeDoubleTextField();
+		
+		public TriStateButton logic = new TriStateButton();
 		private Region spacer = new Region();
 		public HBox container = new HBox(5.0);
 		Button remove = new Button("X");
@@ -199,21 +219,55 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		public ModListCell(ListView<Mod> listView) {
 			remove.setOnAction(e -> listView.getItems().remove(getIndex()));
 			HBox.setHgrow(spacer, Priority.ALWAYS);
-			rangeDoubleTf.setPrefWidth(100);
-			container.getChildren().addAll(tfMod, spacer, rangeDoubleTf, logic, remove);
+			lowerRangeDoubleTf.setPrefWidth(100);
+			higherRangeDoubleTf.setPrefWidth(100);
+			container.getChildren().addAll(lblMod, spacer, lowerRangeDoubleTf, higherRangeDoubleTf, logic, remove);
 		}
 		
 		@Override
 		protected void updateItem(Mod item, boolean empty) {
 			super.updateItem(item, empty);
 			if (item != null) {
+				Type modType = item.modMapping.getType();
+				
+				// Label
 				String key = item.modMapping.getKey();
 				key = StringUtils.removeEnd(key, ".min");
-				tfMod.setText(key);
+				lblMod.setText(key);
+				
+				// Lower Range
+				boolean showLowerRange = modType == Type.DOUBLE || modType == Type.DOUBLE_MIN_MAX;
+				lowerRangeDoubleTf.setVisible(showLowerRange);
+				item.lowerRange.unbind();
+				if (showLowerRange) {
+					item.lowerRange.bind(Bindings.createObjectBinding(() -> {
+						return lowerRangeDoubleTf.val();
+					}, lowerRangeDoubleTf.getMin().textProperty(), lowerRangeDoubleTf.getMax().textProperty()));
+				}
+				
+				// Higher Range
+				boolean showHigherRange = modType == Type.DOUBLE_MIN_MAX;
+				item.higherRange.unbind();
+				if (showHigherRange) {
+					item.higherRange.bind(Bindings.createObjectBinding(() -> {
+						return higherRangeDoubleTf.val();
+					}, higherRangeDoubleTf.getMin().textProperty(), higherRangeDoubleTf.getMax().textProperty()));
+				}
+				
+				item.logic.unbind();
+				item.logic.bind(logic.stateProperty());
 				setGraphic(container);
 			} else {
 				setGraphic(null);
 			}
 		}
+	}
+	
+	public Optional<List<Mod>> mods() {
+		return modsListView.getItems().size() == 0 ? Optional.empty() : Optional.of(modsListView.getItems());
+	}
+	
+	public Optional<Double> mininumShouldMatch() {
+		return tfMinShouldMatch.getOptionalValue();
 	}
 }

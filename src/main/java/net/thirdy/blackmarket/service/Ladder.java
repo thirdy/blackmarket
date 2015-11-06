@@ -17,7 +17,18 @@
  */
 package net.thirdy.blackmarket.service;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import io.jexiletools.es.model.json.ExileToolsHit;
 
 /**
  * @author thirdy
@@ -25,14 +36,66 @@ import java.util.Map;
  */
 public class Ladder {
 
-	// private String rawJson;
-	private Map<String, Object> m;
+	// TODO: auto map from http://exiletools.com/status
+	//    {darkshrine|Darkshrine (IC003)|http://www.pathofexile.com/forum/view-forum/597/page},
+	//    {darkshrinehc|Darkshrine HC (IC004)|http://www.pathofexile.com/forum/view-forum/598/page},
+	//    {hardcore|Hardcore|http://www.pathofexile.com/forum/view-forum/305/page},
+	//    {standard|Standard|http://www.pathofexile.com/forum/view-forum/306/page}
+	private static final ImmutableMap<String, String> LADDER_INDEXER_LEAGUE_MAPPING = ImmutableMap.of(
+			"darkshrine", "Darkshrine (IC003)",
+			"darkshrinehc", "Darkshrine HC (IC004)",
+			"hardcore", "Hardcore",
+			"standard", "Standard");
+	
+	/**
+	 * Map of Leagues
+	 *  -> Map of PlayerAccountName.IGN,LadderHits
+	 */
+	private Map<String, Map<String, LadderHit>> ladderMapAllLeagues;
+	
+	public Ladder() {
+		ladderMapAllLeagues = new HashMap<>();
+	}
 
-	public Ladder(Map<String, Object> m) {
-		this.m = m;
+	public void addLeagueLadder(String league, JsonObject jsonObject) {
+		Map<String, LadderHit> m = jsonObject.entrySet().stream()
+				.map(this::toLadderHit).collect(Collectors.toMap(LadderHit::key, e -> e));
+		String searchLeague = ladderLeagueToSearchLeague(league);
+		ladderMapAllLeagues.put(searchLeague, m);
+	}
+	
+	private String ladderLeagueToSearchLeague(String league) {
+		return LADDER_INDEXER_LEAGUE_MAPPING.get(league);
+	}
+	
+	private LadderHit toLadderHit(Map.Entry<String, JsonElement> entry) {
+		return new LadderHit(entry.getKey(), entry.getValue());
 	}
 
 	public int size() {
-		return m.size();
+		return ladderMapAllLeagues.entrySet().stream()
+				.map(es -> es.getValue().size())
+				.collect(Collectors.summingInt(size -> size));
 	}
+	
+	public String leagueSizes() {
+		String leagueSizes = ladderMapAllLeagues.entrySet().stream()
+			.map(es -> String.format("%s - %d", es.getKey(), es.getValue().size()))
+			.collect(Collectors.joining(System.lineSeparator()));
+		return "Online players per league:" + System.lineSeparator() + leagueSizes;
+	}
+	
+	public void addPlayerLadderData(ExileToolsHit exileToolsHit) {
+		String account = exileToolsHit.getShop().getSellerAccount();
+		String league = exileToolsHit.getAttributes().getLeague();
+		LadderHit ladderHit = ladderMapAllLeagues.get(league).get(account);
+		if (ladderHit != null) {
+			String sellerIGN = StringUtils.trimToNull(exileToolsHit.getShop().getSellerIGN());
+			if (sellerIGN == null) {
+				exileToolsHit.getShop().setSellerIGN(ladderHit.charName());
+			}
+			exileToolsHit.setLadderHit(Optional.of(ladderHit));
+		}
+	}
+	
 }

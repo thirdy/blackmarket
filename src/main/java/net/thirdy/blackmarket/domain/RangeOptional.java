@@ -21,7 +21,10 @@ import java.util.Optional;
 
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeFilterBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 
 /**
  * @author thirdy
@@ -49,6 +52,17 @@ public class RangeOptional {
 		}
 		
 		return filter;
+	}
+	
+	public QueryBuilder rangeQuery(String name) {
+		QueryBuilder query = null;
+		
+		RangeQueryBuilder rquery = QueryBuilders.rangeQuery(name);
+		min.ifPresent(m -> rquery.from(m));
+		max.ifPresent(m -> rquery.to(m));
+		query = rquery;
+		
+		return query;
 	}
 	
 	

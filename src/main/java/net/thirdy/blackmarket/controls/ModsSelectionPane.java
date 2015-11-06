@@ -37,7 +37,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
-import net.thirdy.blackmarket.fxcontrols.TriStateCheckBox;
+import net.thirdy.blackmarket.fxcontrols.TriStateButton;
 import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketTextField;
 
 /**
@@ -110,7 +110,7 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 	public void add(Mod mod) {
 		add(mod.tfMod, 0, row);
 		add(mod.rangeDoubleTf, 1, row);
-		add(mod.logic, 2, row);
+//		add(mod.logic, 2, row);
 		row++;
 	}
 	
@@ -141,12 +141,12 @@ public class ModsSelectionPane extends GridPane implements Consumer<List<ItemTyp
 		public BlackmarketTextField<ModMapping> tfMod;
 		public RangeDoubleTextField rangeDoubleTf = new RangeDoubleTextField();
 //		public TriStateCheckBox logic = new TriStateCheckBox("⊃");
-		public TriStateCheckBox logic = new TriStateCheckBox();
+//		public TriStateButton logic = new TriStateButton();
 		
 	    public Mod(ObservableList<ModMapping> list, String prompt) {
 	    	tfMod = new BlackmarketTextField<ModMapping>(list, 15);
 	    	tfMod.setPromptText(prompt);
-	    	logic.setSelected(true);
+//	    	logic.setSelected(true);
 		}
 	}
 	

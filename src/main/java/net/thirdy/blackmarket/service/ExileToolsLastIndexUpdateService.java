@@ -1,5 +1,7 @@
 package net.thirdy.blackmarket.service;
 
+import java.util.Collections;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public class ExileToolsLastIndexUpdateService extends Service<Void> {
 		String result = "";
 		String url = "http://exiletools.com/last-index-update.html";
 		try {
-			result += StringUtils.trimToEmpty(UrlReaderUtil.getString(url));
+			result += StringUtils.trimToEmpty(UrlReaderUtil.getString(url, Collections.emptyMap()));
 		} catch (Exception e1) {
 			result += String.format("Error downloading indexer status from %s, error: %s", url, e1.getMessage());
 		}

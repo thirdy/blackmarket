@@ -76,6 +76,7 @@ import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
 import net.thirdy.blackmarket.service.ExileToolsLadderService;
 import net.thirdy.blackmarket.service.ExileToolsLastIndexUpdateService;
 import net.thirdy.blackmarket.service.ExileToolsService;
+import net.thirdy.blackmarket.service.Ladder;
 import net.thirdy.blackmarket.util.ImageCache;
 import net.thirdy.blackmarket.util.LangContants;
 import net.thirdy.blackmarket.util.SoundUtils;
@@ -218,6 +219,11 @@ public class BlackmarketApplication extends Application {
 		controlPane.getBtnDurianMode().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
 		controlPane.getBtnSearch().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
 		controlPane.getLblLadderServiceStatus().textProperty().bind(exileToolsLadderService.messageProperty());
+		controlPane.getLblLadderServiceStatus().tooltipProperty().get().textProperty()
+			.bind(Bindings.createStringBinding(() -> {
+				Ladder ladder = exileToolsLadderService.resultProperty().get();
+				return ladder != null ? ladder.leagueSizes() : LangContants.STRING_EMPTY;
+			}, exileToolsLadderService.resultProperty()));
 		searchPane.setId("searchPane");
 
 		AnchorPane centerPane = new AnchorPane();
@@ -316,6 +322,8 @@ public class BlackmarketApplication extends Application {
 
 	private void searchSucceeded() {
 		ExileToolsSearchResult result = searchService.getValue();
+		result.getExileToolHits().stream().forEach(e -> 
+			exileToolsLadderService.resultProperty().get().addPlayerLadderData(e));
 		ObservableList<ExileToolsHit> list = FXCollections.observableList(result.getExileToolHits());
 		// add empty row
 		list.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
@@ -431,8 +439,6 @@ public class BlackmarketApplication extends Application {
 			}
 		} else {
 			searchService.setJson(json);
-			searchService.setLeague(league);
-			searchService.setOnlineOnly(onlineOnly);
 			searchService.restart();
 		} 
 	}

@@ -19,7 +19,6 @@ package net.thirdy.blackmarket.service;
 
 import java.util.Date;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
@@ -29,14 +28,17 @@ import com.google.gson.JsonElement;
  */
 public class LadderHit {
 	
+	private String key;
 	private JsonElement jsonElement;
 	private String charName;
-	private String accountName;
+//	private String accountName;
 
-	public LadderHit(String accountName, String charName, JsonElement jsonElement) {
-		this.accountName = accountName;
+	public LadderHit(String key, JsonElement jsonElement) {
+		this.key = key;
+		String[] jsonKey = key.split("\\.");
+//		this.accountName = jsonKey[0];
+		this.charName = jsonKey[1];
 		this.jsonElement = jsonElement;
-		this.charName = charName;
 	}
 	
 	public String charName() {
@@ -53,6 +55,10 @@ public class LadderHit {
 	
 	public Date lastOnline() {
 		return new Date(jsonElement.getAsJsonObject().get("lastOnline").getAsLong());
+	}
+	
+	public String key() {
+		return key;
 	}
 
 	@Override

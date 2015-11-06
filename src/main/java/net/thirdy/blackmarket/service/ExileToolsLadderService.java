@@ -1,26 +1,34 @@
 package net.thirdy.blackmarket.service;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import net.thirdy.blackmarket.controls.Dialogs;
+import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.util.UrlReaderUtil;
 
 public class ExileToolsLadderService extends Service<Void> {
 	
-	private static final String EXILE_TOOLS_LADDER_API_URL = "http://api.exiletools.com/ladder?showAllOnline=1";
+	private static final String LADDER_API_URL = "http://api.exiletools.com/ladder";
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -32,7 +40,11 @@ public class ExileToolsLadderService extends Service<Void> {
     
     public ExileToolsLadderService() {
 		setOnSucceeded(e -> restart());
-		setOnFailed	 (e -> restart());
+		setOnFailed	 (e -> {
+			getException().printStackTrace();
+			Dialogs.showExceptionDialog(getException());
+			restart();
+		});
 	}
     
 	@Override
@@ -42,8 +54,15 @@ public class ExileToolsLadderService extends Service<Void> {
 			@Override protected Void call() throws Exception {
             	try {
             		sleeping.set(false);
-					Ladder ladder = retrieveAllOnline();
-					result.setValue(ladder);
+            		updateMessage("Downloading player ladder data...");
+            		List<String> leagues = retriveActiveLeagues();
+            		Ladder ladder = new Ladder();
+            		for (String league : leagues) {
+            		  updateMessage("Downloading player ladder data for " + league);
+            		  JsonObject jsonObject = retrieveAllOnline(league);
+            		  ladder.addLeagueLadder(league, jsonObject);
+					}
+					Platform.runLater(() -> result.setValue(ladder));
 					// TODO: we can add a online count per league via http://api.exiletools.com/ladder?listleagues=1
 					updateMessage(ladder.size() + " online players in ladder for all leagues");
 					int fiveMins = 60 * 5;
@@ -52,12 +71,10 @@ public class ExileToolsLadderService extends Service<Void> {
 						Thread.sleep(1000);
 						updateMessage(ladder.size() + " online players in ladder for all leagues (" + i + " secs ago)");
 					}
-            	} catch (JsonSyntaxException | IOException e) {
+            	} catch (JsonSyntaxException | BlackmarketException e) {
             		int countdownToRetry = 3;
             		for (int i = countdownToRetry; i > 0; i--) {
-            			String err = String.format(
-            					"Error downloading Ladder API data from %s, error: %s. Gonna try again in %d secs..", 
-            					EXILE_TOOLS_LADDER_API_URL, e.getMessage(), i);
+            			String err = String.format("Error: %s. Gonna try again in %d secs..", e.getMessage(), i);
             			updateMessage(err);
             			Thread.sleep(1000);
 					}
@@ -66,12 +83,30 @@ public class ExileToolsLadderService extends Service<Void> {
             }
         };
 	}
+
+	private List<String> retriveActiveLeagues() throws BlackmarketException {
+		List<String> activeLeagues = Collections.emptyList();
+		try {
+			String s = UrlReaderUtil.getString(LADDER_API_URL, ImmutableMap.of("activeleagues", "1"));
+			activeLeagues = new JsonParser()
+					.parse(s).getAsJsonObject().entrySet().stream()
+					.map(entrySet -> entrySet.getValue().getAsString())
+					.collect(Collectors.toList());
+		} catch (UnirestException e) {
+			throw new BlackmarketException("Problem while downloading Ladder data - active leagues", e);
+		}
+		return activeLeagues;
+	}
 	
-	private Ladder retrieveAllOnline() throws IOException {
-		String result = StringUtils.trimToEmpty(UrlReaderUtil.getString(EXILE_TOOLS_LADDER_API_URL));
-		Gson gson = new Gson();
-		@SuppressWarnings("unchecked")
-		Map<String, Object> m = gson.fromJson(result, Map.class);
-		return new Ladder(m);
+	private JsonObject retrieveAllOnline(String league) throws BlackmarketException {
+		String s = null;
+		try {
+			s = UrlReaderUtil.getString(LADDER_API_URL, ImmutableMap.of("showAllOnline", "1", "league", league));
+		} catch (UnirestException e) {
+			throw new BlackmarketException("Problem while downloading Ladder data for league " + league, e);
+		}
+		String result = StringUtils.trimToEmpty(s);
+		JsonObject jsonContainer = new JsonParser().parse(result).getAsJsonObject();
+		return jsonContainer;
 	}
 }

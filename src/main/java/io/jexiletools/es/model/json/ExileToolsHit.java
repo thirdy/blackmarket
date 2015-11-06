@@ -2,7 +2,6 @@ package io.jexiletools.es.model.json;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +25,12 @@ public class ExileToolsHit {
 	public ExileToolsHit() { }
 	
 	// Ladder Data
-	List<LadderHit> ladderHits = Collections.emptyList();
-	public boolean isOnline() {
-		return ladderHits.parallelStream().anyMatch(lh -> lh.online());
+	private Optional<LadderHit> ladderHit = Optional.empty();
+	public Optional<Boolean> isOnline() {
+		return ladderHit.map(e -> e.online());
 	}
 	public Optional<Date> lastOnline() {
-		return ladderHits.parallelStream()
-				.sorted((c1, c2) -> c1.lastOnline().compareTo(c2.lastOnline()))
-				.findFirst()
-				.map(lh -> lh.lastOnline());
+		return ladderHit.map(e -> e.lastOnline());
 	}
 	// Ladder Data End
 	
@@ -55,8 +51,8 @@ public class ExileToolsHit {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ExileToolsHit [ladderHits=");
-		builder.append(ladderHits);
+		builder.append("ExileToolsHit [ladderHit=");
+		builder.append(ladderHit);
 		builder.append(", md5sum=");
 		builder.append(md5sum);
 		builder.append(", uuid=");
@@ -83,14 +79,12 @@ public class ExileToolsHit {
 		return builder.toString();
 	}
 
-	public List<LadderHit> getLadderHits() {
-		return ladderHits;
+	public Optional<LadderHit> getLadderHit() {
+		return ladderHit;
 	}
-
-	public void setLadderHits(List<LadderHit> ladderHits) {
-		this.ladderHits = ladderHits;
+	public void setLadderHit(Optional<LadderHit> ladderHit) {
+		this.ladderHit = ladderHit;
 	}
-
 	public String getMd5sum() {
 		return md5sum;
 	}

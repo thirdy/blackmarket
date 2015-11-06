@@ -60,7 +60,8 @@ public class ExileToolsSearchClient {
 	}
 	
 	public ExileToolsSearchResult execute(String json) throws ExileToolsSearchException {
-		 logger.debug("~~~~ Executing search: {}{}", System.lineSeparator(), json);
+//		 logger.debug("~~~~ Executing search: {}{}", System.lineSeparator(), json);
+		 logger.debug("~~~~ Executing search ~~~~");
 
 		 Builder builder = new ExileToolsSearchAction.Builder(json)
 		                                 .setHeader("Authorization", apiKey);
