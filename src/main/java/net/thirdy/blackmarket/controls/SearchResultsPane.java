@@ -61,7 +61,7 @@ public class SearchResultsPane extends GridView<ExileToolsHit> {
 						.collect(Collectors.toList());
 				setItems(FXCollections.observableList(list));
 				searchLabelStatus.set(format("%d items found. Showing %d%s items.", 
-						originalList.size(), list.size(), newVal ? " online" : ""));
+						originalList.size()-3, list.size()-3, newVal ? " online" : ""));
 			}
 		});
 		ladder.addListener((obv, oldVal, newVal) -> {
@@ -82,7 +82,7 @@ public class SearchResultsPane extends GridView<ExileToolsHit> {
 		originalList.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
 		setItems(originalList);
 		searchLabelStatus.set(format("%d items found. Showing %d items.", 
-				originalList.size(), originalList.size()));
+				originalList.size()-3, originalList.size()-3));
 	}
 
 }

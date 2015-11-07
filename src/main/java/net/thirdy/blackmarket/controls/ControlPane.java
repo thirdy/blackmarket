@@ -456,9 +456,11 @@ public class ControlPane extends BorderPane {
 
 
 	private FilterBuilder rarityOrFilter(List<Rarity> list) {
-		TermFilterBuilder[] array = (TermFilterBuilder[]) list.stream()
+		List<TermFilterBuilder> filters = list.stream()
 			.map(l -> termFilter("attributes.rarity", l.displayName()))
-			.collect(Collectors.toList()).toArray();
+			.collect(Collectors.toList());
+		TermFilterBuilder[] array = new TermFilterBuilder[filters.size()];
+		array = filters.toArray(array); 
 		return orFilter(array);
 	}
 	

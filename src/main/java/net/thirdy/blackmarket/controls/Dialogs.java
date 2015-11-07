@@ -55,7 +55,6 @@ public class Dialogs {
 //				+ comics[RandomUtils.nextInt(0, 3)] +
 //				".png")));
 		alert.setGraphic(new ImageView(ImageCache.getInstance().get("/images/gallio/gallio-sad.png")));
-		alert.setContentText("Error Message: " + throwable.getMessage());
 
 		// Create expandable Exception.
 		StringWriter sw = new StringWriter();
@@ -63,24 +62,23 @@ public class Dialogs {
 		throwable.printStackTrace(pw);
 		String exceptionText = sw.toString();
 
-		Label label = new Label("The exception stacktrace was:");
+		StringBuilder sb = new StringBuilder();
+		sb.append("Error Message: ");
+		sb.append(System.lineSeparator());
+		sb.append(throwable.getMessage());
+		sb.append("The exception stacktrace was:");
+		sb.append(System.lineSeparator());
+		sb.append(exceptionText);
 
-		TextArea textArea = new TextArea(exceptionText);
+		TextArea textArea = new TextArea(sb.toString());
 		textArea.setEditable(false);
 		textArea.setWrapText(false);
 
 		textArea.setMaxWidth(Double.MAX_VALUE);
 		textArea.setMaxHeight(150);
-//		GridPane.setVgrow(textArea, Priority.ALWAYS);
-//		GridPane.setHgrow(textArea, Priority.ALWAYS);
-
-//		GridPane expContent = new GridPane();
-//		expContent.setMaxWidth(Double.MAX_VALUE);
-//		expContent.add(label, 0, 0);
-//		expContent.add(textArea, 0, 1);
 
 		// Set expandable Exception into the dialog pane.
-		alert.getDialogPane().setExpandableContent(new VBox(label, textArea));
+		alert.getDialogPane().setExpandableContent(textArea);
 		alert.getDialogPane().setExpanded(true);
 
 		alert.showAndWait();
