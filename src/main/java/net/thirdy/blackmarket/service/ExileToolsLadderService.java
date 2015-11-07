@@ -67,8 +67,8 @@ public class ExileToolsLadderService extends Service<Void> {
 					Platform.runLater(() -> result.setValue(ladder));
 					// TODO: we can add a online count per league via http://api.exiletools.com/ladder?listleagues=1
 					updateMessage(ladder.size() + " online players in ladder for all leagues");
-					int fiveMins = 60 * 5;
-					for (int i = fiveMins; i >= 0; i--) {
+					int tenMins = 60 * 10;
+					for (int i = tenMins; i >= 0; i--) {
 						sleeping.set(true);
 						Thread.sleep(1000);
 						updateMessage(ladder.size() + " online players in ladder for all leagues (" + i + " secs ago)");
