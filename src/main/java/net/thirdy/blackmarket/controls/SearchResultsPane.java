@@ -66,18 +66,24 @@ public class SearchResultsPane extends GridView<ExileToolsHit> {
 		});
 		ladder.addListener((obv, oldVal, newVal) -> {
 			if (newVal != null && originalList != null) {
-				originalList.stream()
-					.filter(hit -> hit != ExileToolsHit.EMPTY)
-					.forEach(e -> {
-						Ladder ladder = newVal;
-						ladder.addPlayerLadderData(e);
-					});
+				applyDataFromLadder(newVal);
 			}
 		});
+	}
+
+	private void applyDataFromLadder(Ladder ladder) {
+		originalList.stream()
+			.filter(hit -> hit != ExileToolsHit.EMPTY)
+			.forEach(e -> {
+				ladder.addPlayerLadderData(e);
+			});
 	}
 	
 	public void setSearchResultItems(List<ExileToolsHit> exileToolHits) {
 		this.originalList = FXCollections.observableList(exileToolHits);
+		if (ladder.get() != null) {
+			applyDataFromLadder(ladder.get());
+		}
 		// add empty row
 		originalList.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
 		setItems(originalList);
