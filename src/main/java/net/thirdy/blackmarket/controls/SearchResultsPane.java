@@ -55,13 +55,8 @@ public class SearchResultsPane extends GridView<ExileToolsHit> {
 	public SearchResultsPane() {
 		onlineOnly.addListener((obv, oldVal, newVal) -> {
 			if (newVal != null && originalList != null) {
-				boolean eitherWay = !newVal;
-				List<ExileToolsHit> list = originalList.stream()
-						.filter(hit -> hit.isOnline().orElse(Boolean.FALSE) || eitherWay || hit == ExileToolsHit.EMPTY)
-						.collect(Collectors.toList());
+				List<ExileToolsHit> list = applyOnlineOnly(newVal);
 				setItems(FXCollections.observableList(list));
-				searchLabelStatus.set(format("%d items found. Showing %d%s items.", 
-						originalList.size()-3, list.size()-3, newVal ? " online" : ""));
 			}
 		});
 		ladder.addListener((obv, oldVal, newVal) -> {
@@ -69,6 +64,16 @@ public class SearchResultsPane extends GridView<ExileToolsHit> {
 				applyDataFromLadder(newVal);
 			}
 		});
+	}
+
+	private List<ExileToolsHit> applyOnlineOnly(Boolean onlineOnly) {
+		boolean eitherWay = !onlineOnly;
+		List<ExileToolsHit> list = originalList.stream()
+				.filter(hit -> hit.isOnline().orElse(Boolean.FALSE) || eitherWay || hit == ExileToolsHit.EMPTY)
+				.collect(Collectors.toList());
+		searchLabelStatus.set(format("%d items found. Showing %d%s items.", 
+				originalList.size()-3, list.size()-3, onlineOnly ? " online" : ""));
+		return list;
 	}
 
 	private void applyDataFromLadder(Ladder ladder) {
@@ -86,9 +91,12 @@ public class SearchResultsPane extends GridView<ExileToolsHit> {
 		}
 		// add empty row
 		originalList.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
-		setItems(originalList);
+		
 		searchLabelStatus.set(format("%d items found. Showing %d items.", 
 				originalList.size()-3, originalList.size()-3));
+		
+		List<ExileToolsHit> list = applyOnlineOnly(onlineOnly.get());
+		setItems(FXCollections.observableList(list));
 	}
 
 }
