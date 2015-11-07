@@ -27,7 +27,7 @@ import javafx.scene.layout.HBox;
  * @author thirdy
  *
  */
-public class FourColorIntegerTextField extends HBox {
+public class FourColorIntegerTextField extends HBox implements Clearable {
 	IntegerTextField r = new IntegerTextField("R");
 	IntegerTextField g = new IntegerTextField("G");
 	IntegerTextField b = new IntegerTextField("B");
@@ -66,5 +66,13 @@ public class FourColorIntegerTextField extends HBox {
 	
 	public Optional<Integer> white() {
 		return w.getOptionalValue();
+	}
+
+	@Override
+	public void clear() {
+		r.clear();
+		g.clear();
+		b.clear();
+		w.clear();
 	}
 }

@@ -65,4 +65,10 @@ public class ToggleButtonToolBar<T extends LabelAndImageDisplayable> extends VBo
 		List<T> selected = selected();
 		return selected.isEmpty() ? Optional.empty() : Optional.of(selected);
 	}
+
+
+	public void unselectAll() {
+		buttons.stream()
+			.forEach(cb -> cb.setSelected(false));
+	}
 }

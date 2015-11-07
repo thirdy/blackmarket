@@ -88,7 +88,7 @@ import net.thirdy.blackmarket.util.SoundUtils;
 public class BlackmarketApplication extends Application {
 
 	public static final int ITEM_GRID_CELL_WIDTH = 380;
-	public static final int ITEM_GRID_CELL_HEIGHT = 250;
+	public static final int ITEM_GRID_CELL_HEIGHT = 270;
 
 //	private static final int WINDOW_HEIGHT = 738;
 //	private static final int WINDOW_WIDTH = 1166;

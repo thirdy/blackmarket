@@ -80,6 +80,7 @@ import net.thirdy.blackmarket.domain.DivinationCard;
 import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
 import net.thirdy.blackmarket.domain.Unique;
+import net.thirdy.blackmarket.fxcontrols.Clearable;
 import net.thirdy.blackmarket.fxcontrols.FourColorIntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.IntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
@@ -97,6 +98,8 @@ import net.thirdy.blackmarket.fxcontrols.autocomplete.BlackmarketTextField;
  */
 public class ControlPane extends BorderPane {
 	
+	private static final String DEFAULT_SEARCH_SIZE = "500";
+
 	private HBox top;
 	
 	private ComboBox<String> cmbxLeague;
@@ -116,6 +119,7 @@ public class ControlPane extends BorderPane {
 	private TextArea txtAreaJson = new TextArea();
 
 	private GridPane simpleSearchGridPane;
+	private Button btnReset;
 
 	private RangeDoubleTextField tfDPS = new RangeDoubleTextField();
 	private RangeDoubleTextField tfeDPS = new RangeDoubleTextField();
@@ -170,7 +174,7 @@ public class ControlPane extends BorderPane {
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		setId("controlPane");
 		btnAbout.setOnAction(e -> Dialogs.showAbout());
-		tfSize.setText("500");
+		tfSize.setText(DEFAULT_SEARCH_SIZE);
 		toggleAdvanceMode.setOnAction(e -> {
 			if(toggleAdvanceMode.isSelected()) {
 				txtAreaJson.setText(buildSimpleSearch());
@@ -291,7 +295,10 @@ public class ControlPane extends BorderPane {
 		});
 		btnSearch.setPrefWidth(500);
 		
-		HBox bottomPane = new HBox(toggleAdvanceMode, newSpacer(), btnSearch, newSpacer(), btnOnlineOnly, btnDurianMode, btnAbout);
+		btnReset = new Button("Reset");
+		btnReset.setOnAction(e -> resetForm());
+		
+		HBox bottomPane = new HBox(toggleAdvanceMode, btnDurianMode, newSpacer(), btnSearch, newSpacer(), btnOnlineOnly, btnAbout, btnReset);
 		
 		GridPane.setHalignment(bottomPane, HPos.CENTER);
 		simpleSearchGridPane.setAlignment(Pos.CENTER);
@@ -308,7 +315,7 @@ public class ControlPane extends BorderPane {
 		setCenter(simpleSearchScrollPane);
 		setBottom(bottomPane);
 	}
-	
+
 	public ToggleButton getBtnDurianMode() {
 		return btnDurianMode;
 	}
@@ -590,5 +597,47 @@ public class ControlPane extends BorderPane {
 	}
 	public void fireSearchEvent() {
 		btnSearch.fire();
+	}
+	
+	
+	private void resetForm() {
+		itemTypesPanes.unselectAll();
+		tfName.setText("");
+		toggleTbRarity.unselectAll();
+		tfSize.setText(DEFAULT_SEARCH_SIZE);
+		btn3Corrupt.setState(State.Or);
+		btn3Identified.setState(State.Or);
+		btn3Crafted.setState(State.Or);
+
+		List<Clearable> clearables = asList(
+				tfDPS,
+				tfeDPS,
+				tfpDPS,
+				tfAPS,
+				tfCritChance,
+				tfAttrStr,
+				tfAttrDex,
+				tfAttrInt,
+				tfAttrTotal,
+				tfLife,
+				tfColdRes,
+				tfFireRes,
+				tfLightningRes,
+				tfChaosRes,
+				tfTotalEleRes,
+				tfArmour,
+				tfEvasion,
+				tfEnergyShield,
+				tfBlock,
+				tfLvlReq,
+				tfStrReq,
+				tfDexReq,
+				tfIntReq,
+				tfQuality,
+				tfSockets,
+				tfLink,
+				tfSockColors,
+				tfLinks);
+		clearables.stream().forEach(c -> c.clear());
 	}
 }

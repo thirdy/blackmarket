@@ -174,13 +174,13 @@ public final class ModsMapping {
 		}
 	}
 	
-	public static void main(String[] args) {
-		List<ModMapping> mms = ModsMapping.getInstance().getModMappings();
+//	public static void main(String[] args) {
+//		List<ModMapping> mms = ModsMapping.getInstance().getModMappings();
 //		mms.forEach(mm -> {
 //			System.out.println(String.format("%s\t%s\t%s\t%s\t%s\t%s", 
 //					mm.itemType, mm.modType, mm.type, mm.mapping, mm.fullName, mm.key));
 //		});
-	}
+//	}
 	
 	public List<ModMapping> listByModType(ModType modType) {
 		return getModMappings()

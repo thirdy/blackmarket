@@ -22,15 +22,12 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import io.jexiletools.es.model.Currencies;
 import io.jexiletools.es.model.ItemType;
 import javafx.geometry.Pos;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
-import net.thirdy.blackmarket.fxcontrols.SmallIcon;
 import net.thirdy.blackmarket.util.ImageCache;
 
 /**
@@ -105,6 +102,11 @@ public class ItemTypePanes  {
 
 	public ItemTypePane getItemTypePane3() {
 		return itemTypePane3;
+	}
+
+	public void unselectAll() {
+		itemTypesChkbxs.stream()
+			.forEach(cb -> cb.setSelected(false));
 	}
 	
 }

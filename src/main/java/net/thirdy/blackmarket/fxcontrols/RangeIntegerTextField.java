@@ -27,7 +27,7 @@ import net.thirdy.blackmarket.domain.RangeOptional;
  * @author thirdy
  *
  */
-public class RangeIntegerTextField extends HBox {
+public class RangeIntegerTextField extends HBox implements Clearable {
 	IntegerTextField min = new IntegerTextField("Min");
 	IntegerTextField max = new IntegerTextField("Max");
 	public RangeIntegerTextField() {
@@ -43,5 +43,11 @@ public class RangeIntegerTextField extends HBox {
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	@Override
+	public void clear() {
+		min.setText("");
+		max.setText("");
 	}
 }

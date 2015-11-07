@@ -24,8 +24,6 @@ import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import net.thirdy.blackmarket.fxcontrols.TriStateButton.State;
 
 
 /**
@@ -58,6 +56,10 @@ public class TriStateButton extends Button {
 
 	public static enum State {
 		And, Or, Not;
+	}
+	
+	public void setState(State s) {
+		state.set(s);
 	}
 	
 }

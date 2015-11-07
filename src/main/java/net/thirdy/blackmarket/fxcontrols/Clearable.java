@@ -15,21 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package net.thirdy.blackmarket;
+package net.thirdy.blackmarket.fxcontrols;
 
-
-import javafx.application.Application;
-
-
-public class Main {
-	
-	// TODO, consider PoE font: https://www.pathofexile.com/forum/view-thread/52060
-	
-	public static final boolean DEVELOPMENT_MODE = false;
-	public static final boolean DISABLE_LADDER_FEATURE = false;
-
-	public static void main(String[] args) {
-        Application.launch(BlackmarketApplication.class, args);
-    }
-
+/**
+ * @author thirdy
+ *
+ */
+public interface Clearable {
+	void clear();
 }

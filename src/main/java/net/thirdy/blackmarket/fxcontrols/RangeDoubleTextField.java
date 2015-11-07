@@ -27,7 +27,7 @@ import net.thirdy.blackmarket.domain.RangeOptional;
  * @author thirdy
  *
  */
-public class RangeDoubleTextField extends HBox {
+public class RangeDoubleTextField extends HBox implements Clearable {
 	DoubleTextField min = new DoubleTextField("Min");
 	DoubleTextField max = new DoubleTextField("Max");
 	public RangeDoubleTextField() {
@@ -47,6 +47,11 @@ public class RangeDoubleTextField extends HBox {
 	}
 	public DoubleTextField getMax() {
 		return max;
+	}
+	@Override
+	public void clear() {
+		min.setText("");
+		max.setText("");
 	}
 	
 }
