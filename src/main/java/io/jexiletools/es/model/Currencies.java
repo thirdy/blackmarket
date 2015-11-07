@@ -3,7 +3,6 @@ package io.jexiletools.es.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,7 +11,7 @@ import net.thirdy.blackmarket.fxcontrols.LabelAndImageDisplayable;
 
 public enum Currencies implements LabelAndImageDisplayable {
 	
-	// TODO ask Pete if there is a need to dynamically grab CEV from http://exiletools.com/rates
+	// CEV rates from http://exiletools.com/rates
 	
 	chaos("1", "Chaos Orb", "/images/Currency/CurrencyRerollRare.png"),
 	none("0", "NONE", null),
@@ -20,7 +19,7 @@ public enum Currencies implements LabelAndImageDisplayable {
 	alt("0.062", "Orb of Alteration", "/images/Currency/CurrencyRerollMagic.png"),
 	alch("0.500", "Orb of Alchemy", "/images/Currency/CurrencyUpgradeToRare.png"),
 	ex("40.000", "Exalted Orb", "/images/Currency/CurrencyAddModToRare.png"),
-	unknown("0", "Unknown", null),
+	unknown("0", "Unknown", "/images/Currency/questionmark.png"),
 	cart("0.333", "Cartographers Chisel", "/images/Currency/CurrencyMapQuality.png"),
 	jew("0.125", "Jewellers Orb", "/images/Currency/CurrencyRerollSocketNumbers.png"),
 	regal("2.000", "Regal Orb", "/images/Currency/CurrencyUpgradeMagicToRare.png"),

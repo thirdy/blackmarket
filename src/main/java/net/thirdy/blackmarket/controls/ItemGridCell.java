@@ -302,6 +302,8 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 	}
 
 	private void setupPrice(ExileToolsHit item) {
+		priceLbl.setText("");
+		priceLbl.setGraphic(null);
 		Optional<Price> price = item.getShop().getPrice();
 		price.ifPresent(p -> {
 			String amt = new DecimalFormat("#.##").format(p.getAmount());

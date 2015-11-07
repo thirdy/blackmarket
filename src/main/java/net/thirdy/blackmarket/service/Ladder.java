@@ -24,28 +24,18 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import io.jexiletools.es.model.League;
 import io.jexiletools.es.model.json.ExileToolsHit;
+import net.thirdy.blackmarket.Main;
 
 /**
  * @author thirdy
  *
  */
 public class Ladder {
-
-	// TODO: auto map from http://exiletools.com/status
-	//    {darkshrine|Darkshrine (IC003)|http://www.pathofexile.com/forum/view-forum/597/page},
-	//    {darkshrinehc|Darkshrine HC (IC004)|http://www.pathofexile.com/forum/view-forum/598/page},
-	//    {hardcore|Hardcore|http://www.pathofexile.com/forum/view-forum/305/page},
-	//    {standard|Standard|http://www.pathofexile.com/forum/view-forum/306/page}
-	private static final ImmutableMap<String, String> LADDER_INDEXER_LEAGUE_MAPPING = ImmutableMap.of(
-			"darkshrine", "Darkshrine (IC003)",
-			"darkshrinehc", "Darkshrine HC (IC004)",
-			"hardcore", "Hardcore",
-			"standard", "Standard");
 	
 	/**
 	 * Map of Leagues
@@ -65,7 +55,7 @@ public class Ladder {
 	}
 	
 	private String ladderLeagueToSearchLeague(String league) {
-		return LADDER_INDEXER_LEAGUE_MAPPING.get(league);
+		return League.LADDER_INDEXER_LEAGUE_MAPPING.get(league);
 	}
 	
 	private LadderHit toLadderHit(Map.Entry<String, JsonElement> entry) {
@@ -86,15 +76,21 @@ public class Ladder {
 	}
 	
 	public void addPlayerLadderData(ExileToolsHit exileToolsHit) {
-		String account = exileToolsHit.getShop().getSellerAccount();
-		String league = exileToolsHit.getAttributes().getLeague();
-		LadderHit ladderHit = ladderMapAllLeagues.get(league).get(account);
-		if (ladderHit != null) {
-			String sellerIGN = StringUtils.trimToNull(exileToolsHit.getShop().getSellerIGN());
-			if (sellerIGN == null) {
-				exileToolsHit.getShop().setSellerIGN(ladderHit.charName());
+		if (!Main.DISABLE_LADDER_FEATURE) {
+			String account = exileToolsHit.getShop().getSellerAccount();
+			String league = exileToolsHit.getAttributes().getLeague();
+			Map<String, LadderHit> leagueMap = ladderMapAllLeagues.get(league);
+			Optional<LadderHit> ladderHit = leagueMap.entrySet().stream()
+					.map(es -> es.getValue())
+					.filter(lh -> lh.accountName().equalsIgnoreCase(account))
+					.findFirst();
+			if (ladderHit.isPresent()) {
+				String sellerIGN = StringUtils.trimToNull(exileToolsHit.getShop().getSellerIGN());
+				if (sellerIGN == null) {
+					exileToolsHit.getShop().setSellerIGN(ladderHit.get().charName());
+				}
+				exileToolsHit.setLadderHit(ladderHit);
 			}
-			exileToolsHit.setLadderHit(Optional.of(ladderHit));
 		}
 	}
 	

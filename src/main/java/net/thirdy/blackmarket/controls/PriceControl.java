@@ -104,6 +104,7 @@ public class PriceControl extends VBox {
 		});
 		currenCmbx.getSelectionModel().selectFirst();
 		btnBuyoutOnly.setSelected(true);
+		anyPriceChckbx.setSelected(true);
 		btnBuyoutOnly.setPrefWidth(80);
 		currenCmbx.setPrefWidth(180);
 		priceMinMax.setPrefWidth(100);
@@ -131,5 +132,8 @@ public class PriceControl extends VBox {
 	}
 	public boolean anyPrice() {
 		return anyPriceChckbx.isSelected();
+	}
+	public boolean isBuyoutOnly() {
+		return btnBuyoutOnly.isSelected();
 	}
 }

@@ -23,7 +23,10 @@ import javafx.application.Application;
 
 public class Main {
 	
+	// TODO, consider PoE font: https://www.pathofexile.com/forum/view-thread/52060
+	
 	public static final boolean DEVELOPMENT_MODE = true;
+	public static final boolean DISABLE_LADDER_FEATURE = false;
 
 	public static void main(String[] args) {
         Application.launch(BlackmarketApplication.class, args);

@@ -20,8 +20,10 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import net.thirdy.blackmarket.Main;
 import net.thirdy.blackmarket.controls.Dialogs;
 import net.thirdy.blackmarket.ex.BlackmarketException;
 import net.thirdy.blackmarket.util.UrlReaderUtil;
@@ -55,7 +57,7 @@ public class ExileToolsLadderService extends Service<Void> {
             	try {
             		sleeping.set(false);
             		updateMessage("Downloading player ladder data...");
-            		List<String> leagues = retriveActiveLeagues();
+            		List<String> leagues = Main.DISABLE_LADDER_FEATURE ? Collections.emptyList() : retriveActiveLeagues();
             		Ladder ladder = new Ladder();
             		for (String league : leagues) {
             		  updateMessage("Downloading player ladder data for " + league);
@@ -109,4 +111,5 @@ public class ExileToolsLadderService extends Service<Void> {
 		JsonObject jsonContainer = new JsonParser().parse(result).getAsJsonObject();
 		return jsonContainer;
 	}
+
 }

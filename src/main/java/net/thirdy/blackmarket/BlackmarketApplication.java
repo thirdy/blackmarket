@@ -18,6 +18,7 @@
 package net.thirdy.blackmarket;
 
 import java.awt.Toolkit;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -34,8 +35,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -70,6 +69,7 @@ import javafx.util.Callback;
 import net.thirdy.blackmarket.controls.ControlPane;
 import net.thirdy.blackmarket.controls.Dialogs;
 import net.thirdy.blackmarket.controls.ItemGridCell;
+import net.thirdy.blackmarket.controls.SearchResultsPane;
 import net.thirdy.blackmarket.fxcontrols.SlidingPane;
 import net.thirdy.blackmarket.fxcontrols.WindowButtons;
 import net.thirdy.blackmarket.fxcontrols.WindowResizeButton;
@@ -126,8 +126,8 @@ public class BlackmarketApplication extends Application {
 	private final ExileToolsService searchService = new ExileToolsService();
 	private final ExileToolsLastIndexUpdateService lastIndexUpdateService = new ExileToolsLastIndexUpdateService();
 
-	private GridView<ExileToolsHit> searchResultsPane;
-
+	private SearchResultsPane searchResultsPane;
+	
 	private Label versionText;
 	private Label indexerLastUpdateText;
 
@@ -216,21 +216,21 @@ public class BlackmarketApplication extends Application {
 
 		controlPane.installCollapseButton(collapseButton);
 		controlPane.getBtnDurianMode().setOnAction(e -> toggleDurianService());
-		controlPane.getBtnDurianMode().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
-		controlPane.getBtnSearch().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
+		controlPane.getBtnOnlineOnly().disableProperty().bind(exileToolsLadderService.sleepingProperty().not());
 		controlPane.getLblLadderServiceStatus().textProperty().bind(exileToolsLadderService.messageProperty());
 		controlPane.getLblLadderServiceStatus().tooltipProperty().get().textProperty()
 			.bind(Bindings.createStringBinding(() -> {
 				Ladder ladder = exileToolsLadderService.resultProperty().get();
 				return ladder != null ? ladder.leagueSizes() : LangContants.STRING_EMPTY;
 			}, exileToolsLadderService.resultProperty()));
+		controlPane.getProgIndctrLadderService().visibleProperty().bind(exileToolsLadderService.sleepingProperty().not());
 		searchPane.setId("searchPane");
 
 		AnchorPane centerPane = new AnchorPane();
 
 		// DoubleProperty wProp = DoubleProperty.
 
-		searchResultsPane = new GridView<>();
+		searchResultsPane = new SearchResultsPane();
 		searchResultsPane.setHorizontalCellSpacing(9);
 		searchResultsPane.setVerticalCellSpacing(5);
 		// searchResultsPane.setB
@@ -264,13 +264,15 @@ public class BlackmarketApplication extends Application {
 		progressIndicatorLabel.visibleProperty().bind(searchService.runningProperty());
 		progressIndicator.visibleProperty().bind(searchService.runningProperty());
 
+		searchResultsPane.onlineOnlyProperty().bind(controlPane.getBtnOnlineOnly().selectedProperty());
+		searchResultsPane.ladderProperty().bind(exileToolsLadderService.resultProperty());
+		controlPane.getSearchHitLabel().textProperty().bind(searchResultsPane.searchLabelStatusProperty());
+		
 		searchService.setOnSucceeded(e -> searchSucceeded());
-
 		searchService.setOnFailed(e -> Dialogs.showExceptionDialog(searchService.getException()));
 
 		StackPane centerStackPane = new StackPane(centerPane, veilOfTheNight, progressIndicator,
 				progressIndicatorLabel);
-
 		this.root.setCenter(centerStackPane);
 
 		// add window resize button so its on top
@@ -283,65 +285,6 @@ public class BlackmarketApplication extends Application {
 		durianTimer.setOnSucceeded(e -> durianTimerSucceeded());
 		lastIndexUpdateService.restart();
 		exileToolsLadderService.restart();
-	}
-
-	ScheduledService<Void> durianTimer = new ScheduledService<Void>() {
-		@Override
-		protected Task<Void> createTask() {
-			return new Task<Void>() {
-				@Override
-				protected Void call() throws Exception {
-					int secs = 60 * 10;
-//					int secs = 15;
-					for (int i = 0; i < secs; i++) {
-						updateMessage("Durian: " + (secs - i) + " sec");
-						Thread.sleep(1000);
-					}
-					return null;
-				}
-			};
-		}
-	};
-	private void toggleDurianService() {
-		ToggleButton btnDurianMode = controlPane.getBtnDurianMode();
-		if (btnDurianMode.isSelected()) {
-			btnDurianMode.textProperty().bind(durianTimer.messageProperty());
-			durianTimer.restart();
-		} else {
-			btnDurianMode.textProperty().unbind();
-			btnDurianMode.textProperty().set("Durian Notifier");
-			durianTimer.cancel();
-		}
-	}
-	private void durianTimerSucceeded() {
-		if (!searchService.isRunning()) {
-			controlPane.fireSearchEvent();
-			durianTimer.restart();
-		}
-	}
-
-	private void searchSucceeded() {
-		ExileToolsSearchResult result = searchService.getValue();
-		result.getExileToolHits().stream().forEach(e -> 
-			exileToolsLadderService.resultProperty().get().addPlayerLadderData(e));
-		ObservableList<ExileToolsHit> list = FXCollections.observableList(result.getExileToolHits());
-		// add empty row
-		list.addAll(ExileToolsHit.EMPTY, ExileToolsHit.EMPTY, ExileToolsHit.EMPTY);
-		searchResultsPane.setItems(list);
-		// Remove 3 empty hits
-		int hitsToShow = result.getExileToolHits().size() - 3;
-		controlPane.setSearchHitCount(result.getSearchResult().getTotal(),
-				hitsToShow);
-		Platform.runLater(() -> searchPane.toggleSlide());
-		
-		if (controlPane.getBtnDurianMode().isSelected() && hitsToShow > 0) {
-			try {
-				SoundUtils.tone(2000,100);
-			} catch (LineUnavailableException e) {
-				e.printStackTrace();
-				Toolkit.getDefaultToolkit().beep();
-			}
-		}
 	}
 
 	private void setupToolbar(final Stage stage) {
@@ -420,7 +363,7 @@ public class BlackmarketApplication extends Application {
 		});
 	}
 
-	private void searchHandler(String json, String league, boolean onlineOnly) {
+	private void searchHandler(String json) {
 		logger.debug("Search: " + json);
 		if (json.isEmpty()) {
 			return;
@@ -443,5 +386,55 @@ public class BlackmarketApplication extends Application {
 		} 
 	}
 
+	ScheduledService<Void> durianTimer = new ScheduledService<Void>() {
+		@Override
+		protected Task<Void> createTask() {
+			return new Task<Void>() {
+				@Override
+				protected Void call() throws Exception {
+					int secs = 60 * 10;
+//					int secs = 15;
+					for (int i = 0; i < secs; i++) {
+						updateMessage("Durian: " + (secs - i) + " sec");
+						Thread.sleep(1000);
+					}
+					return null;
+				}
+			};
+		}
+	};
+	private void toggleDurianService() {
+		ToggleButton btnDurianMode = controlPane.getBtnDurianMode();
+		if (btnDurianMode.isSelected()) {
+			btnDurianMode.textProperty().bind(durianTimer.messageProperty());
+			durianTimer.restart();
+		} else {
+			btnDurianMode.textProperty().unbind();
+			btnDurianMode.textProperty().set("Durian Notifier");
+			durianTimer.cancel();
+		}
+	}
+	private void durianTimerSucceeded() {
+		if (!searchService.isRunning()) {
+			controlPane.fireSearchEvent();
+			durianTimer.restart();
+		}
+	}
+
+	private void searchSucceeded() {
+		ExileToolsSearchResult result = searchService.getValue();
+		List<ExileToolsHit> exileToolHits = result.getExileToolHits();
+		searchResultsPane.setSearchResultItems(exileToolHits);
+		
+		Platform.runLater(() -> searchPane.toggleSlide());
+		if (controlPane.getBtnDurianMode().isSelected() && exileToolHits.size() > 0) {
+			try {
+				SoundUtils.tone(2000,100);
+			} catch (LineUnavailableException e) {
+				e.printStackTrace();
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
+	}
 
 }

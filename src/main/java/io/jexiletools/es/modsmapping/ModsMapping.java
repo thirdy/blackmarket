@@ -19,9 +19,11 @@ package io.jexiletools.es.modsmapping;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -104,6 +106,13 @@ public final class ModsMapping {
 	
 	public enum ModType {
 		PSEUDO, IMPLICIT, EXPLICIT, CRAFTED, COSMETIC;
+
+		public static Optional<ModType> fromModType(String modType) {
+			return Arrays.asList(values())
+					.stream()
+					.filter(e -> e.toString().equalsIgnoreCase(modType))
+					.findFirst();
+		}
 	}
 	
 	public static class ModMapping {

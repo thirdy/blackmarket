@@ -22,5 +22,5 @@ package net.thirdy.blackmarket.domain;
  *
  */
 public interface SearchEventHandler {
-	void search(String json, String league, boolean onlineOnly);
+	void search(String json);
 }

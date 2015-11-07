@@ -31,18 +31,22 @@ public class LadderHit {
 	private String key;
 	private JsonElement jsonElement;
 	private String charName;
-//	private String accountName;
+	private String accountName;
 
 	public LadderHit(String key, JsonElement jsonElement) {
 		this.key = key;
 		String[] jsonKey = key.split("\\.");
-//		this.accountName = jsonKey[0];
+		this.accountName = jsonKey[0];
 		this.charName = jsonKey[1];
 		this.jsonElement = jsonElement;
 	}
 	
 	public String charName() {
 		return charName;
+	}
+	
+	public String accountName() {
+		return accountName;
 	}
 	
 	public JsonElement jsonElement() {

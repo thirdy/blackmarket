@@ -36,8 +36,8 @@ public class TriStateButton extends Button {
 	
 	private static final Map<State, State> TRANSITION_TABLE = ImmutableMap.of(
 			State.And, State.Or,
-			State.Or,  State.No,
-			State.No,  State.And);
+			State.Or,  State.Not,
+			State.Not,  State.And);
 	
 	private ObjectProperty<State> state = new SimpleObjectProperty<>();
 	public ObjectProperty<State> stateProperty() {return state;}
@@ -57,7 +57,7 @@ public class TriStateButton extends Button {
 	}
 
 	public static enum State {
-		And, Or, No;
+		And, Or, Not;
 	}
 	
 }

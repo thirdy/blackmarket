@@ -20,6 +20,8 @@ package io.jexiletools.es.model;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * @author thirdy
  *
@@ -27,6 +29,17 @@ import java.util.List;
 public class League {
 
 	public static List<String> names() {
-		return Arrays.asList("Flashback Event (IC001)", "Flashback Event HC (IC002)", "Standard", "Hardcore");
+		return Arrays.asList("Darkshrine (IC003)", "Darkshrine HC (IC004)", "Standard", "Hardcore");
 	}
+
+	// TODO: auto map from http://exiletools.com/status
+	//    {darkshrine|Darkshrine (IC003)|http://www.pathofexile.com/forum/view-forum/597/page},
+	//    {darkshrinehc|Darkshrine HC (IC004)|http://www.pathofexile.com/forum/view-forum/598/page},
+	//    {hardcore|Hardcore|http://www.pathofexile.com/forum/view-forum/305/page},
+	//    {standard|Standard|http://www.pathofexile.com/forum/view-forum/306/page}
+	public static final ImmutableMap<String, String> LADDER_INDEXER_LEAGUE_MAPPING = ImmutableMap.of(
+			"darkshrine", "Darkshrine (IC003)",
+			"darkshrinehc", "Darkshrine HC (IC004)",
+			"hardcore", "Hardcore",
+			"standard", "Standard");
 }

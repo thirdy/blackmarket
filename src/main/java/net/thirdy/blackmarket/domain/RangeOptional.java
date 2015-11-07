@@ -64,6 +64,6 @@ public class RangeOptional {
 		
 		return query;
 	}
-	
-	
+
+	public static final RangeOptional MIN_ZERO = new RangeOptional(Optional.of(0.0), Optional.empty());
 }

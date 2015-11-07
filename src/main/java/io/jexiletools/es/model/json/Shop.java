@@ -119,6 +119,8 @@ public class Shop {
 				&& getAmount() != 0
 				&& StringUtils.isNotBlank(getCurrency())) {
 			Currencies currencies = Currencies.fromDisplayName(getCurrency());
+			if (currencies == Currencies.unknown) {
+			}
 			return Optional.of(new Price(currencies, getAmount()));
 		}
 		return Optional.empty();

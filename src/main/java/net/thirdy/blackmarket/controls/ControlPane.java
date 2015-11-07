@@ -24,16 +24,14 @@ import static java.util.Optional.ofNullable;
 import static javafx.collections.FXCollections.observableList;
 import static org.elasticsearch.common.lang3.StringUtils.trimToEmpty;
 import static org.elasticsearch.common.lang3.StringUtils.trimToNull;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
-import static org.elasticsearch.index.query.QueryBuilders.filteredQuery;
 import static org.elasticsearch.index.query.FilterBuilders.andFilter;
+import static org.elasticsearch.index.query.FilterBuilders.notFilter;
 import static org.elasticsearch.index.query.FilterBuilders.orFilter;
 import static org.elasticsearch.index.query.FilterBuilders.rangeFilter;
 import static org.elasticsearch.index.query.FilterBuilders.termFilter;
-import static org.elasticsearch.index.query.FilterBuilders.boolFilter;
-import static org.elasticsearch.index.query.FilterBuilders.existsFilter;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.filteredQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,15 +40,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.lucene.search.FilteredQuery;
-import org.elasticsearch.index.query.BoolFilterBuilder;
+import org.elasticsearch.common.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.OrFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryFilterBuilder;
 import org.elasticsearch.index.query.TermFilterBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -66,6 +60,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -86,6 +81,7 @@ import net.thirdy.blackmarket.domain.RangeOptional;
 import net.thirdy.blackmarket.domain.SearchEventHandler;
 import net.thirdy.blackmarket.domain.Unique;
 import net.thirdy.blackmarket.fxcontrols.FourColorIntegerTextField;
+import net.thirdy.blackmarket.fxcontrols.IntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeDoubleTextField;
 import net.thirdy.blackmarket.fxcontrols.RangeIntegerTextField;
 import net.thirdy.blackmarket.fxcontrols.SmallIcon;
@@ -113,6 +109,7 @@ public class ControlPane extends BorderPane {
 	
 	private Label lblHitCount = new Label();
 	private Label lblLadderServiceStatus = new Label();
+	private ProgressIndicator progIndctrLadderService = new ProgressIndicator(-1.0f);
 	private Button btnAbout = new Button("About");
 	private ToggleButton toggleAdvanceMode = new ToggleButton("Advance Mode");
 	
@@ -132,6 +129,7 @@ public class ControlPane extends BorderPane {
 	private RangeIntegerTextField tfAttrDex = new RangeIntegerTextField();
 	private RangeIntegerTextField tfAttrInt = new RangeIntegerTextField();
 	private RangeIntegerTextField tfAttrTotal = new RangeIntegerTextField();
+	private IntegerTextField tfSize = new IntegerTextField("");
 	
 	private RangeIntegerTextField tfLife = new RangeIntegerTextField();
 	private RangeIntegerTextField tfColdRes = new RangeIntegerTextField();
@@ -160,7 +158,7 @@ public class ControlPane extends BorderPane {
 	
 	private ToggleButton btnSortByShopUpdate = new ToggleButton("Sort by Last Shop Updated");
 	private ToggleButton btnVerified = new ToggleButton("Verified");
-	private ToggleButton btnOnlineOnly = new ToggleButton("Online Only");
+	private ToggleButton btnOnlineOnly = new ToggleButton("Ladder Online Only");
 	
 	private PriceControl priceControl = new PriceControl();
 
@@ -172,7 +170,7 @@ public class ControlPane extends BorderPane {
 	public ControlPane(SearchEventHandler searchEventHandler) {
 		setId("controlPane");
 		btnAbout.setOnAction(e -> Dialogs.showAbout());
-		btnOnlineOnly.setSelected(true);
+		tfSize.setText("500");
 		toggleAdvanceMode.setOnAction(e -> {
 			if(toggleAdvanceMode.isSelected()) {
 				txtAreaJson.setText(buildSimpleSearch());
@@ -181,9 +179,10 @@ public class ControlPane extends BorderPane {
 			else setCenter(simpleSearchScrollPane);
 		});
 		lblLadderServiceStatus.setTooltip(new Tooltip());
+		progIndctrLadderService.setMaxSize(15, 15);
 		
 		top = new HBox(5);
-		top.getChildren().addAll(lblHitCount, newSpacer(), lblLadderServiceStatus);
+		top.getChildren().addAll(lblHitCount, newSpacer(), progIndctrLadderService, lblLadderServiceStatus);
 		setTop(top);
 		
 	    List<String> namesList = new ArrayList<>();
@@ -263,7 +262,8 @@ public class ControlPane extends BorderPane {
 	    		"Energy Shield:"   , tfEnergyShield,
 	    		"Block:"  , tfBlock,
 	    		"# Sockets:" , tfSockets,
-	    		"# Links:" , tfLink
+	    		"# Links:" , tfLink,
+	    		"Size: ", tfSize
 	    		), 2, 0);
 		
 		// Column 4
@@ -287,9 +287,7 @@ public class ControlPane extends BorderPane {
 			String json = toggleAdvanceMode.isSelected() ?
 					buildAdvanceSearch()
 					: buildSimpleSearch();
-			String league = cmbxLeague.getSelectionModel().getSelectedItem();
-			boolean onlineOnly = btnOnlineOnly.isSelected();
-			searchEventHandler.search(json, league, onlineOnly);
+			searchEventHandler.search(json);
 		});
 		btnSearch.setPrefWidth(500);
 		
@@ -315,12 +313,24 @@ public class ControlPane extends BorderPane {
 		return btnDurianMode;
 	}
 	
+	public ToggleButton getBtnOnlineOnly() {
+		return btnOnlineOnly;
+	}
+	
 	public Button getBtnSearch() {
 		return btnSearch;
 	}
 	
 	public Label getLblLadderServiceStatus() {
 		return lblLadderServiceStatus;
+	}
+	
+	public ProgressIndicator getProgIndctrLadderService() {
+		return progIndctrLadderService;
+	}
+	
+	public Label getSearchHitLabel() {
+		return lblHitCount;
 	}
 
 	private Region newSpacer() {
@@ -390,10 +400,12 @@ public class ControlPane extends BorderPane {
 		tfSockColors.val().ifPresent(s -> filters.add(termFilter("sockets.allSocketsSorted", s)));
 		
 		// Col 5
-		if (priceControl.anyPrice()) {
-			filters.add(FilterBuilders.existsFilter("shop.chaosEquiv"));
-		} else {
-			priceControl.val().ifPresent(price -> filters.add(price.rangeFilter("shop.chaosEquiv")));
+		if (priceControl.isBuyoutOnly()) {
+			if (priceControl.anyPrice()) {
+				filters.add(notFilter(termFilter("shop.currency", "NONE")));
+			} else {
+				priceControl.val().ifPresent(price -> filters.add(price.rangeFilter("shop.chaosEquiv")));
+			}
 		}
 		
 		// Mods
@@ -413,6 +425,7 @@ public class ControlPane extends BorderPane {
 		}
 		
 		searchSourceBuilder.query(filteredQuery(query, filter));
+		searchSourceBuilder.size(tfSize.getOptionalValue().orElse(500));
 		
 		searchSourceBuilder.sort("shop.chaosEquiv", SortOrder.ASC);
 		if(btnSortByShopUpdate.isSelected())
@@ -429,7 +442,6 @@ public class ControlPane extends BorderPane {
 //        sortJson.put("age", sortDateJson);
 //        sortDateJson.put("order", "asc");
 		
-		searchSourceBuilder.size(999);
 		json = searchSourceBuilder.toString();
 
 		return json;
@@ -454,18 +466,24 @@ public class ControlPane extends BorderPane {
 			Optional<RangeOptional> higherRange = mod.higherRange.get();
 			
 			if (selectedMod.getType() == Type.DOUBLE_MIN_MAX) {
-				if (lowerRange.isPresent()) {
-					queryBuilder = lowerRange.get().rangeQuery(selectedMod.getKey() + ".min");
-				}			
+				BoolQueryBuilder minMaxQueryBuilder = boolQuery();
+				
+				minMaxQueryBuilder.must(
+						lowerRange.orElse(RangeOptional.MIN_ZERO).rangeQuery(selectedMod.getKey())
+				);
+
 				if (higherRange.isPresent()) {
-					queryBuilder = higherRange.get().rangeQuery(selectedMod.getKey() + ".max");
-				}			
+					String modifierKey = StringUtils.removeEnd(selectedMod.getKey(), ".min") + ".max";
+					minMaxQueryBuilder.must(
+							higherRange.get().rangeQuery(modifierKey)
+					);
+				}
+				
+				queryBuilder = minMaxQueryBuilder;
 			}
 			
 			if (selectedMod.getType() == Type.DOUBLE) {
-				if (lowerRange.isPresent()) {
-					queryBuilder = lowerRange.get().rangeQuery(selectedMod.getKey());
-				}			
+				queryBuilder = lowerRange.orElse(RangeOptional.MIN_ZERO).rangeQuery(selectedMod.getKey());
 			}
 			
 			if (selectedMod.getType() == Type.BOOLEAN) {
@@ -479,7 +497,7 @@ public class ControlPane extends BorderPane {
 			case Or:
 				modQuery.should(queryBuilder);
 				break;
-			case No:
+			case Not:
 				modQuery.mustNot(queryBuilder);
 				break;
 			}
@@ -572,8 +590,5 @@ public class ControlPane extends BorderPane {
 	}
 	public void fireSearchEvent() {
 		btnSearch.fire();
-	}
-	public void setSearchHitCount(int count, int show) {
-		lblHitCount.setText(String.format("%d items found. Showing %d items.", count, show));
 	}
 }

@@ -82,10 +82,12 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		setupModMappingTable();
 		setupFilterTextField();
 		tfMinShouldMatch = new DoubleTextField("Minimum number of OR modifiers to match");
+		tfMinShouldMatch.setMinWidth(350);
 		
 		Button add = addButton();
 		add.setPrefWidth(150);
 		HBox hBox = new HBox(5, new Label("Filter: "), filterField, add);
+		hBox.setAlignment(Pos.CENTER);
 		
 		VBox.setVgrow(modMappingTable, Priority.ALWAYS);
 		VBox left = new VBox(10, hBox, modMappingTable);
@@ -93,7 +95,9 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		Label modifiersLbl = new Label("Modifiers");
 		modifiersLbl.setFont(Font.font("Verdana", FontWeight.MEDIUM, 14));
 		modifiersLbl.setPadding(new Insets(4));
-		VBox right = new VBox(3, new StackPane(modifiersLbl), new HBox(3, new Label("MinOrMatch:"), tfMinShouldMatch), modsListView);
+		HBox minShouldMatchHBox = new HBox(3, new Label("Minimum OR Matches:"), tfMinShouldMatch);
+		minShouldMatchHBox.setAlignment(Pos.CENTER);
+		VBox right = new VBox(3, new StackPane(modifiersLbl), minShouldMatchHBox, modsListView);
 		
 	    setupGridPaneColumns();
 		
@@ -155,19 +159,15 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 				if (newValue == null || newValue.isEmpty()) {
 					return true;
 				}
-				String lowerCaseFilter = newValue.toLowerCase();
-				String[] toks = lowerCaseFilter.split("\\s");
 				
+				String lowerCaseFilter = newValue.toLowerCase();
 				String key = modmapping.getKey().toLowerCase();
-				for (String token : toks) {
-					if(key.contains(token)) {
-						return true;
-					}
-				}
-				return false; // Does not match.
+				
+				return key.contains(lowerCaseFilter);
 			});
 		});
 	}
+
 
 	@Override
 	public void accept(List<ItemType> itemTypes) {
@@ -238,9 +238,10 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 				
 				// Lower Range
 				boolean showLowerRange = modType == Type.DOUBLE || modType == Type.DOUBLE_MIN_MAX;
-				lowerRangeDoubleTf.setVisible(showLowerRange);
 				item.lowerRange.unbind();
+				container.getChildren().remove(lowerRangeDoubleTf);
 				if (showLowerRange) {
+					container.getChildren().add(2, lowerRangeDoubleTf);
 					item.lowerRange.bind(Bindings.createObjectBinding(() -> {
 						return lowerRangeDoubleTf.val();
 					}, lowerRangeDoubleTf.getMin().textProperty(), lowerRangeDoubleTf.getMax().textProperty()));
@@ -248,8 +249,11 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 				
 				// Higher Range
 				boolean showHigherRange = modType == Type.DOUBLE_MIN_MAX;
+				higherRangeDoubleTf.setVisible(showHigherRange);
 				item.higherRange.unbind();
+				container.getChildren().remove(higherRangeDoubleTf);
 				if (showHigherRange) {
+					container.getChildren().add(3, higherRangeDoubleTf);
 					item.higherRange.bind(Bindings.createObjectBinding(() -> {
 						return higherRangeDoubleTf.val();
 					}, higherRangeDoubleTf.getMin().textProperty(), higherRangeDoubleTf.getMax().textProperty()));

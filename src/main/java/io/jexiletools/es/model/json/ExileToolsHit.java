@@ -18,16 +18,21 @@ import io.jexiletools.es.model.Price;
 import net.thirdy.blackmarket.service.LadderHit;
 
 public class ExileToolsHit {
-	public static final ExileToolsHit EMPTY = new ExileToolsHit();
+	public static final ExileToolsHit EMPTY = new ExileToolsHit(true);
+	private boolean blank;
 	
 	private JsonObject hitJsonObject;
 	
 	public ExileToolsHit() { }
 	
+	public ExileToolsHit(boolean blank) {
+		this.blank = blank;
+	}
+	
 	// Ladder Data
 	private Optional<LadderHit> ladderHit = Optional.empty();
 	public Optional<Boolean> isOnline() {
-		return ladderHit.map(e -> e.online());
+		return ladderHit.map(e -> e.online() || blank);
 	}
 	public Optional<Date> lastOnline() {
 		return ladderHit.map(e -> e.lastOnline());
