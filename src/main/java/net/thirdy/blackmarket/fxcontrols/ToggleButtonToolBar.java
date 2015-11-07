@@ -53,16 +53,11 @@ public class ToggleButtonToolBar<T extends LabelAndImageDisplayable> extends VBo
         this.getChildren().addAll(buttons);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<T> selected() {
-		return (List<T>) buttons.stream()
-				.filter(b -> b.isSelected())
-				.map(b -> b.getUserData())
-				.collect(Collectors.toList());
-	}
-	
 	public Optional<List<T>> val() {
-		List<T> selected = selected();
+		List<T> selected = buttons.stream()
+							.filter(b -> b.isSelected())
+							.map(b -> (T) b.getUserData())
+							.collect(Collectors.toList());
 		return selected.isEmpty() ? Optional.empty() : Optional.of(selected);
 	}
 
