@@ -65,16 +65,16 @@ public final class ModsMapping {
 		modMappings.stream().filter(mm -> mm.type == Type.DOUBLE_MIN).forEach(mm -> mm.type = Type.DOUBLE_MIN_MAX);
 		
 		// also add pseudo mods
-		modMappings.add(new ModMapping("modsPseudo.eleResistSumChaos", "modsPseudo.eleResistSumChaos", "+#% to Lightning Chaos", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.eleResistSumCold", "modsPseudo.eleResistSumCold", "+#% to Cold Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.eleResistSumFire", "modsPseudo.eleResistSumFire", "+#% to Fire Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.eleResistSumLightning", "modsPseudo.eleResistSumLightning", "+#% to Lightning Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.eleResistTotal", "modsPseudo.eleResistTotal", "+#% total Elemental Resistance", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.flatAttributesTotal", "modsPseudo.flatAttributesTotal", "+# to all Attributes", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.flatSumDex", "modsPseudo.flatSumDex", "+# to Dexterity", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.flatSumInt", "modsPseudo.flatSumInt", "+# to Intelligence", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.flatSumStr", "modsPseudo.flatSumStr", "+# to Strength", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
-		modMappings.add(new ModMapping("modsPseudo.maxLife", "modsPseudo.maxLife", "+# to Maximum Life", Type.DOUBLE, ModType.PSEUDO, ItemType.Unknown));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumChaos", "modsPseudo.eleResistSumChaos", "+#% to Lightning Chaos", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumCold", "modsPseudo.eleResistSumCold", "+#% to Cold Resistance", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumFire", "modsPseudo.eleResistSumFire", "+#% to Fire Resistance", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.eleResistSumLightning", "modsPseudo.eleResistSumLightning", "+#% to Lightning Resistance", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.eleResistTotal", "modsPseudo.eleResistTotal", "+#% total Elemental Resistance", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.flatAttributesTotal", "modsPseudo.flatAttributesTotal", "+# to all Attributes", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.flatSumDex", "modsPseudo.flatSumDex", "+# to Dexterity", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.flatSumInt", "modsPseudo.flatSumInt", "+# to Intelligence", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.flatSumStr", "modsPseudo.flatSumStr", "+# to Strength", Type.DOUBLE, ModType.PSEUDO, null));
+		modMappings.add(new ModMapping("modsPseudo.maxLife", "modsPseudo.maxLife", "+# to Maximum Life", Type.DOUBLE, ModType.PSEUDO, null));
  
 	}
 	public List<ModMapping> getModMappings() {
@@ -113,7 +113,7 @@ public final class ModsMapping {
 		Type type;
 		
 		ModType modType;
-		ItemType itemType;
+		String itemType;
 		
 		public ModMapping() {
 		}
@@ -122,7 +122,7 @@ public final class ModsMapping {
 			String[] tokens = key.split("\\.");
 			if(tokens.length < 4 || tokens.length > 5) throw new IllegalStateException("Mod key is not 4 or 5 tokens. Indexer mapping has changed?");
 			
-			itemType = ItemType.fromItemType(tokens[1]);
+			itemType = tokens[1];
 			modType = ModType.valueOf(tokens[2].toUpperCase());
 			
 			if (tokens.length == 5) {
@@ -151,11 +151,11 @@ public final class ModsMapping {
 			return modType;
 		}
 
-		public ItemType getItemType() {
+		public String getItemType() {
 			return itemType;
 		}
 
-		public ModMapping(String key, String fullName, String mapping, Type type, ModType modType, ItemType itemType) {
+		public ModMapping(String key, String fullName, String mapping, Type type, ModType modType, String itemType) {
 			this.key = key;
 			this.fullName = fullName;
 			this.mapping = mapping;

@@ -35,9 +35,7 @@ import io.jexiletools.es.modsmapping.ModsMapping.ModMapping;
 import io.jexiletools.es.modsmapping.ModsMapping.ModType;
 import io.jexiletools.es.modsmapping.ModsMapping.Type;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -176,9 +174,12 @@ public class ModSelectionPane extends GridPane implements Consumer<List<ItemType
 		masterData.clear();
 		List<ModMapping> modMappings = ModsMapping.getInstance().getModMappings();
 		if (!itemTypes.isEmpty()) {
+			List<String> itemTypesRaw = itemTypes.stream()
+				.map(itemType -> itemType.itemType())
+				.collect(Collectors.toList());
 			modMappings = modMappings.stream()
-				.filter(mm -> itemTypes.contains(mm.getItemType()) 
-						|| mm.getModType() == ModType.PSEUDO)
+				.filter(mm -> mm.getModType() == ModType.PSEUDO
+					|| itemTypesRaw.contains(mm.getItemType()))
 				.collect(Collectors.toList());
 		}
 		
