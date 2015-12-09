@@ -70,10 +70,10 @@ public class ExileToolsSearchClient {
 		 SearchResult result;
 		try {
 			result = client.execute(search);
-//			logger.debug(result.getJsonString());
+			logger.debug(result.getJsonString());
 			return new ExileToolsSearchResult(result);
 		} catch (IOException e) {
-			throw new ExileToolsSearchException("Error while executing search for json: " + json, e);
+			throw new ExileToolsSearchException("Error while executing search: " + e.getMessage() , e);
 		}
 	}
 	

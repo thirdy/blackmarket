@@ -17,9 +17,12 @@
  */
 package net.thirdy.blackmarket.controls;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +52,10 @@ public class Dialogs {
 	
 	public static void showExceptionDialog(Throwable throwable) {
 		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("An error occured");
-		alert.setHeaderText("Sorry something wrong happened");
+		alert.setTitle("Sorry something wrong happened");
+		String header = throwable.getMessage();
+		header = isBlank(header) ? throwable.getClass().getSimpleName() : header; 
+		alert.setHeaderText(header);
 //		alert.setGraphic(new ImageView(ImageCache.getInstance().get("/images/gallio/gallio-"
 //				+ comics[RandomUtils.nextInt(0, 3)] +
 //				".png")));
@@ -63,9 +68,9 @@ public class Dialogs {
 		String exceptionText = sw.toString();
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("Error Message: ");
-		sb.append(System.lineSeparator());
-		sb.append(throwable.getMessage());
+//		sb.append("Error Message: ");
+//		sb.append(System.lineSeparator());
+//		sb.append(throwable.getMessage());
 		sb.append("The exception stacktrace was:");
 		sb.append(System.lineSeparator());
 		sb.append(exceptionText);

@@ -29,7 +29,10 @@ import com.google.common.collect.ImmutableMap;
 public class League {
 
 	public static List<String> names() {
-		return Arrays.asList("Darkshrine (IC003)", "Darkshrine HC (IC004)", "Standard", "Hardcore");
+		return Arrays.asList(
+				"Standard", "Hardcore",
+				"Darkshrine (IC003)", "Darkshrine HC (IC004)" 
+				);
 	}
 
 	// TODO: auto map from http://exiletools.com/status

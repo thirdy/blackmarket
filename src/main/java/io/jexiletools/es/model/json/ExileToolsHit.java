@@ -48,7 +48,7 @@ public class ExileToolsHit {
 	Attributes attributes;
 	Sockets sockets;
 	Requirements requirements;
-	Map<String, Map<String, Object>> properties;
+	Map<String, Object> properties;
 	Map<String, Object> mods;
 	Map<String, Object> modsTotal;
 	Map<String, String> modsPseudo;
@@ -146,11 +146,11 @@ public class ExileToolsHit {
 		this.requirements = requirements;
 	}
 
-	public Map<String, Map<String, Object>> getProperties() {
+	public Map<String, Object> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(Map<String, Map<String, Object>> properties) {
+	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
 
@@ -253,8 +253,8 @@ public class ExileToolsHit {
 		return getDoubleFromProperties("Chance to Block");
 	}
 	
-	public Optional<Double> getAPS() {
-		return getDoubleFromProperties("Attacks per Second");
+	public Optional<String> getAPS() {
+		return getStringFromProperties("Attacks per Second");
 	}
 	
 	public Optional<Double> getChaosDPS() {
@@ -265,12 +265,12 @@ public class ExileToolsHit {
 		return getRangeFromProperties("Chaos Damage");
 	}
 
-	public Optional<Double> getQuality() {
-		return getDoubleFromProperties("Quality");
+	public Optional<String> getQuality() {
+		return getQualityFromProperties();
 	}
 	
-	public Optional<Double> getCriticalStrikeChance() {
-		return getDoubleFromProperties("Critical Strike Chance");
+	public Optional<String> getCriticalStrikeChance() {
+		return getStringFromProperties("Critical Strike Chance");
 	}
 
 	public Optional<Double> getTotalDPS() {
@@ -293,8 +293,8 @@ public class ExileToolsHit {
 		return getRangeFromProperties("Elemental Damage");
 	}
 	
-	public Optional<Double> getStackSize() {
-		return getDoubleFromProperties("Stack Size");
+	public Optional<String> getStackSize() {
+		return getStringFromProperties("Stack Size");
 	}
 	
 	public Optional<Integer> getRLvl() {
@@ -354,23 +354,38 @@ public class ExileToolsHit {
 	}
 	
 	private Optional<Double> getDoubleFromProperties(String key) {
-		Optional<Map<String, Map<String, Object>>> props = Optional.ofNullable(getProperties());
+		Optional<Map<String, Object>> props = Optional.ofNullable(getProperties());
 		
 		Optional<Double> quality = props
-			.map(e -> e.get(getBaseItemType().displayName()))
-			.map(e -> {
-				return e.get(key);
-			})
-			.map(e -> (Double) e);
+			.map(e -> (Map<String, Object>) e.get(getBaseItemType().displayName()))
+			.map(e -> (Double) e.get(key));
+		return quality;
+	}
+	
+	private Optional<String> getStringFromProperties(String key) {
+		Optional<Map<String, Object>> props = Optional.ofNullable(getProperties());
+		
+		Optional<String> quality = props
+				.map(e -> (Map<String, Object>) e.get(getBaseItemType().displayName()))
+				.map(e -> (String) e.get(key));
+		return quality;
+	}
+	
+	private Optional<String> getQualityFromProperties() {
+		Optional<Map<String, Object>> props = Optional.ofNullable(getProperties());
+		
+		Optional<String> quality = props
+				.map(e -> e.get("Quality"))
+				.map(e -> e.toString());
 		return quality;
 	}
 	
 	private Optional<Range> getRangeFromProperties(String key) {
-		Optional<Map<String, Map<String, Object>>> props = Optional.ofNullable(getProperties());
+		Optional<Map<String, Object>> props = Optional.ofNullable(getProperties());
 		
 		@SuppressWarnings("unchecked")
 		Optional<Range> quality = props
-				.map(e -> e.get(getBaseItemType().displayName()))
+				.map(e -> (Map<String, Object>) e.get(getBaseItemType().displayName()))
 				.map(e -> (Map<String, Double>) e.get(key))
 				.map(e -> new Range(e));
 		return quality;

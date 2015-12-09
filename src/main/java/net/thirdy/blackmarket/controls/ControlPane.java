@@ -420,7 +420,7 @@ public class ControlPane extends BorderPane {
 //		modsSelectionPane.explicitMods().ifPresent(mod -> filters.add(explicitModFilter(mod)));
 		
 		if(btnVerified.isSelected())
-			filters.add(termFilter("shop.verified", "yes"));
+			filters.add(termFilter("shop.verified", "YES"));
 		
 		// Final Build
 		FilterBuilder filter = andFilter(toArray(filters, FilterBuilder.class));

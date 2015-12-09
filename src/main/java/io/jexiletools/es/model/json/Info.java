@@ -6,7 +6,7 @@ public class Info {
 //	public Info() {
 //	}
 	String	descrText;
-    List<String>  flavourText;
+    String  flavourText;
     String  fullName  ;
     String  fullNameTokenized;
     String  icon;
@@ -25,10 +25,10 @@ public class Info {
 	public void setDescrText(String descrText) {
 		this.descrText = descrText;
 	}
-	public List<String> getFlavourText() {
+	public String getFlavourText() {
 		return flavourText;
 	}
-	public void setFlavourText(List<String> flavourText) {
+	public void setFlavourText(String flavourText) {
 		this.flavourText = flavourText;
 	}
 	public String getFullName() {

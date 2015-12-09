@@ -17,9 +17,12 @@
  */
 package io.jexiletools.es;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.FileUtils;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -31,6 +34,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
 
 import io.jexiletools.es.model.json.ExileToolsHit;
 import io.searchbox.core.SearchResult;
@@ -57,6 +63,16 @@ public class ExileToolsSearchClientTest {
 	}
 	
 	// TODO: we've excluded most of ES's transitve deps, however this breaks these tests when running with mvn test
+	
+	@Test
+	public void testGrabItemMapping() throws Exception {
+		HttpResponse<String> httpResponse = Unirest.get("http://api.exiletools.com/index/_mapping")
+			.header("Authorization", "DEVELOPMENT-Indexer")
+			.asString();
+		String body = httpResponse.getBody();
+		File mapping = new File("poe-mapping.json");
+		FileUtils.writeStringToFile(mapping, body, Charsets.UTF_8);
+	}
 	
 	@Test
 	@Ignore

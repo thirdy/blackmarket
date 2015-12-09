@@ -38,9 +38,10 @@ public class ExileToolsService extends Service<ExileToolsSearchResult> {
         			return result;
         		} catch (ExileToolsSearchException e) {
         			e.printStackTrace();
-        			String msg = "Error while running search to Exile Tools ES API";
+//        			String msg = "Error while running search to Exile Tools ES API";
         			updateMessage(e.getMessage());
-					throw new BlackmarketException(msg, e);
+//					throw new BlackmarketException(msg, e);
+        			throw e;
         		}
             }
 
