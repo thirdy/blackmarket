@@ -289,7 +289,7 @@ public class ItemGridCell extends GridCell<ExileToolsHit> {
 		item.getElementalDPS().ifPresent(d -> propertiesGridPane.add("eDPS:", d) );
 		item.getElementalDamage().ifPresent(d -> propertiesGridPane.add("Elem:", d));
 		item.getAPS().ifPresent(d ->  propertiesGridPane.add("APS:", d));
-		item.getCriticalStrikeChance().ifPresent(d ->  propertiesGridPane.add("Crit:", d) );
+//		item.getCriticalStrikeChance().ifPresent(d ->  propertiesGridPane.add("Crit:", d) );
 		item.getArmour().ifPresent(d -> propertiesGridPane.add("Ar:", d));
 		item.getEvasionRating().ifPresent(d -> propertiesGridPane.add("Ev:", d));
 		item.getEnergyShield().ifPresent(d -> propertiesGridPane.add("Es:", d));

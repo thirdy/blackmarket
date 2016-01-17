@@ -269,8 +269,8 @@ public class ExileToolsHit {
 		return getQualityFromProperties();
 	}
 	
-	public Optional<String> getCriticalStrikeChance() {
-		return getStringFromProperties("Critical Strike Chance");
+	public Optional<Double> getCriticalStrikeChance() {
+		return getDoubleFromProperties("Critical Strike Chance");
 	}
 
 	public Optional<Double> getTotalDPS() {

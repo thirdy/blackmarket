@@ -30,19 +30,14 @@ public class League {
 
 	public static List<String> names() {
 		return Arrays.asList(
-				"Standard", "Hardcore",
-				"Darkshrine (IC003)", "Darkshrine HC (IC004)" 
+				"Talisman", "Hardcore Talisman",
+				"Standard", "Hardcore"
 				);
 	}
 
-	// TODO: auto map from http://exiletools.com/status
-	//    {darkshrine|Darkshrine (IC003)|http://www.pathofexile.com/forum/view-forum/597/page},
-	//    {darkshrinehc|Darkshrine HC (IC004)|http://www.pathofexile.com/forum/view-forum/598/page},
-	//    {hardcore|Hardcore|http://www.pathofexile.com/forum/view-forum/305/page},
-	//    {standard|Standard|http://www.pathofexile.com/forum/view-forum/306/page}
 	public static final ImmutableMap<String, String> LADDER_INDEXER_LEAGUE_MAPPING = ImmutableMap.of(
-			"darkshrine", "Darkshrine (IC003)",
-			"darkshrinehc", "Darkshrine HC (IC004)",
+			"talisman", "Talisman",
+			"talismanhc", "Hardcore Talisman",
 			"hardcore", "Hardcore",
 			"standard", "Standard");
 }
