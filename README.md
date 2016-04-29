@@ -11,6 +11,5 @@ blackmarket is fan-made and not affiliated with Grinding Gear Games in any way.
 
 ## Links:
 
-1. http://poeblackmarket.github.io/
 1. https://www.pathofexile.com/forum/view-thread/1454058
 2. https://www.reddit.com/r/poeblackmarket
